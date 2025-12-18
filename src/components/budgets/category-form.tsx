@@ -37,6 +37,7 @@ const formSchema = z.object({
   name: z.string().min(1, 'Name is required').max(50),
   icon: z.string().nullable(),
   color: z.string().nullable(),
+  type: z.enum(['income', 'expense']),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -93,6 +94,7 @@ export function CategoryForm({
       name: '',
       icon: 'more-horizontal',
       color: '#9B87F5',
+      type: 'expense',
     },
   })
 
@@ -102,12 +104,14 @@ export function CategoryForm({
         name: editingCategory.name,
         icon: editingCategory.icon,
         color: editingCategory.color,
+        type: editingCategory.type as 'income' | 'expense',
       })
     } else {
       form.reset({
         name: '',
         icon: 'more-horizontal',
         color: '#9B87F5',
+        type: 'expense',
       })
     }
   }, [editingCategory, form])
@@ -134,6 +138,7 @@ export function CategoryForm({
             name: values.name,
             icon: values.icon,
             color: values.color,
+            type: values.type,
           },
         })
         toast.success(t('budget_category_created'))
@@ -218,11 +223,10 @@ export function CategoryForm({
                         key={color.value}
                         type="button"
                         onClick={() => field.onChange(color.value)}
-                        className={`w-8 h-8 rounded-full border-2 transition-all ${
-                          field.value === color.value
+                        className={`w-8 h-8 rounded-full border-2 transition-all ${field.value === color.value
                             ? 'border-foreground scale-110'
                             : 'border-transparent'
-                        }`}
+                          }`}
                         style={{ backgroundColor: color.value }}
                         title={color.label}
                       />

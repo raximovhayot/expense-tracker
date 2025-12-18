@@ -3,7 +3,7 @@
  * These should only be imported in server-side actions (SSR, functions).
  */
 
-import { Client, Account, Storage, Users } from 'node-appwrite'
+import { Client, Account, Storage, Users, Databases } from 'node-appwrite'
 
 const getAppwriteClientCredentials = () => {
   const endpoint = process.env.APPWRITE_ENDPOINT
@@ -38,6 +38,7 @@ export async function createSessionClient(session: string) {
     account: new Account(client),
     users: new Users(client),
     storage: new Storage(client),
+    databases: new Databases(client),
   }
 }
 

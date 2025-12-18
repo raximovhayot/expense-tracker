@@ -1,7 +1,6 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import {
   LayoutDashboard,
-  Wallet,
   PiggyBank,
   Receipt,
   RefreshCw,
@@ -10,6 +9,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  HandCoins,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -35,9 +35,9 @@ interface NavItem {
 
 const mainNavItems: NavItem[] = [
   { labelKey: 'nav_dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { labelKey: 'nav_income', href: '/income', icon: Wallet },
   { labelKey: 'nav_budgets', href: '/budgets', icon: PiggyBank },
   { labelKey: 'nav_transactions', href: '/transactions', icon: Receipt },
+  { labelKey: 'nav_debts', href: '/debts', icon: HandCoins },
   { labelKey: 'nav_recurring', href: '/recurring', icon: RefreshCw },
 ]
 

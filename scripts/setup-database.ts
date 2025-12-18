@@ -224,6 +224,26 @@ const COLLECTIONS: Collection[] = [
         ],
         indexes: [{ key: 'idx_currencies', type: 'unique', attrs: ['fromCurrency', 'toCurrency'] }],
     },
+    {
+        id: 'debts',
+        name: 'Debts',
+        attrs: [
+            { key: 'createdBy', type: 'string', size: 36, required: true },
+            { key: 'workspaceId', type: 'string', size: 36, required: true },
+            { key: 'type', type: 'string', size: 20, required: true }, // 'lent' or 'borrowed'
+            { key: 'personName', type: 'string', size: 255, required: true },
+            { key: 'amount', type: 'float', required: true },
+            { key: 'currency', type: 'string', size: 10, required: true },
+            { key: 'description', type: 'string', size: 1000, required: false },
+            { key: 'dueDate', type: 'datetime', required: false },
+            { key: 'isPaid', type: 'boolean', required: false },
+            { key: 'notes', type: 'string', size: 1000, required: false },
+        ],
+        indexes: [
+            { key: 'idx_workspaceId', type: 'key', attrs: ['workspaceId'] },
+            { key: 'idx_isPaid', type: 'key', attrs: ['isPaid'] },
+        ],
+    },
 ]
 
 // =============================================================================

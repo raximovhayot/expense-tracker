@@ -2,16 +2,25 @@ import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { db } from '../lib/db'
 import { authMiddleware } from './auth'
-import { Query } from 'node-appwrite'
+import { Query, ID } from 'node-appwrite'
+import { addDays, addMonths, addYears, addWeeks } from 'date-fns'
 
 // Schemas
 const createRecurringSchema = z.object({
   workspaceId: z.string(),
   name: z.string().min(1).max(100),
-  categoryId: z.string(),
+  categoryId: z.string().nullable().optional(),
+  type: z.enum(['income', 'expense']),
   amount: z.number().positive(),
   currency: z.enum(['USD', 'UZS']),
-  frequency: z.enum(['monthly', 'quarterly', 'annual']),
+  frequency: z.enum([
+    'weekly',
+    'biweekly',
+    'monthly',
+    'quarterly',
+    'annual',
+    'one_time',
+  ]),
   startDate: z.string(),
   endDate: z.string().nullable().optional(),
   isActive: z.boolean().default(true),
@@ -21,10 +30,13 @@ const createRecurringSchema = z.object({
 const updateRecurringSchema = z.object({
   id: z.string(),
   name: z.string().min(1).max(100).optional(),
-  categoryId: z.string().optional(),
+  categoryId: z.string().nullable().optional(),
+  type: z.enum(['income', 'expense']).optional(),
   amount: z.number().positive().optional(),
   currency: z.enum(['USD', 'UZS']).optional(),
-  frequency: z.enum(['monthly', 'quarterly', 'annual']).optional(),
+  frequency: z
+    .enum(['weekly', 'biweekly', 'monthly', 'quarterly', 'annual', 'one_time'])
+    .optional(),
   startDate: z.string().optional(),
   endDate: z.string().nullable().optional(),
   isActive: z.boolean().optional(),
@@ -53,34 +65,8 @@ async function verifyWorkspaceAccess(
   return memberships.rows[0]
 }
 
-// Calculate next due date based on frequency
-function calculateNextDueDate(
-  startDate: string,
-  frequency: string,
-  lastProcessed?: string | null,
-): string {
-  const now = new Date()
-  const next = new Date(lastProcessed || startDate)
-
-  while (next <= now) {
-    switch (frequency) {
-      case 'monthly':
-        next.setMonth(next.getMonth() + 1)
-        break
-      case 'quarterly':
-        next.setMonth(next.getMonth() + 3)
-        break
-      case 'annual':
-        next.setFullYear(next.getFullYear() + 1)
-        break
-    }
-  }
-
-  return next.toISOString()
-}
-
-// List recurring expenses
-export const listRecurringExpensesFn = createServerFn({ method: 'GET' })
+// List recurring transactions
+export const listRecurringTransactionsFn = createServerFn({ method: 'GET' })
   .inputValidator(z.object({ workspaceId: z.string() }))
   .handler(async ({ data }) => {
     const { currentUser } = await authMiddleware()
@@ -88,29 +74,29 @@ export const listRecurringExpensesFn = createServerFn({ method: 'GET' })
 
     await verifyWorkspaceAccess(data.workspaceId, currentUser.$id)
 
-    const expenses = await db.recurringExpenses.list([
+    const recurring = await db.recurringTransactions.list([
       Query.equal('workspaceId', [data.workspaceId]),
-      Query.orderAsc('nextDueDate'),
+      Query.orderDesc('createdAt'),
     ])
 
-    return { expenses: expenses.rows }
+    return { recurring: recurring.rows }
   })
 
-// Get single recurring expense
-export const getRecurringExpenseFn = createServerFn({ method: 'GET' })
+// Get single recurring transaction
+export const getRecurringTransactionFn = createServerFn({ method: 'GET' })
   .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
     const { currentUser } = await authMiddleware()
     if (!currentUser) throw new Error('Unauthorized')
 
-    const expense = await db.recurringExpenses.get(data.id)
-    await verifyWorkspaceAccess(expense.workspaceId, currentUser.$id)
+    const recurring = await db.recurringTransactions.get(data.id)
+    await verifyWorkspaceAccess(recurring.workspaceId, currentUser.$id)
 
-    return { expense }
+    return { recurring }
   })
 
-// Create recurring expense
-export const createRecurringExpenseFn = createServerFn({ method: 'POST' })
+// Create recurring transaction
+export const createRecurringTransactionFn = createServerFn({ method: 'POST' })
   .inputValidator(createRecurringSchema)
   .handler(async ({ data }) => {
     const { currentUser } = await authMiddleware()
@@ -118,40 +104,40 @@ export const createRecurringExpenseFn = createServerFn({ method: 'POST' })
 
     await verifyWorkspaceAccess(data.workspaceId, currentUser.$id, true)
 
-    const nextDueDate = calculateNextDueDate(data.startDate, data.frequency)
-
-    const expense = await db.recurringExpenses.create({
+    const recurring = await db.recurringTransactions.create({
       createdBy: currentUser.$id,
       workspaceId: data.workspaceId,
       name: data.name.trim(),
-      categoryId: data.categoryId,
+      categoryId: data.categoryId || null,
+      type: data.type,
       amount: data.amount,
       currency: data.currency,
       frequency: data.frequency,
       startDate: data.startDate,
       endDate: data.endDate || null,
-      nextDueDate,
+      nextDueDate: data.startDate, // Initial next due date is start date
       lastProcessedDate: null,
       isActive: data.isActive,
       notes: data.notes?.trim() || null,
     })
 
-    return { expense }
+    return { recurring }
   })
 
-// Update recurring expense
-export const updateRecurringExpenseFn = createServerFn({ method: 'POST' })
+// Update recurring transaction
+export const updateRecurringTransactionFn = createServerFn({ method: 'POST' })
   .inputValidator(updateRecurringSchema)
   .handler(async ({ data }) => {
     const { currentUser } = await authMiddleware()
     if (!currentUser) throw new Error('Unauthorized')
 
-    const existing = await db.recurringExpenses.get(data.id)
+    const existing = await db.recurringTransactions.get(data.id)
     await verifyWorkspaceAccess(existing.workspaceId, currentUser.$id, true)
 
     const updateData: Record<string, unknown> = {}
     if (data.name) updateData.name = data.name.trim()
-    if (data.categoryId) updateData.categoryId = data.categoryId
+    if (data.categoryId !== undefined) updateData.categoryId = data.categoryId
+    if (data.type) updateData.type = data.type
     if (data.amount !== undefined) updateData.amount = data.amount
     if (data.currency) updateData.currency = data.currency
     if (data.frequency) updateData.frequency = data.frequency
@@ -160,54 +146,12 @@ export const updateRecurringExpenseFn = createServerFn({ method: 'POST' })
     if (data.isActive !== undefined) updateData.isActive = data.isActive
     if (data.notes !== undefined) updateData.notes = data.notes?.trim() || null
 
-    // Recalculate next due date if frequency or start date changed
-    if (data.frequency || data.startDate) {
-      const frequency = data.frequency || existing.frequency
-      const startDate = data.startDate || existing.startDate
-      updateData.nextDueDate = calculateNextDueDate(
-        startDate,
-        frequency,
-        existing.lastProcessedDate,
-      )
-    }
-
-    const expense = await db.recurringExpenses.update(data.id, updateData)
-    return { expense }
+    const recurring = await db.recurringTransactions.update(data.id, updateData)
+    return { recurring }
   })
 
-// Delete recurring expense
-export const deleteRecurringExpenseFn = createServerFn({ method: 'POST' })
-  .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    const { currentUser } = await authMiddleware()
-    if (!currentUser) throw new Error('Unauthorized')
-
-    const existing = await db.recurringExpenses.get(data.id)
-    await verifyWorkspaceAccess(existing.workspaceId, currentUser.$id, true)
-
-    await db.recurringExpenses.delete(data.id)
-    return { success: true }
-  })
-
-// Toggle recurring expense active status
-export const toggleRecurringExpenseFn = createServerFn({ method: 'POST' })
-  .inputValidator(z.object({ id: z.string() }))
-  .handler(async ({ data }) => {
-    const { currentUser } = await authMiddleware()
-    if (!currentUser) throw new Error('Unauthorized')
-
-    const existing = await db.recurringExpenses.get(data.id)
-    await verifyWorkspaceAccess(existing.workspaceId, currentUser.$id, true)
-
-    const expense = await db.recurringExpenses.update(data.id, {
-      isActive: !existing.isActive,
-    })
-
-    return { expense }
-  })
-
-// Process due recurring expenses (create transactions)
-export const processDueExpensesFn = createServerFn({ method: 'POST' })
+// Process due recurring transactions
+export const processDueTransactionsFn = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ workspaceId: z.string() }))
   .handler(async ({ data }) => {
     const { currentUser } = await authMiddleware()
@@ -215,81 +159,108 @@ export const processDueExpensesFn = createServerFn({ method: 'POST' })
 
     await verifyWorkspaceAccess(data.workspaceId, currentUser.$id, true)
 
-    const now = new Date().toISOString()
+    const today = new Date().toISOString()
 
-    // Get all active recurring expenses that are due
-    const dueExpenses = await db.recurringExpenses.list([
+    // Find due transactions
+    const dueTransactions = await db.recurringTransactions.list([
       Query.equal('workspaceId', [data.workspaceId]),
       Query.equal('isActive', [true]),
-      Query.lessThanEqual('nextDueDate', now),
+      Query.lessThanEqual('nextDueDate', today),
     ])
 
-    const processed = []
+    let processedCount = 0
 
-    for (const expense of dueExpenses.rows) {
-      // Check if end date has passed
-      if (expense.endDate && new Date(expense.endDate) < new Date()) {
-        await db.recurringExpenses.update(expense.$id, { isActive: false })
-        continue
-      }
-
+    for (const recurring of dueTransactions.rows) {
       // Create transaction
-      const transaction = await db.transactions.create({
+      await db.transactions.create({
         createdBy: currentUser.$id,
         workspaceId: data.workspaceId,
-        type: 'expense',
-        categoryId: expense.categoryId,
-        incomeSourceId: null,
-        amount: expense.amount,
-        currency: expense.currency,
-        convertedAmount: null,
-        exchangeRate: null,
-        description: `Recurring: ${expense.name}`,
-        transactionDate: expense.nextDueDate,
-        recurringExpenseId: expense.$id,
-        tags: ['recurring'],
+        type: recurring.type,
+        amount: recurring.amount,
+        currency: recurring.currency,
+        categoryId: recurring.categoryId,
+        description: `Recurring: ${recurring.name}`,
+        transactionDate: recurring.nextDueDate,
+        // No incomeSourceId needed as we use categoryId now
       })
 
-      // Update recurring expense
-      const nextDueDate = calculateNextDueDate(
-        expense.startDate,
-        expense.frequency,
-        expense.nextDueDate,
-      )
-      await db.recurringExpenses.update(expense.$id, {
-        lastProcessedDate: expense.nextDueDate,
-        nextDueDate,
-      })
+      // Calculate next due date
+      const currentDue = new Date(recurring.nextDueDate)
+      let nextDue = currentDue
 
-      processed.push({ expense, transaction })
+      switch (recurring.frequency) {
+        case 'weekly':
+          nextDue = addWeeks(currentDue, 1)
+          break
+        case 'biweekly':
+          nextDue = addWeeks(currentDue, 2)
+          break
+        case 'monthly':
+          nextDue = addMonths(currentDue, 1)
+          break
+        case 'quarterly':
+          nextDue = addMonths(currentDue, 3)
+          break
+        case 'annual':
+          nextDue = addYears(currentDue, 1)
+          break
+        case 'one_time':
+          // For one-time, we can deactivate it or set next due date far in future?
+          // Or just deactivate it.
+          await db.recurringTransactions.update(recurring.$id, {
+            isActive: false,
+            lastProcessedDate: today,
+          })
+          processedCount++
+          continue
+      }
+
+      // Check if past end date
+      if (recurring.endDate && nextDue > new Date(recurring.endDate)) {
+        await db.recurringTransactions.update(recurring.$id, {
+          isActive: false,
+          lastProcessedDate: today,
+        })
+      } else {
+        await db.recurringTransactions.update(recurring.$id, {
+          nextDueDate: nextDue.toISOString(),
+          lastProcessedDate: today,
+        })
+      }
+
+      processedCount++
     }
 
-    return { processed, count: processed.length }
+    return { count: processedCount }
   })
 
-// Get upcoming recurring expenses
-export const getUpcomingExpensesFn = createServerFn({ method: 'GET' })
-  .inputValidator(
-    z.object({
-      workspaceId: z.string(),
-      days: z.number().int().min(1).max(90).optional(),
-    }),
-  )
+// Delete recurring transaction
+export const deleteRecurringTransactionFn = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({ id: z.string() }))
   .handler(async ({ data }) => {
     const { currentUser } = await authMiddleware()
     if (!currentUser) throw new Error('Unauthorized')
 
-    await verifyWorkspaceAccess(data.workspaceId, currentUser.$id)
+    const existing = await db.recurringTransactions.get(data.id)
+    await verifyWorkspaceAccess(existing.workspaceId, currentUser.$id, true)
 
-    const futureDate = new Date()
-    futureDate.setDate(futureDate.getDate() + (data.days || 30))
+    await db.recurringTransactions.delete(data.id)
+    return { success: true }
+  })
 
-    const expenses = await db.recurringExpenses.list([
-      Query.equal('workspaceId', [data.workspaceId]),
-      Query.equal('isActive', [true]),
-      Query.lessThanEqual('nextDueDate', futureDate.toISOString()),
-      Query.orderAsc('nextDueDate'),
-    ])
+// Toggle recurring transaction active status
+export const toggleRecurringTransactionFn = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({ id: z.string() }))
+  .handler(async ({ data }) => {
+    const { currentUser } = await authMiddleware()
+    if (!currentUser) throw new Error('Unauthorized')
 
-    return { expenses: expenses.rows }
+    const existing = await db.recurringTransactions.get(data.id)
+    await verifyWorkspaceAccess(existing.workspaceId, currentUser.$id, true)
+
+    const recurring = await db.recurringTransactions.update(data.id, {
+      isActive: !existing.isActive,
+    })
+
+    return { recurring }
   })

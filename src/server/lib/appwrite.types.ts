@@ -25,17 +25,6 @@ export type WorkspaceInvitations = Models.Document & {
   expiresAt: string | null
 }
 
-export type IncomeSources = Models.Document & {
-  createdBy: string
-  workspaceId: string
-  name: string
-  type: string
-  amount: number
-  currency: string
-  frequency: string
-  isActive: boolean
-  notes: string | null
-}
 
 export type BudgetCategories = Models.Document & {
   createdBy: string
@@ -43,6 +32,7 @@ export type BudgetCategories = Models.Document & {
   name: string
   icon: string | null
   color: string | null
+  type: 'income' | 'expense'
   isDefault: boolean
 }
 
@@ -72,11 +62,12 @@ export type Transactions = Models.Document & {
   tags: string[] | null
 }
 
-export type RecurringExpenses = Models.Document & {
+export type RecurringTransactions = Models.Document & {
   createdBy: string
   workspaceId: string
   name: string
-  categoryId: string
+  categoryId: string | null
+  type: 'income' | 'expense'
   amount: number
   currency: string
   frequency: string
@@ -104,4 +95,17 @@ export type ExchangeRates = Models.Document & {
   toCurrency: string
   rate: number
   fetchedAt: string
+}
+
+export type Debts = Models.Document & {
+  createdBy: string
+  workspaceId: string
+  type: 'lent' | 'borrowed'
+  personName: string
+  amount: number
+  currency: string
+  description: string | null
+  dueDate: string | null
+  isPaid: boolean
+  notes: string | null
 }

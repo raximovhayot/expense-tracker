@@ -8,13 +8,11 @@ import { useWorkspace } from '@/hooks/use-workspace'
 import { useI18n } from '@/hooks/use-i18n'
 import { listTransactionsFn } from '@/server/functions/transactions'
 import { listCategoriesFn } from '@/server/functions/budgets'
-import { listIncomeSourcesFn } from '@/server/functions/income'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Plus } from 'lucide-react'
 import type {
   Transactions,
   BudgetCategories,
-  IncomeSources,
 } from '@/server/lib/appwrite.types'
 
 export const Route = createFileRoute('/_protected/transactions')({
@@ -25,7 +23,6 @@ function TransactionsPage() {
   const [loading, setLoading] = useState(true)
   const [transactions, setTransactions] = useState<Transactions[]>([])
   const [categories, setCategories] = useState<BudgetCategories[]>([])
-  const [incomeSources, setIncomeSources] = useState<IncomeSources[]>([])
   const [showForm, setShowForm] = useState(false)
   const [editingTransaction, setEditingTransaction] =
     useState<Transactions | null>(null)
@@ -35,25 +32,22 @@ function TransactionsPage() {
 
   const fetchTransactions = useServerFn(listTransactionsFn)
   const fetchCategories = useServerFn(listCategoriesFn)
-  const fetchIncomeSources = useServerFn(listIncomeSourcesFn)
 
   const loadData = async () => {
     if (!workspace) return
 
     setLoading(true)
     try {
-      const [transactionsResult, categoriesResult, incomeResult] =
+      const [transactionsResult, categoriesResult] =
         await Promise.all([
           fetchTransactions({
             data: { workspaceId: workspace.$id, limit: 100 },
           }),
           fetchCategories({ data: { workspaceId: workspace.$id } }),
-          fetchIncomeSources({ data: { workspaceId: workspace.$id } }),
         ])
 
       setTransactions(transactionsResult.transactions)
       setCategories(categoriesResult.categories)
-      setIncomeSources(incomeResult.sources)
     } catch (error) {
       console.error('Failed to load transactions:', error)
     } finally {
@@ -140,7 +134,6 @@ function TransactionsPage() {
         onOpenChange={handleCloseForm}
         editingTransaction={editingTransaction}
         categories={categories}
-        incomeSources={incomeSources}
         onSuccess={loadData}
       />
     </div>

@@ -9,7 +9,6 @@ const createTransactionSchema = z.object({
   workspaceId: z.string(),
   type: z.enum(['income', 'expense']),
   categoryId: z.string().nullable().optional(),
-  incomeSourceId: z.string().nullable().optional(),
   amount: z.number().positive(),
   currency: z.enum(['USD', 'UZS']),
   convertedAmount: z.number().nullable().optional(),
@@ -23,7 +22,6 @@ const updateTransactionSchema = z.object({
   id: z.string(),
   type: z.enum(['income', 'expense']).optional(),
   categoryId: z.string().nullable().optional(),
-  incomeSourceId: z.string().nullable().optional(),
   amount: z.number().positive().optional(),
   currency: z.enum(['USD', 'UZS']).optional(),
   convertedAmount: z.number().nullable().optional(),
@@ -134,7 +132,6 @@ export const createTransactionFn = createServerFn({ method: 'POST' })
       workspaceId: data.workspaceId,
       type: data.type,
       categoryId: data.categoryId || null,
-      incomeSourceId: data.incomeSourceId || null,
       amount: data.amount,
       currency: data.currency,
       convertedAmount: data.convertedAmount || null,
@@ -161,8 +158,7 @@ export const updateTransactionFn = createServerFn({ method: 'POST' })
     const updateData: Record<string, unknown> = {}
     if (data.type) updateData.type = data.type
     if (data.categoryId !== undefined) updateData.categoryId = data.categoryId
-    if (data.incomeSourceId !== undefined)
-      updateData.incomeSourceId = data.incomeSourceId
+
     if (data.amount !== undefined) updateData.amount = data.amount
     if (data.currency) updateData.currency = data.currency
     if (data.convertedAmount !== undefined)
@@ -222,17 +218,21 @@ export const getTransactionSummaryFn = createServerFn({ method: 'GET' })
     const expensesByCategory: Record<string, number> = {}
 
     transactions.rows.forEach((t) => {
-      if (t.type === 'income') {
-        totalIncome += t.amount
-        if (t.incomeSourceId) {
-          incomeBySource[t.incomeSourceId] =
-            (incomeBySource[t.incomeSourceId] || 0) + t.amount
-        }
-      } else {
-        totalExpenses += t.amount
-        if (t.categoryId) {
+      if (t.categoryId) {
+        if (t.type === 'income') {
+          totalIncome += t.amount
+          incomeBySource[t.categoryId] =
+            (incomeBySource[t.categoryId] || 0) + t.amount
+        } else {
+          totalExpenses += t.amount
           expensesByCategory[t.categoryId] =
             (expensesByCategory[t.categoryId] || 0) + t.amount
+        }
+      } else {
+        if (t.type === 'income') {
+          totalIncome += t.amount
+        } else {
+          totalExpenses += t.amount
         }
       }
     })

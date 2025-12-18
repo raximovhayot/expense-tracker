@@ -46,13 +46,11 @@ import { cn } from '@/lib/utils'
 import type {
   Transactions,
   BudgetCategories,
-  IncomeSources,
 } from '@/server/lib/appwrite.types'
 
 const formSchema = z.object({
   type: z.enum(['income', 'expense']),
   categoryId: z.string().nullable().optional(),
-  incomeSourceId: z.string().nullable().optional(),
   amount: z.number().positive('Amount must be positive'),
   currency: z.enum(['USD', 'UZS']),
   description: z.string().max(500).optional(),
@@ -66,7 +64,6 @@ interface TransactionFormProps {
   onOpenChange: (open: boolean) => void
   editingTransaction?: Transactions | null
   categories: BudgetCategories[]
-  incomeSources: IncomeSources[]
   onSuccess?: () => void
 }
 
@@ -75,7 +72,6 @@ export function TransactionForm({
   onOpenChange,
   editingTransaction,
   categories,
-  incomeSources,
   onSuccess,
 }: TransactionFormProps) {
   const [loading, setLoading] = useState(false)
@@ -90,7 +86,6 @@ export function TransactionForm({
     defaultValues: {
       type: 'expense',
       categoryId: null,
-      incomeSourceId: null,
       amount: 0,
       currency: currency,
       description: '',
@@ -105,7 +100,6 @@ export function TransactionForm({
       form.reset({
         type: editingTransaction.type as FormValues['type'],
         categoryId: editingTransaction.categoryId,
-        incomeSourceId: editingTransaction.incomeSourceId,
         amount: editingTransaction.amount,
         currency: editingTransaction.currency as FormValues['currency'],
         description: editingTransaction.description || '',
@@ -115,7 +109,6 @@ export function TransactionForm({
       form.reset({
         type: 'expense',
         categoryId: null,
-        incomeSourceId: null,
         amount: 0,
         currency: currency,
         description: '',
@@ -134,9 +127,7 @@ export function TransactionForm({
           data: {
             id: editingTransaction.$id,
             type: values.type,
-            categoryId: values.type === 'expense' ? values.categoryId : null,
-            incomeSourceId:
-              values.type === 'income' ? values.incomeSourceId : null,
+            categoryId: values.categoryId || null,
             amount: values.amount,
             currency: values.currency,
             description: values.description || null,
@@ -149,9 +140,7 @@ export function TransactionForm({
           data: {
             workspaceId: workspace.$id,
             type: values.type,
-            categoryId: values.type === 'expense' ? values.categoryId : null,
-            incomeSourceId:
-              values.type === 'income' ? values.incomeSourceId : null,
+            categoryId: values.categoryId || null,
             amount: values.amount,
             currency: values.currency,
             description: values.description || null,
@@ -210,65 +199,35 @@ export function TransactionForm({
               )}
             />
 
-            {watchType === 'expense' && (
-              <FormField
-                control={form.control}
-                name="categoryId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('transaction_category')}</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value || undefined}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categories.map((cat) => (
+            <FormField
+              control={form.control}
+              name="categoryId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('transaction_category')}</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || undefined}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categories
+                        .filter((c) => c.type === watchType)
+                        .map((cat) => (
                           <SelectItem key={cat.$id} value={cat.$id}>
                             {cat.name}
                           </SelectItem>
                         ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {watchType === 'income' && incomeSources.length > 0 && (
-              <FormField
-                control={form.control}
-                name="incomeSourceId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Income Source</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value || undefined}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select source (optional)" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {incomeSources.map((source) => (
-                          <SelectItem key={source.$id} value={source.$id}>
-                            {source.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="grid grid-cols-2 gap-4">
               <FormField

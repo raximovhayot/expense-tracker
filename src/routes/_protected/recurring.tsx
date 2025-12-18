@@ -7,15 +7,15 @@ import { RecurringForm } from '@/components/recurring/recurring-form'
 import { useWorkspace } from '@/hooks/use-workspace'
 import { useI18n } from '@/hooks/use-i18n'
 import {
-  listRecurringExpensesFn,
-  processDueExpensesFn,
+  listRecurringTransactionsFn,
+  processDueTransactionsFn,
 } from '@/server/functions/recurring'
 import { listCategoriesFn } from '@/server/functions/budgets'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from 'sonner'
 import { Plus, Play } from 'lucide-react'
 import type {
-  RecurringExpenses,
+  RecurringTransactions,
   BudgetCategories,
 } from '@/server/lib/appwrite.types'
 
@@ -25,31 +25,31 @@ export const Route = createFileRoute('/_protected/recurring')({
 
 function RecurringPage() {
   const [loading, setLoading] = useState(true)
-  const [expenses, setExpenses] = useState<RecurringExpenses[]>([])
+  const [transactions, setTransactions] = useState<RecurringTransactions[]>([])
   const [categories, setCategories] = useState<BudgetCategories[]>([])
   const [showForm, setShowForm] = useState(false)
-  const [editingExpense, setEditingExpense] =
-    useState<RecurringExpenses | null>(null)
+  const [editingTransaction, setEditingTransaction] =
+    useState<RecurringTransactions | null>(null)
   const [processing, setProcessing] = useState(false)
 
   const { workspace, canEdit } = useWorkspace()
   const { t } = useI18n()
 
-  const fetchExpenses = useServerFn(listRecurringExpensesFn)
+  const fetchTransactions = useServerFn(listRecurringTransactionsFn)
   const fetchCategories = useServerFn(listCategoriesFn)
-  const processDue = useServerFn(processDueExpensesFn)
+  const processDue = useServerFn(processDueTransactionsFn)
 
   const loadData = async () => {
     if (!workspace) return
 
     setLoading(true)
     try {
-      const [expensesResult, categoriesResult] = await Promise.all([
-        fetchExpenses({ data: { workspaceId: workspace.$id } }),
+      const [transactionsResult, categoriesResult] = await Promise.all([
+        fetchTransactions({ data: { workspaceId: workspace.$id } }),
         fetchCategories({ data: { workspaceId: workspace.$id } }),
       ])
 
-      setExpenses(expensesResult.expenses)
+      setTransactions(transactionsResult.recurring)
       setCategories(categoriesResult.categories)
     } catch (error) {
       console.error('Failed to load recurring expenses:', error)
@@ -62,15 +62,15 @@ function RecurringPage() {
     loadData()
   }, [workspace])
 
-  const handleEdit = (expense: RecurringExpenses) => {
-    setEditingExpense(expense)
+  const handleEdit = (transaction: RecurringTransactions) => {
+    setEditingTransaction(transaction)
     setShowForm(true)
   }
 
   const handleCloseForm = (open: boolean) => {
     setShowForm(open)
     if (!open) {
-      setEditingExpense(null)
+      setEditingTransaction(null)
     }
   }
 
@@ -154,7 +154,7 @@ function RecurringPage() {
 
       {/* Recurring List */}
       <RecurringList
-        expenses={expenses}
+        transactions={transactions}
         categories={categories}
         onEdit={handleEdit}
         onUpdate={loadData}
@@ -164,7 +164,7 @@ function RecurringPage() {
       <RecurringForm
         open={showForm}
         onOpenChange={handleCloseForm}
-        editingExpense={editingExpense}
+        editingTransaction={editingTransaction}
         categories={categories}
         onSuccess={loadData}
       />

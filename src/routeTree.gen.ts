@@ -18,7 +18,7 @@ import { Route as ProtectedWorkspaceSettingsRouteImport } from './routes/_protec
 import { Route as ProtectedTransactionsRouteImport } from './routes/_protected/transactions'
 import { Route as ProtectedRecurringRouteImport } from './routes/_protected/recurring'
 import { Route as ProtectedPreferencesRouteImport } from './routes/_protected/preferences'
-import { Route as ProtectedIncomeRouteImport } from './routes/_protected/income'
+import { Route as ProtectedDebtsRouteImport } from './routes/_protected/debts'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
 import { Route as ProtectedBudgetsRouteImport } from './routes/_protected/budgets'
 import { Route as AuthSignOutRouteImport } from './routes/_auth/sign-out'
@@ -68,9 +68,9 @@ const ProtectedPreferencesRoute = ProtectedPreferencesRouteImport.update({
   path: '/preferences',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const ProtectedIncomeRoute = ProtectedIncomeRouteImport.update({
-  id: '/income',
-  path: '/income',
+const ProtectedDebtsRoute = ProtectedDebtsRouteImport.update({
+  id: '/debts',
+  path: '/debts',
   getParentRoute: () => ProtectedRoute,
 } as any)
 const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
@@ -106,7 +106,7 @@ export interface FileRoutesByFullPath {
   '/sign-out': typeof AuthSignOutRoute
   '/budgets': typeof ProtectedBudgetsRoute
   '/dashboard': typeof ProtectedDashboardRoute
-  '/income': typeof ProtectedIncomeRoute
+  '/debts': typeof ProtectedDebtsRoute
   '/preferences': typeof ProtectedPreferencesRoute
   '/recurring': typeof ProtectedRecurringRoute
   '/transactions': typeof ProtectedTransactionsRoute
@@ -120,7 +120,7 @@ export interface FileRoutesByTo {
   '/sign-out': typeof AuthSignOutRoute
   '/budgets': typeof ProtectedBudgetsRoute
   '/dashboard': typeof ProtectedDashboardRoute
-  '/income': typeof ProtectedIncomeRoute
+  '/debts': typeof ProtectedDebtsRoute
   '/preferences': typeof ProtectedPreferencesRoute
   '/recurring': typeof ProtectedRecurringRoute
   '/transactions': typeof ProtectedTransactionsRoute
@@ -138,7 +138,7 @@ export interface FileRoutesById {
   '/_auth/sign-out': typeof AuthSignOutRoute
   '/_protected/budgets': typeof ProtectedBudgetsRoute
   '/_protected/dashboard': typeof ProtectedDashboardRoute
-  '/_protected/income': typeof ProtectedIncomeRoute
+  '/_protected/debts': typeof ProtectedDebtsRoute
   '/_protected/preferences': typeof ProtectedPreferencesRoute
   '/_protected/recurring': typeof ProtectedRecurringRoute
   '/_protected/transactions': typeof ProtectedTransactionsRoute
@@ -154,7 +154,7 @@ export interface FileRouteTypes {
     | '/sign-out'
     | '/budgets'
     | '/dashboard'
-    | '/income'
+    | '/debts'
     | '/preferences'
     | '/recurring'
     | '/transactions'
@@ -168,7 +168,7 @@ export interface FileRouteTypes {
     | '/sign-out'
     | '/budgets'
     | '/dashboard'
-    | '/income'
+    | '/debts'
     | '/preferences'
     | '/recurring'
     | '/transactions'
@@ -185,7 +185,7 @@ export interface FileRouteTypes {
     | '/_auth/sign-out'
     | '/_protected/budgets'
     | '/_protected/dashboard'
-    | '/_protected/income'
+    | '/_protected/debts'
     | '/_protected/preferences'
     | '/_protected/recurring'
     | '/_protected/transactions'
@@ -266,11 +266,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedPreferencesRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_protected/income': {
-      id: '/_protected/income'
-      path: '/income'
-      fullPath: '/income'
-      preLoaderRoute: typeof ProtectedIncomeRouteImport
+    '/_protected/debts': {
+      id: '/_protected/debts'
+      path: '/debts'
+      fullPath: '/debts'
+      preLoaderRoute: typeof ProtectedDebtsRouteImport
       parentRoute: typeof ProtectedRoute
     }
     '/_protected/dashboard': {
@@ -326,7 +326,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 interface ProtectedRouteChildren {
   ProtectedBudgetsRoute: typeof ProtectedBudgetsRoute
   ProtectedDashboardRoute: typeof ProtectedDashboardRoute
-  ProtectedIncomeRoute: typeof ProtectedIncomeRoute
+  ProtectedDebtsRoute: typeof ProtectedDebtsRoute
   ProtectedPreferencesRoute: typeof ProtectedPreferencesRoute
   ProtectedRecurringRoute: typeof ProtectedRecurringRoute
   ProtectedTransactionsRoute: typeof ProtectedTransactionsRoute
@@ -336,7 +336,7 @@ interface ProtectedRouteChildren {
 const ProtectedRouteChildren: ProtectedRouteChildren = {
   ProtectedBudgetsRoute: ProtectedBudgetsRoute,
   ProtectedDashboardRoute: ProtectedDashboardRoute,
-  ProtectedIncomeRoute: ProtectedIncomeRoute,
+  ProtectedDebtsRoute: ProtectedDebtsRoute,
   ProtectedPreferencesRoute: ProtectedPreferencesRoute,
   ProtectedRecurringRoute: ProtectedRecurringRoute,
   ProtectedTransactionsRoute: ProtectedTransactionsRoute,

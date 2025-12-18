@@ -15,13 +15,13 @@ import type {
   Workspaces,
   WorkspaceMembers,
   WorkspaceInvitations,
-  IncomeSources,
   BudgetCategories,
   MonthlyBudgets,
   Transactions,
-  RecurringExpenses,
+  RecurringTransactions,
   UserPreferences,
   ExchangeRates,
+  Debts,
 } from './appwrite.types'
 
 // Initialize client
@@ -113,13 +113,13 @@ export const db = {
   workspaces: createCollectionClient<Workspaces>('workspaces'),
   workspaceMembers: createCollectionClient<WorkspaceMembers>('workspace_members'),
   workspaceInvitations: createCollectionClient<WorkspaceInvitations>('workspace_invitations'),
-  incomeSources: createCollectionClient<IncomeSources>('income_sources'),
   budgetCategories: createCollectionClient<BudgetCategories>('budget_categories'),
   monthlyBudgets: createCollectionClient<MonthlyBudgets>('monthly_budgets'),
   transactions: createCollectionClient<Transactions>('transactions'),
-  recurringExpenses: createCollectionClient<RecurringExpenses>('recurring_expenses'),
+  recurringTransactions: createCollectionClient<RecurringTransactions>('recurring_expenses'),
   userPreferences: createCollectionClient<UserPreferences>('user_preferences'),
   exchangeRates: createCollectionClient<ExchangeRates>('exchange_rates'),
+  debts: createCollectionClient<Debts>('debts'),
 }
 
 // Re-export Query for convenience

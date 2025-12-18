@@ -38,24 +38,32 @@ import {
 } from '@/components/ui/select'
 import { toast } from 'sonner'
 import {
-  createRecurringExpenseFn,
-  updateRecurringExpenseFn,
+  createRecurringTransactionFn,
+  updateRecurringTransactionFn,
 } from '@/server/functions/recurring'
 import { useWorkspace } from '@/hooks/use-workspace'
 import { useI18n } from '@/hooks/use-i18n'
 import { Loader2, CalendarIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type {
-  RecurringExpenses,
+  RecurringTransactions,
   BudgetCategories,
 } from '@/server/lib/appwrite.types'
 
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
-  categoryId: z.string().min(1, 'Category is required'),
+  categoryId: z.string().nullable().optional(),
+  type: z.enum(['income', 'expense']),
   amount: z.number().positive('Amount must be positive'),
   currency: z.enum(['USD', 'UZS']),
-  frequency: z.enum(['monthly', 'quarterly', 'annual']),
+  frequency: z.enum([
+    'weekly',
+    'biweekly',
+    'monthly',
+    'quarterly',
+    'annual',
+    'one_time',
+  ]),
   startDate: z.date(),
   endDate: z.date().nullable().optional(),
   isActive: z.boolean(),
@@ -67,7 +75,7 @@ type FormValues = z.infer<typeof formSchema>
 interface RecurringFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  editingExpense?: RecurringExpenses | null
+  editingTransaction?: RecurringTransactions | null
   categories: BudgetCategories[]
   onSuccess?: () => void
 }
@@ -75,7 +83,7 @@ interface RecurringFormProps {
 export function RecurringForm({
   open,
   onOpenChange,
-  editingExpense,
+  editingTransaction,
   categories,
   onSuccess,
 }: RecurringFormProps) {
@@ -83,14 +91,15 @@ export function RecurringForm({
   const { workspace, currency } = useWorkspace()
   const { t } = useI18n()
 
-  const createRecurring = useServerFn(createRecurringExpenseFn)
-  const updateRecurring = useServerFn(updateRecurringExpenseFn)
+  const createRecurring = useServerFn(createRecurringTransactionFn)
+  const updateRecurring = useServerFn(updateRecurringTransactionFn)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      categoryId: '',
+      categoryId: null,
+      type: 'expense',
       amount: 0,
       currency: currency,
       frequency: 'monthly',
@@ -102,24 +111,26 @@ export function RecurringForm({
   })
 
   useEffect(() => {
-    if (editingExpense) {
+    if (editingTransaction) {
       form.reset({
-        name: editingExpense.name,
-        categoryId: editingExpense.categoryId,
-        amount: editingExpense.amount,
-        currency: editingExpense.currency as FormValues['currency'],
-        frequency: editingExpense.frequency as FormValues['frequency'],
-        startDate: new Date(editingExpense.startDate),
-        endDate: editingExpense.endDate
-          ? new Date(editingExpense.endDate)
+        name: editingTransaction.name,
+        categoryId: editingTransaction.categoryId || null,
+        type: editingTransaction.type as FormValues['type'],
+        amount: editingTransaction.amount,
+        currency: editingTransaction.currency as FormValues['currency'],
+        frequency: editingTransaction.frequency as FormValues['frequency'],
+        startDate: new Date(editingTransaction.startDate),
+        endDate: editingTransaction.endDate
+          ? new Date(editingTransaction.endDate)
           : null,
-        isActive: editingExpense.isActive,
-        notes: editingExpense.notes || '',
+        isActive: editingTransaction.isActive,
+        notes: editingTransaction.notes || '',
       })
     } else {
       form.reset({
         name: '',
-        categoryId: '',
+        categoryId: null,
+        type: 'expense',
         amount: 0,
         currency: currency,
         frequency: 'monthly',
@@ -129,19 +140,20 @@ export function RecurringForm({
         notes: '',
       })
     }
-  }, [editingExpense, currency, form])
+  }, [editingTransaction, currency, form])
 
   async function onSubmit(values: FormValues) {
     if (!workspace) return
 
     setLoading(true)
     try {
-      if (editingExpense) {
+      if (editingTransaction) {
         await updateRecurring({
           data: {
-            id: editingExpense.$id,
+            id: editingTransaction.$id,
             name: values.name,
-            categoryId: values.categoryId,
+            categoryId: values.categoryId || null,
+            type: values.type,
             amount: values.amount,
             currency: values.currency,
             frequency: values.frequency,
@@ -157,7 +169,8 @@ export function RecurringForm({
           data: {
             workspaceId: workspace.$id,
             name: values.name,
-            categoryId: values.categoryId,
+            categoryId: values.categoryId || null,
+            type: values.type,
             amount: values.amount,
             currency: values.currency,
             frequency: values.frequency,
@@ -183,9 +196,12 @@ export function RecurringForm({
   }
 
   const frequencies = [
+    { value: 'weekly', label: t('recurring_freq_weekly') },
+    { value: 'biweekly', label: t('recurring_freq_biweekly') },
     { value: 'monthly', label: t('recurring_freq_monthly') },
     { value: 'quarterly', label: t('recurring_freq_quarterly') },
     { value: 'annual', label: t('recurring_freq_annual') },
+    { value: 'one_time', label: t('recurring_freq_one_time') },
   ]
 
   return (
@@ -193,7 +209,7 @@ export function RecurringForm({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
-            {editingExpense ? t('recurring_edit') : t('recurring_add')}
+            {editingTransaction ? t('recurring_edit') : t('recurring_add')}
           </DialogTitle>
         </DialogHeader>
 
@@ -207,10 +223,32 @@ export function RecurringForm({
                   <FormLabel>{t('recurring_name')}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Netflix, Rent, Insurance..."
+                      placeholder="Name..."
                       {...field}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="expense">Expense</SelectItem>
+                      <SelectItem value="income">Income</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -222,18 +260,20 @@ export function RecurringForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('transaction_category')}</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value || undefined}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.$id} value={cat.$id}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
+                      {categories
+                        .filter((c) => c.type === form.watch('type'))
+                        .map((cat) => (
+                          <SelectItem key={cat.$id} value={cat.$id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -437,7 +477,7 @@ export function RecurringForm({
               </Button>
               <Button type="submit" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {editingExpense ? t('update') : t('create')}
+                {editingTransaction ? t('update') : t('create')}
               </Button>
             </div>
           </form>

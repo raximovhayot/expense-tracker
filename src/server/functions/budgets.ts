@@ -10,6 +10,7 @@ const createCategorySchema = z.object({
   name: z.string().min(1).max(50),
   icon: z.string().max(50).nullable().optional(),
   color: z.string().max(20).nullable().optional(),
+  type: z.enum(['income', 'expense']).default('expense'),
 })
 
 const updateCategorySchema = z.object({
@@ -17,6 +18,7 @@ const updateCategorySchema = z.object({
   name: z.string().min(1).max(50).optional(),
   icon: z.string().max(50).nullable().optional(),
   color: z.string().max(20).nullable().optional(),
+  type: z.enum(['income', 'expense']).optional(),
 })
 
 const setBudgetSchema = z.object({
@@ -52,17 +54,26 @@ async function verifyWorkspaceAccess(
 
 // List budget categories
 export const listCategoriesFn = createServerFn({ method: 'GET' })
-  .inputValidator(z.object({ workspaceId: z.string() }))
+  .inputValidator(z.object({
+    workspaceId: z.string(),
+    type: z.enum(['income', 'expense']).optional(),
+  }))
   .handler(async ({ data }) => {
     const { currentUser } = await authMiddleware()
     if (!currentUser) throw new Error('Unauthorized')
 
     await verifyWorkspaceAccess(data.workspaceId, currentUser.$id)
 
-    const categories = await db.budgetCategories.list([
+    const queries = [
       Query.equal('workspaceId', [data.workspaceId]),
       Query.orderAsc('name'),
-    ])
+    ]
+
+    if (data.type) {
+      queries.push(Query.equal('type', [data.type]))
+    }
+
+    const categories = await db.budgetCategories.list(queries)
 
     return { categories: categories.rows }
   })
@@ -82,6 +93,7 @@ export const createCategoryFn = createServerFn({ method: 'POST' })
       name: data.name.trim(),
       icon: data.icon || null,
       color: data.color || '#9B87F5',
+      type: data.type,
       isDefault: false,
     })
 
@@ -102,6 +114,7 @@ export const updateCategoryFn = createServerFn({ method: 'POST' })
     if (data.name) updateData.name = data.name.trim()
     if (data.icon !== undefined) updateData.icon = data.icon
     if (data.color !== undefined) updateData.color = data.color
+    if (data.type) updateData.type = data.type
 
     const category = await db.budgetCategories.update(data.id, updateData)
     return { category }
