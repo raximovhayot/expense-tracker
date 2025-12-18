@@ -1,5 +1,5 @@
 import { ID, Permission, Role } from 'node-appwrite'
-import { getAppwriteSessionFn } from '../functions/auth'
+import { getCookie } from '@tanstack/react-start/server'
 import { createSessionClient } from './appwrite'
 
 const APPWRITE_BUCKET_ID = process.env.APPWRITE_BUCKET_ID
@@ -9,14 +9,14 @@ export async function fileStorage() {
     throw new Error('Missing APPWRITE_BUCKET_ID environment variable')
   }
 
-  const session = await getAppwriteSessionFn()
+  const sessionSecret = getCookie('appwrite-session-secret')
 
-  if (!session) {
+  if (!sessionSecret) {
     console.error('No valid session found')
     return
   }
 
-  const { storage } = await createSessionClient(session)
+  const { storage } = await createSessionClient(sessionSecret)
 
   return {
     create(userId: string, file: File) {

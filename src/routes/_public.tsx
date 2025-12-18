@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { authMiddleware } from '@/server/functions/auth'
 
 export const Route = createFileRoute('/_public')({
@@ -9,4 +9,9 @@ export const Route = createFileRoute('/_public')({
       currentUser,
     }
   },
+  component: PublicLayout,
 })
+
+function PublicLayout() {
+  return <Outlet />
+}
