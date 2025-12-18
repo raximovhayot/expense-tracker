@@ -1,23 +1,51 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import { signOutFn } from '@/server/functions/auth'
+/**
+ * Sign Out Page
+ * Clears both client and server sessions
+ */
+import { createFileRoute } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { Loader2 } from 'lucide-react'
+import { signOut as clientSignOut } from '@/lib/appwrite-client'
+import { useServerFn } from '@tanstack/react-start'
+import { clearSessionFn } from '@/server/functions/auth'
 
 export const Route = createFileRoute('/_auth/sign-out')({
-  loader: async () => {
-    // Perform sign out on the server
-    await signOutFn()
-
-    // This should not be reached as signOutFn throws a redirect
-    // But just in case, redirect to home
-    throw redirect({ to: '/' })
-  },
-
-  // Show a brief loading state while signing out
-  pendingComponent: () => (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center space-y-3">
-        <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-        <p className="text-muted-foreground">Signing out...</p>
-      </div>
-    </div>
-  ),
+  component: SignOutPage,
 })
+
+function SignOutPage() {
+  const [isLoading] = useState(true)
+  const clearSession = useServerFn(clearSessionFn)
+
+  useEffect(() => {
+    async function handleSignOut() {
+      try {
+        // Clear client session
+        await clientSignOut()
+
+        // Clear server session
+        await clearSession()
+      } catch (error) {
+        console.error('[Sign Out] Error:', error)
+      } finally {
+        // Always redirect to sign-in
+        window.location.href = '/sign-in'
+      }
+    }
+
+    handleSignOut()
+  }, [clearSession])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+          <h2 className="text-xl font-semibold">Signing out...</h2>
+        </div>
+      </div>
+    )
+  }
+
+  return null
+}

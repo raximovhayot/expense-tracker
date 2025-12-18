@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Outlet, useNavigate } from '@tanstack/react-router'
+import { Outlet } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { AppSidebar } from './app-sidebar'
 import { CreateWorkspaceDialog } from '@/components/workspace/create-workspace-dialog'
@@ -12,19 +12,16 @@ import { Skeleton } from '@/components/ui/skeleton'
 export function AppLayout() {
   const [showCreateWorkspace, setShowCreateWorkspace] = useState(false)
   const [loading, setLoading] = useState(true)
-  const { workspace, workspaces, setWorkspaces, setWorkspace } = useWorkspace()
-  const { currentUser } = useAuth()
-  const navigate = useNavigate()
+  const { workspace, workspaces, setWorkspaces, setWorkspace, setLanguage, setCurrency } = useWorkspace()
+  const { currentUser, isLoading: authLoading } = useAuth()
+
 
   const fetchWorkspaces = useServerFn(listWorkspacesFn)
   const fetchPreferences = useServerFn(getPreferencesFn)
 
   useEffect(() => {
     async function loadData() {
-      if (!currentUser) {
-        navigate({ to: '/sign-in' })
-        return
-      }
+      if (authLoading || !currentUser) return
 
       try {
         const [workspacesResult, prefsResult] = await Promise.all([
@@ -33,6 +30,14 @@ export function AppLayout() {
         ])
 
         setWorkspaces(workspacesResult.workspaces)
+
+        // Set global preferences
+        if (prefsResult.preferences.defaultLanguage) {
+          setLanguage(prefsResult.preferences.defaultLanguage as any)
+        }
+        if (prefsResult.preferences.defaultCurrency) {
+          setCurrency(prefsResult.preferences.defaultCurrency as any)
+        }
 
         // Set default workspace if available
         if (workspacesResult.workspaces.length > 0) {
@@ -45,6 +50,7 @@ export function AppLayout() {
             setWorkspace(defaultWs || workspacesResult.workspaces[0])
           }
         }
+
       } catch (error) {
         console.error('Failed to load workspaces:', error)
       } finally {
@@ -53,7 +59,7 @@ export function AppLayout() {
     }
 
     loadData()
-  }, [currentUser])
+  }, [currentUser, authLoading])
 
   if (loading) {
     return (

@@ -18,6 +18,7 @@ const updatePreferencesSchema = z.object({
 export const getPreferencesFn = createServerFn({ method: 'GET' }).handler(
   async () => {
     const { currentUser } = await authMiddleware()
+    console.log('[Preferences] getPreferencesFn for:', currentUser?.email || 'ANONYMOUS')
     if (!currentUser) throw new Error('Unauthorized')
 
     const prefs = await db.userPreferences.list([

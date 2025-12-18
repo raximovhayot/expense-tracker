@@ -11,13 +11,15 @@ interface WorkspaceWithRole extends Workspaces {
 interface WorkspaceState {
   currentWorkspace: WorkspaceWithRole | null
   workspaces: WorkspaceWithRole[]
+  language: Language
+  currency: Currency
   setCurrentWorkspace: (workspace: WorkspaceWithRole | null) => void
   setWorkspaces: (workspaces: WorkspaceWithRole[]) => void
   addWorkspace: (workspace: WorkspaceWithRole) => void
   updateWorkspace: (id: string, updates: Partial<WorkspaceWithRole>) => void
   removeWorkspace: (id: string) => void
-  getLanguage: () => Language
-  getCurrency: () => Currency
+  setLanguage: (language: Language) => void
+  setCurrency: (currency: Currency) => void
 }
 
 export const useWorkspaceStore = create<WorkspaceState>()(
@@ -25,6 +27,8 @@ export const useWorkspaceStore = create<WorkspaceState>()(
     (set, get) => ({
       currentWorkspace: null,
       workspaces: [],
+      language: 'en',
+      currency: 'USD',
 
       setCurrentWorkspace: (workspace) => set({ currentWorkspace: workspace }),
 
@@ -67,20 +71,15 @@ export const useWorkspaceStore = create<WorkspaceState>()(
           }
         }),
 
-      getLanguage: () => {
-        const workspace = get().currentWorkspace
-        return (workspace?.language as Language) || 'en'
-      },
-
-      getCurrency: () => {
-        const workspace = get().currentWorkspace
-        return (workspace?.currency as Currency) || 'USD'
-      },
+      setLanguage: (language) => set({ language }),
+      setCurrency: (currency) => set({ currency }),
     }),
     {
       name: 'budgetflow-workspace',
       partialize: (state) => ({
         currentWorkspace: state.currentWorkspace,
+        language: state.language,
+        currency: state.currency,
       }),
     },
   ),
@@ -98,8 +97,10 @@ export function useWorkspace() {
     addWorkspace: store.addWorkspace,
     updateWorkspace: store.updateWorkspace,
     removeWorkspace: store.removeWorkspace,
-    language: store.getLanguage(),
-    currency: store.getCurrency(),
+    language: store.language,
+    currency: store.currency,
+    setLanguage: store.setLanguage,
+    setCurrency: store.setCurrency,
     isOwner: store.currentWorkspace?.userRole === 'owner',
     isEditor:
       store.currentWorkspace?.userRole === 'owner' ||

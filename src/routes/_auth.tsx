@@ -1,25 +1,23 @@
-import { getCurrentUser } from '@/server/functions/auth'
-import { redirect, Outlet } from '@tanstack/react-router'
-import { createFileRoute } from '@tanstack/react-router'
+/**
+ * Auth Layout
+ * For sign-in/sign-out pages - redirects if already authenticated
+ */
+import { createFileRoute, redirect, Outlet } from '@tanstack/react-router'
+import { authMiddleware } from '@/server/functions/auth'
 
 export const Route = createFileRoute('/_auth')({
-  loader: async ({ location }) => {
-    const currentUser = await getCurrentUser()
+  beforeLoad: async ({ location }) => {
+    const { currentUser } = await authMiddleware()
+    console.log('[Route: Auth] beforeLoad for:', currentUser?.email || 'NULL', 'at:', location.pathname)
 
-    // If user is already logged in and not trying to sign out, 
-    // redirect to home
-    if (currentUser && location.pathname !== '/sign-out') {
+    // If already logged in and not on sign-out page, redirect to home
+    if (currentUser && !location.pathname.includes('sign-out')) {
+      console.log('[Route: Auth] User already logged in, redirecting to /')
       throw redirect({ to: '/' })
     }
 
-    return {
-      currentUser,
-    }
+    return {}
   },
 
-  component: AuthLayout,
+  component: () => <Outlet />,
 })
-
-function AuthLayout() {
-  return <Outlet />
-}

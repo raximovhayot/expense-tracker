@@ -23,13 +23,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -67,8 +60,6 @@ export const Route = createFileRoute('/_protected/workspace-settings')({
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   description: z.string().max(500).optional(),
-  currency: z.enum(['USD', 'UZS']),
-  language: z.enum(['en', 'uz']),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -97,8 +88,6 @@ function WorkspaceSettingsPage() {
     defaultValues: {
       name: '',
       description: '',
-      currency: 'USD',
-      language: 'en',
     },
   })
 
@@ -118,8 +107,6 @@ function WorkspaceSettingsPage() {
       form.reset({
         name: workspace.name,
         description: workspace.description || '',
-        currency: workspace.currency as FormValues['currency'],
-        language: workspace.language as FormValues['language'],
       })
     } catch (error) {
       console.error('Failed to load workspace data:', error)
@@ -142,16 +129,12 @@ function WorkspaceSettingsPage() {
           id: workspace.$id,
           name: values.name,
           description: values.description || null,
-          currency: values.currency,
-          language: values.language,
         },
       })
 
       updateWorkspace(workspace.$id, {
         name: values.name,
         description: values.description || null,
-        currency: values.currency,
-        language: values.language,
       })
 
       toast.success(t('workspace_updated'))
@@ -266,59 +249,6 @@ function WorkspaceSettingsPage() {
                 )}
               />
 
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="currency"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('workspace_currency')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={!isOwner}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="USD">$ USD</SelectItem>
-                          <SelectItem value="UZS">so'm UZS</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="language"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('workspace_language')}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={!isOwner}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="en">{t('language_en')}</SelectItem>
-                          <SelectItem value="uz">{t('language_uz')}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
 
               {isOwner && (
                 <Button type="submit" disabled={saving}>

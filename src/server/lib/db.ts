@@ -1,10 +1,15 @@
+/**
+ * Database Access Layer
+ * Uses Appwrite Databases API
+ */
 import {
   Client,
-  TablesDB,
+  Databases,
   ID,
   type Models,
   Permission,
   Role,
+  Query,
 } from 'node-appwrite'
 import type {
   Workspaces,
@@ -19,492 +24,103 @@ import type {
   ExchangeRates,
 } from './appwrite.types'
 
+// Initialize client
 const client = new Client()
   .setEndpoint(process.env.APPWRITE_ENDPOINT!)
   .setProject(process.env.APPWRITE_PROJECT_ID!)
   .setKey(process.env.APPWRITE_API_KEY!)
 
-const tablesDB = new TablesDB(client)
+const databases = new Databases(client)
+const DATABASE_ID = process.env.APPWRITE_DB_ID!
+
+// =============================================================================
+// GENERIC CRUD HELPERS
+// =============================================================================
+
+interface ListResponse<T> {
+  total: number
+  rows: T[]
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function createCollectionClient<T extends Models.Document>(collectionId: string) {
+  return {
+    create: async (
+      data: Record<string, unknown>,
+      options?: { rowId?: string; permissions?: string[] }
+    ): Promise<T> => {
+      const userId = data.createdBy as string | undefined
+      const permissions = options?.permissions || (userId ? [
+        Permission.read(Role.user(userId)),
+        Permission.write(Role.user(userId)),
+        Permission.update(Role.user(userId)),
+        Permission.delete(Role.user(userId)),
+      ] : [])
+
+      const result = await databases.createDocument(
+        DATABASE_ID,
+        collectionId,
+        options?.rowId || ID.unique(),
+        data,
+        permissions
+      )
+      return result as unknown as T
+    },
+
+    get: async (id: string): Promise<T> => {
+      const result = await databases.getDocument(DATABASE_ID, collectionId, id)
+      return result as unknown as T
+    },
+
+    update: async (
+      id: string,
+      data: Record<string, unknown>,
+      options?: { permissions?: string[] }
+    ): Promise<T> => {
+      const result = await databases.updateDocument(
+        DATABASE_ID,
+        collectionId,
+        id,
+        data,
+        options?.permissions
+      )
+      return result as unknown as T
+    },
+
+    delete: async (id: string): Promise<void> => {
+      await databases.deleteDocument(DATABASE_ID, collectionId, id)
+    },
+
+    list: async (queries?: string[]): Promise<ListResponse<T>> => {
+      const result = await databases.listDocuments(
+        DATABASE_ID,
+        collectionId,
+        queries
+      )
+      return {
+        total: result.total,
+        rows: result.documents as unknown as T[],
+      }
+    },
+  }
+}
+
+// =============================================================================
+// COLLECTION CLIENTS
+// =============================================================================
 
 export const db = {
-  workspaces: {
-    create: (
-      data: Omit<Workspaces, keyof Models.Row>,
-      options?: { rowId?: string; permissions?: string[] },
-    ) =>
-      tablesDB.createRow<Workspaces>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspaces',
-        rowId: options?.rowId ?? ID.unique(),
-        data,
-        permissions: [
-          Permission.write(Role.user(data.createdBy)),
-          Permission.read(Role.user(data.createdBy)),
-          Permission.update(Role.user(data.createdBy)),
-          Permission.delete(Role.user(data.createdBy)),
-        ],
-      }),
-    get: (id: string) =>
-      tablesDB.getRow<Workspaces>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspaces',
-        rowId: id,
-      }),
-    update: (
-      id: string,
-      data: Partial<Omit<Workspaces, keyof Models.Row>>,
-      options?: { permissions?: string[] },
-    ) =>
-      tablesDB.updateRow<Workspaces>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspaces',
-        rowId: id,
-        data,
-        ...(options?.permissions ? { permissions: options.permissions } : {}),
-      }),
-    delete: (id: string) =>
-      tablesDB.deleteRow({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspaces',
-        rowId: id,
-      }),
-    list: (queries?: string[]) =>
-      tablesDB.listRows<Workspaces>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspaces',
-        queries,
-      }),
-  },
-  workspaceMembers: {
-    create: (
-      data: Omit<WorkspaceMembers, keyof Models.Row>,
-      options?: { rowId?: string; permissions?: string[] },
-    ) =>
-      tablesDB.createRow<WorkspaceMembers>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspace_members',
-        rowId: options?.rowId ?? ID.unique(),
-        data,
-        permissions: [
-          Permission.write(Role.user(data.createdBy)),
-          Permission.read(Role.user(data.createdBy)),
-          Permission.update(Role.user(data.createdBy)),
-          Permission.delete(Role.user(data.createdBy)),
-        ],
-      }),
-    get: (id: string) =>
-      tablesDB.getRow<WorkspaceMembers>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspace_members',
-        rowId: id,
-      }),
-    update: (
-      id: string,
-      data: Partial<Omit<WorkspaceMembers, keyof Models.Row>>,
-      options?: { permissions?: string[] },
-    ) =>
-      tablesDB.updateRow<WorkspaceMembers>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspace_members',
-        rowId: id,
-        data,
-        ...(options?.permissions ? { permissions: options.permissions } : {}),
-      }),
-    delete: (id: string) =>
-      tablesDB.deleteRow({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspace_members',
-        rowId: id,
-      }),
-    list: (queries?: string[]) =>
-      tablesDB.listRows<WorkspaceMembers>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspace_members',
-        queries,
-      }),
-  },
-  workspaceInvitations: {
-    create: (
-      data: Omit<WorkspaceInvitations, keyof Models.Row>,
-      options?: { rowId?: string; permissions?: string[] },
-    ) =>
-      tablesDB.createRow<WorkspaceInvitations>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspace_invitations',
-        rowId: options?.rowId ?? ID.unique(),
-        data,
-        permissions: [
-          Permission.write(Role.user(data.createdBy)),
-          Permission.read(Role.user(data.createdBy)),
-          Permission.update(Role.user(data.createdBy)),
-          Permission.delete(Role.user(data.createdBy)),
-        ],
-      }),
-    get: (id: string) =>
-      tablesDB.getRow<WorkspaceInvitations>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspace_invitations',
-        rowId: id,
-      }),
-    update: (
-      id: string,
-      data: Partial<Omit<WorkspaceInvitations, keyof Models.Row>>,
-      options?: { permissions?: string[] },
-    ) =>
-      tablesDB.updateRow<WorkspaceInvitations>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspace_invitations',
-        rowId: id,
-        data,
-        ...(options?.permissions ? { permissions: options.permissions } : {}),
-      }),
-    delete: (id: string) =>
-      tablesDB.deleteRow({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspace_invitations',
-        rowId: id,
-      }),
-    list: (queries?: string[]) =>
-      tablesDB.listRows<WorkspaceInvitations>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'workspace_invitations',
-        queries,
-      }),
-  },
-  incomeSources: {
-    create: (
-      data: Omit<IncomeSources, keyof Models.Row>,
-      options?: { rowId?: string; permissions?: string[] },
-    ) =>
-      tablesDB.createRow<IncomeSources>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'income_sources',
-        rowId: options?.rowId ?? ID.unique(),
-        data,
-        permissions: [
-          Permission.write(Role.user(data.createdBy)),
-          Permission.read(Role.user(data.createdBy)),
-          Permission.update(Role.user(data.createdBy)),
-          Permission.delete(Role.user(data.createdBy)),
-        ],
-      }),
-    get: (id: string) =>
-      tablesDB.getRow<IncomeSources>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'income_sources',
-        rowId: id,
-      }),
-    update: (
-      id: string,
-      data: Partial<Omit<IncomeSources, keyof Models.Row>>,
-      options?: { permissions?: string[] },
-    ) =>
-      tablesDB.updateRow<IncomeSources>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'income_sources',
-        rowId: id,
-        data,
-        ...(options?.permissions ? { permissions: options.permissions } : {}),
-      }),
-    delete: (id: string) =>
-      tablesDB.deleteRow({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'income_sources',
-        rowId: id,
-      }),
-    list: (queries?: string[]) =>
-      tablesDB.listRows<IncomeSources>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'income_sources',
-        queries,
-      }),
-  },
-  budgetCategories: {
-    create: (
-      data: Omit<BudgetCategories, keyof Models.Row>,
-      options?: { rowId?: string; permissions?: string[] },
-    ) =>
-      tablesDB.createRow<BudgetCategories>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'budget_categories',
-        rowId: options?.rowId ?? ID.unique(),
-        data,
-        permissions: [
-          Permission.write(Role.user(data.createdBy)),
-          Permission.read(Role.user(data.createdBy)),
-          Permission.update(Role.user(data.createdBy)),
-          Permission.delete(Role.user(data.createdBy)),
-        ],
-      }),
-    get: (id: string) =>
-      tablesDB.getRow<BudgetCategories>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'budget_categories',
-        rowId: id,
-      }),
-    update: (
-      id: string,
-      data: Partial<Omit<BudgetCategories, keyof Models.Row>>,
-      options?: { permissions?: string[] },
-    ) =>
-      tablesDB.updateRow<BudgetCategories>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'budget_categories',
-        rowId: id,
-        data,
-        ...(options?.permissions ? { permissions: options.permissions } : {}),
-      }),
-    delete: (id: string) =>
-      tablesDB.deleteRow({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'budget_categories',
-        rowId: id,
-      }),
-    list: (queries?: string[]) =>
-      tablesDB.listRows<BudgetCategories>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'budget_categories',
-        queries,
-      }),
-  },
-  monthlyBudgets: {
-    create: (
-      data: Omit<MonthlyBudgets, keyof Models.Row>,
-      options?: { rowId?: string; permissions?: string[] },
-    ) =>
-      tablesDB.createRow<MonthlyBudgets>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'monthly_budgets',
-        rowId: options?.rowId ?? ID.unique(),
-        data,
-        permissions: [
-          Permission.write(Role.user(data.createdBy)),
-          Permission.read(Role.user(data.createdBy)),
-          Permission.update(Role.user(data.createdBy)),
-          Permission.delete(Role.user(data.createdBy)),
-        ],
-      }),
-    get: (id: string) =>
-      tablesDB.getRow<MonthlyBudgets>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'monthly_budgets',
-        rowId: id,
-      }),
-    update: (
-      id: string,
-      data: Partial<Omit<MonthlyBudgets, keyof Models.Row>>,
-      options?: { permissions?: string[] },
-    ) =>
-      tablesDB.updateRow<MonthlyBudgets>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'monthly_budgets',
-        rowId: id,
-        data,
-        ...(options?.permissions ? { permissions: options.permissions } : {}),
-      }),
-    delete: (id: string) =>
-      tablesDB.deleteRow({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'monthly_budgets',
-        rowId: id,
-      }),
-    list: (queries?: string[]) =>
-      tablesDB.listRows<MonthlyBudgets>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'monthly_budgets',
-        queries,
-      }),
-  },
-  transactions: {
-    create: (
-      data: Omit<Transactions, keyof Models.Row>,
-      options?: { rowId?: string; permissions?: string[] },
-    ) =>
-      tablesDB.createRow<Transactions>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'transactions',
-        rowId: options?.rowId ?? ID.unique(),
-        data,
-        permissions: [
-          Permission.write(Role.user(data.createdBy)),
-          Permission.read(Role.user(data.createdBy)),
-          Permission.update(Role.user(data.createdBy)),
-          Permission.delete(Role.user(data.createdBy)),
-        ],
-      }),
-    get: (id: string) =>
-      tablesDB.getRow<Transactions>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'transactions',
-        rowId: id,
-      }),
-    update: (
-      id: string,
-      data: Partial<Omit<Transactions, keyof Models.Row>>,
-      options?: { permissions?: string[] },
-    ) =>
-      tablesDB.updateRow<Transactions>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'transactions',
-        rowId: id,
-        data,
-        ...(options?.permissions ? { permissions: options.permissions } : {}),
-      }),
-    delete: (id: string) =>
-      tablesDB.deleteRow({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'transactions',
-        rowId: id,
-      }),
-    list: (queries?: string[]) =>
-      tablesDB.listRows<Transactions>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'transactions',
-        queries,
-      }),
-  },
-  recurringExpenses: {
-    create: (
-      data: Omit<RecurringExpenses, keyof Models.Row>,
-      options?: { rowId?: string; permissions?: string[] },
-    ) =>
-      tablesDB.createRow<RecurringExpenses>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'recurring_expenses',
-        rowId: options?.rowId ?? ID.unique(),
-        data,
-        permissions: [
-          Permission.write(Role.user(data.createdBy)),
-          Permission.read(Role.user(data.createdBy)),
-          Permission.update(Role.user(data.createdBy)),
-          Permission.delete(Role.user(data.createdBy)),
-        ],
-      }),
-    get: (id: string) =>
-      tablesDB.getRow<RecurringExpenses>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'recurring_expenses',
-        rowId: id,
-      }),
-    update: (
-      id: string,
-      data: Partial<Omit<RecurringExpenses, keyof Models.Row>>,
-      options?: { permissions?: string[] },
-    ) =>
-      tablesDB.updateRow<RecurringExpenses>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'recurring_expenses',
-        rowId: id,
-        data,
-        ...(options?.permissions ? { permissions: options.permissions } : {}),
-      }),
-    delete: (id: string) =>
-      tablesDB.deleteRow({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'recurring_expenses',
-        rowId: id,
-      }),
-    list: (queries?: string[]) =>
-      tablesDB.listRows<RecurringExpenses>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'recurring_expenses',
-        queries,
-      }),
-  },
-  userPreferences: {
-    create: (
-      data: Omit<UserPreferences, keyof Models.Row>,
-      options?: { rowId?: string; permissions?: string[] },
-    ) =>
-      tablesDB.createRow<UserPreferences>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'user_preferences',
-        rowId: options?.rowId ?? ID.unique(),
-        data,
-        permissions: [
-          Permission.write(Role.user(data.createdBy)),
-          Permission.read(Role.user(data.createdBy)),
-          Permission.update(Role.user(data.createdBy)),
-          Permission.delete(Role.user(data.createdBy)),
-        ],
-      }),
-    get: (id: string) =>
-      tablesDB.getRow<UserPreferences>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'user_preferences',
-        rowId: id,
-      }),
-    update: (
-      id: string,
-      data: Partial<Omit<UserPreferences, keyof Models.Row>>,
-      options?: { permissions?: string[] },
-    ) =>
-      tablesDB.updateRow<UserPreferences>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'user_preferences',
-        rowId: id,
-        data,
-        ...(options?.permissions ? { permissions: options.permissions } : {}),
-      }),
-    delete: (id: string) =>
-      tablesDB.deleteRow({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'user_preferences',
-        rowId: id,
-      }),
-    list: (queries?: string[]) =>
-      tablesDB.listRows<UserPreferences>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'user_preferences',
-        queries,
-      }),
-  },
-  exchangeRates: {
-    create: (
-      data: Omit<ExchangeRates, keyof Models.Row>,
-      options?: { rowId?: string; permissions?: string[] },
-    ) =>
-      tablesDB.createRow<ExchangeRates>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'exchange_rates',
-        rowId: options?.rowId ?? ID.unique(),
-        data,
-        permissions: [
-          Permission.write(Role.user(data.createdBy)),
-          Permission.read(Role.user(data.createdBy)),
-          Permission.update(Role.user(data.createdBy)),
-          Permission.delete(Role.user(data.createdBy)),
-        ],
-      }),
-    get: (id: string) =>
-      tablesDB.getRow<ExchangeRates>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'exchange_rates',
-        rowId: id,
-      }),
-    update: (
-      id: string,
-      data: Partial<Omit<ExchangeRates, keyof Models.Row>>,
-      options?: { permissions?: string[] },
-    ) =>
-      tablesDB.updateRow<ExchangeRates>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'exchange_rates',
-        rowId: id,
-        data,
-        ...(options?.permissions ? { permissions: options.permissions } : {}),
-      }),
-    delete: (id: string) =>
-      tablesDB.deleteRow({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'exchange_rates',
-        rowId: id,
-      }),
-    list: (queries?: string[]) =>
-      tablesDB.listRows<ExchangeRates>({
-        databaseId: process.env.APPWRITE_DB_ID!,
-        tableId: 'exchange_rates',
-        queries,
-      }),
-  },
+  workspaces: createCollectionClient<Workspaces>('workspaces'),
+  workspaceMembers: createCollectionClient<WorkspaceMembers>('workspace_members'),
+  workspaceInvitations: createCollectionClient<WorkspaceInvitations>('workspace_invitations'),
+  incomeSources: createCollectionClient<IncomeSources>('income_sources'),
+  budgetCategories: createCollectionClient<BudgetCategories>('budget_categories'),
+  monthlyBudgets: createCollectionClient<MonthlyBudgets>('monthly_budgets'),
+  transactions: createCollectionClient<Transactions>('transactions'),
+  recurringExpenses: createCollectionClient<RecurringExpenses>('recurring_expenses'),
+  userPreferences: createCollectionClient<UserPreferences>('user_preferences'),
+  exchangeRates: createCollectionClient<ExchangeRates>('exchange_rates'),
 }
+
+// Re-export Query for convenience
+export { Query }

@@ -22,13 +22,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { toast } from 'sonner'
 import { createWorkspaceFn } from '@/server/functions/workspaces'
 import { useWorkspace } from '@/hooks/use-workspace'
@@ -38,8 +31,6 @@ import { Loader2 } from 'lucide-react'
 const formSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   description: z.string().max(500).optional(),
-  currency: z.enum(['USD', 'UZS']),
-  language: z.enum(['en', 'uz']),
 })
 
 type FormValues = z.infer<typeof formSchema>
@@ -63,8 +54,6 @@ export function CreateWorkspaceDialog({
     defaultValues: {
       name: '',
       description: '',
-      currency: 'USD',
-      language: 'en',
     },
   })
 
@@ -75,8 +64,6 @@ export function CreateWorkspaceDialog({
         data: {
           name: values.name,
           description: values.description || null,
-          currency: values.currency,
-          language: values.language,
         },
       })
 
@@ -147,61 +134,6 @@ export function CreateWorkspaceDialog({
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="currency"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('workspace_currency')}</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="USD">
-                          $ {t('currency_usd')}
-                        </SelectItem>
-                        <SelectItem value="UZS">
-                          so'm {t('currency_uzs')}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="language"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('workspace_language')}</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="en">{t('language_en')}</SelectItem>
-                        <SelectItem value="uz">{t('language_uz')}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
 
             <DialogFooter>
               <Button

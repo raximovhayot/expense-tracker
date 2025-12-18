@@ -1,3 +1,7 @@
+/**
+ * Root Route
+ * Base layout for all pages
+ */
 import {
   HeadContent,
   Scripts,
@@ -8,11 +12,18 @@ import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 import { Toaster } from '@/components/ui/sonner'
 import { ThemeProvider } from 'next-themes'
-import { authMiddleware } from '@/server/functions/auth'
+
+// =============================================================================
+// TYPES
+// =============================================================================
 
 interface MyRouterContext {
   queryClient: QueryClient
 }
+
+// =============================================================================
+// SCRIPTS
+// =============================================================================
 
 const scripts: React.DetailedHTMLProps<
   React.ScriptHTMLAttributes<HTMLScriptElement>,
@@ -26,38 +37,29 @@ if (import.meta.env.VITE_INSTRUMENTATION_SCRIPT_SRC) {
   })
 }
 
-export const Route = createRootRouteWithContext<MyRouterContext>()({
-  loader: async () => {
-    const { currentUser } = await authMiddleware()
+// =============================================================================
+// ROUTE
+// =============================================================================
 
-    return {
-      currentUser,
-    }
-  },
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'BudgetFlow - Personal Expense Tracker',
-      },
+      { charSet: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { title: 'BudgetFlow - Personal Expense Tracker' },
     ],
     links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
+      { rel: 'stylesheet', href: appCss },
     ],
     scripts: [...scripts],
   }),
 
   shellComponent: RootDocument,
 })
+
+// =============================================================================
+// COMPONENTS
+// =============================================================================
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -74,18 +76,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         >
           {children}
           <Toaster />
-          {/* <TanStackDevtools
-            config={{
-              position: 'bottom-left',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              TanStackQueryDevtools,
-            ]}
-          /> */}
         </ThemeProvider>
         <Scripts />
       </body>

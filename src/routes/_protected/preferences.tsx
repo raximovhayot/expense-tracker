@@ -40,6 +40,8 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { Loader2, User, Bell, Globe } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import type { Language } from '@/lib/i18n'
+import type { Currency } from '@/lib/currency'
 
 export const Route = createFileRoute('/_protected/preferences')({
   component: PreferencesPage,
@@ -60,7 +62,7 @@ function PreferencesPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  const { workspaces } = useWorkspace()
+  const { workspaces, setLanguage, setCurrency } = useWorkspace()
   const { t } = useI18n()
   const { currentUser } = useAuth()
   const { setTheme } = useTheme()
@@ -95,6 +97,14 @@ function PreferencesPage() {
           notificationsEnabled: result.preferences.notificationsEnabled,
           emailNotifications: result.preferences.emailNotifications,
         })
+
+        // Update local store from fetched prefs
+        if (result.preferences.defaultLanguage) {
+          setLanguage(result.preferences.defaultLanguage as Language)
+        }
+        if (result.preferences.defaultCurrency) {
+          setCurrency(result.preferences.defaultCurrency as Currency)
+        }
       } catch (error) {
         console.error('Failed to load preferences:', error)
       } finally {
@@ -122,6 +132,14 @@ function PreferencesPage() {
       // Apply theme change
       if (values.theme) {
         setTheme(values.theme)
+      }
+
+      // Update local store for immediate reflect
+      if (values.defaultLanguage) {
+        setLanguage(values.defaultLanguage)
+      }
+      if (values.defaultCurrency) {
+        setCurrency(values.defaultCurrency)
       }
 
       toast.success(t('preferences_saved'))

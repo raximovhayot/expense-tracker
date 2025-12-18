@@ -66,9 +66,7 @@ export function WorkspaceSwitcher({
                       <div className="flex flex-col">
                         <span className="font-medium text-sm">{ws.name}</span>
                         <span className="text-xs text-muted-foreground">
-                          {t('workspace_member_count', {
-                            count: ws.memberCount,
-                          })}
+                          {ws.description || ''}
                         </span>
                       </div>
                     </div>
@@ -120,9 +118,7 @@ export function WorkspaceSwitcher({
                   {workspace.name}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  {t('workspace_member_count', {
-                    count: workspace.memberCount,
-                  })}
+                  {workspace.description || ''}
                 </span>
               </div>
             </div>
@@ -156,7 +152,7 @@ export function WorkspaceSwitcher({
                     <div className="flex flex-col">
                       <span className="font-medium text-sm">{ws.name}</span>
                       <span className="text-xs text-muted-foreground">
-                        {t('workspace_member_count', { count: ws.memberCount })}
+                        {ws.description || ''}
                       </span>
                     </div>
                   </div>

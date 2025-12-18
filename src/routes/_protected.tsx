@@ -1,29 +1,29 @@
-import { redirect, createFileRoute } from '@tanstack/react-router'
-import { authMiddleware } from '@/server/functions/auth'
+/**
+ * Protected Routes Layout
+ * Requires authentication to access
+ */
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { AppLayout } from '@/components/layout/app-layout'
+import { authMiddleware } from '@/server/functions/auth'
 
 export const Route = createFileRoute('/_protected')({
-  loader: async ({ location }) => {
+  beforeLoad: async ({ location }) => {
     const { currentUser } = await authMiddleware()
+    console.log('[Route: Protected] beforeLoad for:', currentUser?.email || 'NULL', 'at:', location.pathname)
 
     if (!currentUser) {
-      // Store the intended destination for post-login redirect
-      const redirectTo = location.href !== '/sign-in' ? location.href : undefined
-
+      console.log('[Route: Protected] No user found, redirecting to /sign-in')
       throw redirect({
         to: '/sign-in',
-        search: redirectTo ? { redirect: redirectTo } : undefined
+        search: { redirect: location.pathname },
       })
     }
 
-    return {
-      currentUser,
-    }
+    return { currentUser }
   },
 
-  component: ProtectedLayout,
+  component: () => <AppLayout />,
 
-  // Show loading state while checking auth
   pendingComponent: () => (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center space-y-3">
@@ -33,19 +33,16 @@ export const Route = createFileRoute('/_protected')({
     </div>
   ),
 
-  // Handle auth errors gracefully
   errorComponent: ({ error }) => (
     <div className="min-h-screen flex items-center justify-center bg-background p-6">
       <div className="text-center space-y-4 max-w-md">
-        <h1 className="text-2xl font-bold text-destructive">
-          Access Denied
-        </h1>
+        <h1 className="text-2xl font-bold text-destructive">Access Denied</h1>
         <p className="text-muted-foreground">
           {error?.message || 'You need to be signed in to access this page.'}
         </p>
         <a
           href="/sign-in"
-          className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+          className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md"
         >
           Sign In
         </a>
@@ -53,7 +50,3 @@ export const Route = createFileRoute('/_protected')({
     </div>
   ),
 })
-
-function ProtectedLayout() {
-  return <AppLayout />
-}

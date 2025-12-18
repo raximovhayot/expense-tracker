@@ -13,6 +13,7 @@
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "generate:routes": "tsr generate",
+    "setup:db": "tsx scripts/setup-database.ts",
     "clean": "rm -rf .ouptut dist node_modules/.vite .nitro .tanstack"
   },
   "dependencies": {
@@ -90,9 +91,11 @@
     "@types/react-dom": "^19.1.9",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@vitejs/plugin-react": "^5.0.3",
+    "dotenv": "^17.2.3",
     "eslint-plugin-unused-imports": "^4.3.0",
     "jsdom": "^26.0.0",
     "prettier": "^3.5.3",
+    "tsx": "^4.21.0",
     "typescript": "^5.7.2",
     "vite": "npm:rolldown-vite@latest",
     "vite-plugin-devtools-json": "^1.0.0",

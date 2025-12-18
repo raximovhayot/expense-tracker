@@ -1,139 +1,142 @@
-import { useCallback, useState } from 'react'
-import { useRouter, useRouteContext } from '@tanstack/react-router'
+/**
+ * Auth Hook
+ * Provides auth state and actions for components
+ */
+import { useState, useCallback, useEffect } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import {
-  signInWithGoogleFn,
-  signOutFn,
-  refreshSessionFn
-} from '@/server/functions/auth'
+  signInWithGoogle,
+  signOut as clientSignOut,
+  getSession,
+  getUser,
+} from '@/lib/appwrite-client'
+import { authMiddleware, clearSessionFn } from '@/server/functions/auth'
 
 interface AuthState {
-  isLoading: boolean
   isSigningIn: boolean
   isSigningOut: boolean
+  isLoading: boolean
   error: string | null
 }
 
-/**
- * Custom hook for authentication actions and current user access
- * Provides loading states, error handling, and user data
- */
+interface User {
+  $id: string
+  email: string
+  name: string
+}
+
 export function useAuth() {
-  const router = useRouter()
-
-  // Get current user from route context (loaded by _protected or __root loader)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const routeContext = useRouteContext({ from: '__root__' }) as any
-  const currentUser = routeContext?.currentUser ?? null
-
+  const navigate = useNavigate()
   const [state, setState] = useState<AuthState>({
-    isLoading: false,
     isSigningIn: false,
     isSigningOut: false,
+    isLoading: true, // Start loading
     error: null,
   })
+  const [user, setUser] = useState<User | null>(null)
 
-  // Server function bindings
-  const signInWithGoogle = useServerFn(signInWithGoogleFn)
-  const signOut = useServerFn(signOutFn)
-  const refreshSession = useServerFn(refreshSessionFn)
+  const clearServerSession = useServerFn(clearSessionFn)
 
   /**
-   * Handle Google sign in
+   * Check session on mount
    */
-  const handleSignIn = useCallback(async (redirectTo?: string) => {
-    setState(prev => ({ ...prev, isSigningIn: true, error: null }))
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        // Check server session (from cookie)
+        const { currentUser } = await authMiddleware()
 
-    try {
-      await signInWithGoogle({ data: { redirectTo } })
-    } catch (error) {
-      // Redirects are thrown as errors in TanStack Start - this is expected
-      // Only log actual errors
-      if (error instanceof Error && !error.message.includes('redirect')) {
-        console.error('[useAuth] Sign in error:', error)
-        setState(prev => ({
-          ...prev,
-          isSigningIn: false,
-          error: 'Failed to initiate sign in. Please try again.'
-        }))
+        if (currentUser) {
+          setUser(currentUser as User)
+        } else {
+          // No server session, check client session
+          const session = await getSession()
+          if (session) {
+            const userData = await getUser()
+            if (userData) {
+              setUser(userData as User)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('[Auth] Session check failed:', error)
+      } finally {
+        setState(prev => ({ ...prev, isLoading: false }))
       }
     }
-  }, [signInWithGoogle])
+
+    checkAuth()
+  }, [])
 
   /**
-   * Handle sign out
+   * Sign in with Google
    */
-  const handleSignOut = useCallback(async () => {
+  const signIn = useCallback((redirectTo?: string) => {
+    setState(prev => ({ ...prev, isSigningIn: true, error: null }))
+    signInWithGoogle(redirectTo)
+  }, [])
+
+  /**
+   * Sign out
+   */
+  const signOut = useCallback(async () => {
     setState(prev => ({ ...prev, isSigningOut: true, error: null }))
 
     try {
-      await signOut()
+      // Clear client session
+      await clientSignOut()
+
+      // Clear server session
+      await clearServerSession()
+
+      setUser(null)
+      navigate({ to: '/sign-in' })
     } catch (error) {
-      // Redirects are expected
-      if (error instanceof Error && !error.message.includes('redirect')) {
-        console.error('[useAuth] Sign out error:', error)
-        setState(prev => ({
-          ...prev,
-          isSigningOut: false,
-          error: 'Failed to sign out. Please try again.'
-        }))
-      }
+      console.error('[Auth] Sign out failed:', error)
+      setState(prev => ({
+        ...prev,
+        isSigningOut: false,
+        error: 'Failed to sign out',
+      }))
     }
-  }, [signOut])
+  }, [navigate, clearServerSession])
 
   /**
-   * Check and refresh session validity
+   * Refresh user from server
    */
-  const checkSession = useCallback(async () => {
-    setState(prev => ({ ...prev, isLoading: true }))
-
+  const refreshUser = useCallback(async () => {
     try {
-      const result = await refreshSession()
-
-      if (!result.valid) {
-        // Session is invalid, redirect to sign in
-        router.navigate({ to: '/sign-in' })
+      const { currentUser } = await authMiddleware()
+      if (currentUser) {
+        setUser(currentUser as User)
       }
-
-      return result
-    } catch (error) {
-      console.error('[useAuth] Session check error:', error)
-      return { valid: false, reason: 'error' }
-    } finally {
-      setState(prev => ({ ...prev, isLoading: false }))
+      return currentUser
+    } catch {
+      return null
     }
-  }, [refreshSession, router])
+  }, [])
 
   /**
-   * Clear any auth errors
+   * Clear error
    */
   const clearError = useCallback(() => {
     setState(prev => ({ ...prev, error: null }))
   }, [])
 
   return {
-    // User data
-    currentUser,
-    isAuthenticated: !!currentUser,
+    // User
+    user,
+    currentUser: user, // Alias for backward compatibility
+    isAuthenticated: !!user,
 
-    // Auth state
+    // State
     ...state,
 
-    // Auth actions
-    signIn: handleSignIn,
-    signOut: handleSignOut,
-    checkSession,
+    // Actions
+    signIn,
+    signOut,
+    refreshUser,
     clearError,
   }
-}
-
-/**
- * Hook to get session status
- * Uses the route loader data for the current user
- */
-export function useSessionCheck() {
-  const { isLoading, currentUser } = useAuth()
-  const isValid = !!currentUser
-
-  return { isValid, isLoading, currentUser }
 }

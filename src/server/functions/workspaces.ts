@@ -8,16 +8,12 @@ import { Query } from 'node-appwrite'
 const createWorkspaceSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().max(500).nullable().optional(),
-  currency: z.enum(['USD', 'UZS']).default('USD'),
-  language: z.enum(['en', 'uz']).default('en'),
 })
 
 const updateWorkspaceSchema = z.object({
   id: z.string(),
   name: z.string().min(1).max(100).optional(),
   description: z.string().max(500).nullable().optional(),
-  currency: z.enum(['USD', 'UZS']).optional(),
-  language: z.enum(['en', 'uz']).optional(),
 })
 
 const inviteMemberSchema = z.object({
@@ -40,6 +36,7 @@ const updateMemberRoleSchema = z.object({
 export const listWorkspacesFn = createServerFn({ method: 'GET' }).handler(
   async () => {
     const { currentUser } = await authMiddleware()
+    console.log('[Workspaces] listWorkspacesFn for:', currentUser?.email || 'ANONYMOUS')
     if (!currentUser) throw new Error('Unauthorized')
 
     // Get workspaces where user is a member
@@ -107,10 +104,10 @@ export const createWorkspaceFn = createServerFn({ method: 'POST' })
       createdBy: currentUser.$id,
       name: data.name.trim(),
       description: data.description?.trim() || null,
-      currency: data.currency,
-      language: data.language,
-      memberCount: 1,
+      currency: 'USD', // Required by Appwrite schema
+      language: 'en',  // Required by Appwrite schema
     })
+
 
     // Add creator as owner member
     await db.workspaceMembers.create({
@@ -170,8 +167,6 @@ export const updateWorkspaceFn = createServerFn({ method: 'POST' })
     if (data.name) updateData.name = data.name.trim()
     if (data.description !== undefined)
       updateData.description = data.description?.trim() || null
-    if (data.currency) updateData.currency = data.currency
-    if (data.language) updateData.language = data.language
 
     const workspace = await db.workspaces.update(data.id, updateData)
     return { workspace }
@@ -394,11 +389,7 @@ export const respondToInvitationFn = createServerFn({ method: 'POST' })
         role: invitation.role,
       })
 
-      // Update workspace member count
-      const workspace = await db.workspaces.get(invitation.workspaceId)
-      await db.workspaces.update(invitation.workspaceId, {
-        memberCount: workspace.memberCount + 1,
-      })
+      // Member count logic removed
     }
 
     // Update invitation status
@@ -437,11 +428,7 @@ export const removeMemberFn = createServerFn({ method: 'POST' })
 
     await db.workspaceMembers.delete(data.memberId)
 
-    // Update member count
-    const workspace = await db.workspaces.get(member.workspaceId)
-    await db.workspaces.update(member.workspaceId, {
-      memberCount: Math.max(1, workspace.memberCount - 1),
-    })
+    // Member count logic removed
 
     return { success: true }
   })

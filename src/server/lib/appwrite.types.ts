@@ -1,15 +1,13 @@
 import { type Models } from 'node-appwrite'
 
-export type Workspaces = Models.Row & {
+export type Workspaces = Models.Document & {
   createdBy: string
   name: string
   description: string | null
-  currency: string
-  language: string
-  memberCount: number
 }
 
-export type WorkspaceMembers = Models.Row & {
+
+export type WorkspaceMembers = Models.Document & {
   createdBy: string
   workspaceId: string
   userId: string
@@ -17,7 +15,7 @@ export type WorkspaceMembers = Models.Row & {
   role: string
 }
 
-export type WorkspaceInvitations = Models.Row & {
+export type WorkspaceInvitations = Models.Document & {
   createdBy: string
   workspaceId: string
   email: string
@@ -27,7 +25,7 @@ export type WorkspaceInvitations = Models.Row & {
   expiresAt: string | null
 }
 
-export type IncomeSources = Models.Row & {
+export type IncomeSources = Models.Document & {
   createdBy: string
   workspaceId: string
   name: string
@@ -39,7 +37,7 @@ export type IncomeSources = Models.Row & {
   notes: string | null
 }
 
-export type BudgetCategories = Models.Row & {
+export type BudgetCategories = Models.Document & {
   createdBy: string
   workspaceId: string
   name: string
@@ -48,7 +46,7 @@ export type BudgetCategories = Models.Row & {
   isDefault: boolean
 }
 
-export type MonthlyBudgets = Models.Row & {
+export type MonthlyBudgets = Models.Document & {
   createdBy: string
   workspaceId: string
   categoryId: string
@@ -58,7 +56,7 @@ export type MonthlyBudgets = Models.Row & {
   currency: string
 }
 
-export type Transactions = Models.Row & {
+export type Transactions = Models.Document & {
   createdBy: string
   workspaceId: string
   type: string
@@ -74,7 +72,7 @@ export type Transactions = Models.Row & {
   tags: string[] | null
 }
 
-export type RecurringExpenses = Models.Row & {
+export type RecurringExpenses = Models.Document & {
   createdBy: string
   workspaceId: string
   name: string
@@ -90,7 +88,7 @@ export type RecurringExpenses = Models.Row & {
   notes: string | null
 }
 
-export type UserPreferences = Models.Row & {
+export type UserPreferences = Models.Document & {
   createdBy: string
   defaultWorkspaceId: string | null
   defaultLanguage: string | null
@@ -100,7 +98,7 @@ export type UserPreferences = Models.Row & {
   emailNotifications: boolean
 }
 
-export type ExchangeRates = Models.Row & {
+export type ExchangeRates = Models.Document & {
   createdBy: string
   fromCurrency: string
   toCurrency: string

@@ -1,22 +1,33 @@
+/**
+ * Sign In Page
+ * Google OAuth sign-in with Appwrite
+ */
 import { createFileRoute, useSearch } from '@tanstack/react-router'
+import { useState } from 'react'
+import { z } from 'zod'
 import { AuthCard } from '@/components/auth/auth-card'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/hooks/use-auth'
 import { Loader2, AlertCircle } from 'lucide-react'
-import { z } from 'zod'
+import { signInWithGoogle } from '@/lib/appwrite-client'
 
-// Search params for handling redirects and errors
+// =============================================================================
+// ROUTE CONFIG
+// =============================================================================
+
 const searchSchema = z.object({
   redirect: z.string().optional(),
   error: z.string().optional(),
 })
 
 export const Route = createFileRoute('/_auth/sign-in')({
-  validateSearch: (search) => searchSchema.parse(search),
+  validateSearch: searchSchema,
   component: SignInPage,
 })
 
-// Google Icon Component
+// =============================================================================
+// COMPONENTS
+// =============================================================================
+
 function GoogleIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none">
@@ -41,52 +52,44 @@ function GoogleIcon({ className }: { className?: string }) {
 }
 
 function SignInPage() {
-  const { signIn, isSigningIn, error, clearError } = useAuth()
   const search = useSearch({ from: '/_auth/sign-in' })
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSignIn = async () => {
-    clearError()
-    await signIn(search.redirect)
+  const handleSignIn = () => {
+    setIsLoading(true)
+    signInWithGoogle(search.redirect)
   }
 
-  // Get error message from URL or auth state
-  const errorMessage = search.error
-    ? getErrorMessage(search.error)
-    : error
+  const errorMessage = search.error ? getErrorMessage(search.error) : null
 
   return (
     <AuthCard
       title="Welcome Back"
-      description="Sign in with your Google account to access your personal expense tracker"
+      description="Sign in with your Google account to continue"
     >
       <div className="flex flex-col space-y-6 py-4">
         {/* Error Alert */}
         {errorMessage && (
           <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
             <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <p className="text-sm font-medium text-destructive">
-                Sign in failed
-              </p>
-              <p className="text-sm text-destructive/80">
-                {errorMessage}
-              </p>
+            <div>
+              <p className="text-sm font-medium text-destructive">Sign in failed</p>
+              <p className="text-sm text-destructive/80">{errorMessage}</p>
             </div>
           </div>
         )}
 
-        {/* Google Sign In Button */}
+        {/* Sign In Button */}
         <Button
           variant="outline"
-          type="button"
-          disabled={isSigningIn}
-          className="w-full h-12 text-base font-medium shadow-sm hover:bg-accent hover:text-accent-foreground transition-all duration-200 flex items-center justify-center gap-3 border-2 disabled:opacity-70"
+          disabled={isLoading}
           onClick={handleSignIn}
+          className="w-full h-12 text-base font-medium gap-3 border-2"
         >
-          {isSigningIn ? (
+          {isLoading ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Connecting to Google...
+              Connecting...
             </>
           ) : (
             <>
@@ -97,7 +100,7 @@ function SignInPage() {
         </Button>
 
         {/* Redirect Notice */}
-        {search.redirect && !isSigningIn && (
+        {search.redirect && !isLoading && (
           <p className="text-center text-xs text-muted-foreground">
             You'll be redirected back after signing in.
           </p>
@@ -105,32 +108,25 @@ function SignInPage() {
       </div>
 
       {/* Terms */}
-      <div className="text-center text-xs text-muted-foreground mt-6 space-y-2">
-        <p>
-          By continuing, you agree to our{' '}
-          <a href="/terms" className="underline hover:text-foreground transition-colors">
-            Terms of Service
-          </a>
-          {' '}and{' '}
-          <a href="/privacy" className="underline hover:text-foreground transition-colors">
-            Privacy Policy
-          </a>.
-        </p>
-      </div>
+      <p className="text-center text-xs text-muted-foreground mt-6">
+        By continuing, you agree to our{' '}
+        <a href="/terms" className="underline hover:text-foreground">Terms</a>
+        {' '}and{' '}
+        <a href="/privacy" className="underline hover:text-foreground">Privacy Policy</a>.
+      </p>
     </AuthCard>
   )
 }
 
-/**
- * Map error codes to user-friendly messages
- */
+// =============================================================================
+// HELPERS
+// =============================================================================
+
 function getErrorMessage(code: string): string {
   const messages: Record<string, string> = {
     oauth_failed: 'Google sign-in was cancelled or failed. Please try again.',
     session_expired: 'Your session has expired. Please sign in again.',
-    access_denied: 'Access was denied. Please try signing in with a different account.',
-    invalid_request: 'There was a problem with the sign-in request. Please try again.',
+    access_denied: 'Access was denied. Please try a different account.',
   }
-
-  return messages[code] || 'An error occurred during sign in. Please try again.'
+  return messages[code] || 'An error occurred. Please try again.'
 }
