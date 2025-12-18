@@ -42,9 +42,9 @@ export function CTASection() {
                 </Button>
               </Link>
             ) : (
-              <Link to="/sign-up">
+              <Link to="/sign-in">
                 <Button size="lg" variant="secondary" className="gap-2 px-8">
-                  Create Free Account
+                  Get Started for Free
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>

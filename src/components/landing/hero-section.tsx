@@ -66,19 +66,12 @@ export function HeroSection() {
                 </Button>
               </Link>
             ) : (
-              <>
-                <Link to="/sign-up">
-                  <Button size="lg" className="gap-2 px-8">
-                    Get Started Free
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link to="/sign-in">
-                  <Button size="lg" variant="outline" className="px-8">
-                    Sign In
-                  </Button>
-                </Link>
-              </>
+              <Link to="/sign-in">
+                <Button size="lg" className="gap-2 px-8">
+                  Get Started for Free
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
             )}
           </motion.div>
 

@@ -8,10 +8,7 @@ export const Route = createFileRoute('/_protected')({
     const { currentUser } = await authMiddleware()
 
     if (!currentUser) {
-      if (
-        location.pathname !== '/sign-in' &&
-        location.pathname !== '/sign-up'
-      ) {
+      if (location.pathname !== '/sign-in') {
         throw redirect({ to: '/sign-in', search: { redirect: location.href } })
       }
     }
