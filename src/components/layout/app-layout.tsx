@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Outlet } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { AppSidebar } from './app-sidebar'
+import { MobileNav } from './mobile-nav'
+import { MobileHeader } from './mobile-header'
 import { CreateWorkspaceDialog } from '@/components/workspace/create-workspace-dialog'
 import { useWorkspace } from '@/hooks/use-workspace'
 import { useAuth } from '@/hooks/use-auth'
@@ -64,7 +66,7 @@ export function AppLayout() {
   if (loading) {
     return (
       <div className="flex h-screen bg-background">
-        <div className="w-64 border-r p-4 space-y-4">
+        <div className="hidden md:block w-64 border-r p-4 space-y-4">
           <Skeleton className="h-8 w-full" />
           <Skeleton className="h-12 w-full" />
           <div className="space-y-2 pt-4">
@@ -131,10 +133,25 @@ export function AppLayout() {
 
   return (
     <>
-      <div className="flex h-screen bg-background relative">
-        <AppSidebar onCreateWorkspace={() => setShowCreateWorkspace(true)} />
-        <main className="flex-1 overflow-auto">
-          <Outlet />
+      <div className="flex h-screen bg-background relative overflow-hidden">
+        {/* Desktop Sidebar */}
+        <div className="hidden md:flex h-full">
+          <AppSidebar onCreateWorkspace={() => setShowCreateWorkspace(true)} />
+        </div>
+
+        {/* Mobile Header & Nav */}
+        <div className="md:hidden block fixed top-0 left-0 right-0 z-50">
+          <MobileHeader onCreateWorkspace={() => setShowCreateWorkspace(true)} />
+        </div>
+        <div className="md:hidden block fixed bottom-0 left-0 right-0 z-50">
+          <MobileNav />
+        </div>
+
+        {/* Main Content */}
+        <main className="flex-1 overflow-auto h-full w-full pt-14 pb-20 md:pt-0 md:pb-0">
+          <div className="container mx-auto p-4 md:p-8 max-w-7xl">
+            <Outlet />
+          </div>
         </main>
       </div>
       <CreateWorkspaceDialog

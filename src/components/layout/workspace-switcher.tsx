@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Check, ChevronsUpDown, Plus, Building2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import {
   Command,
   CommandEmpty,
@@ -21,11 +22,13 @@ import { useI18n } from '@/hooks/use-i18n'
 interface WorkspaceSwitcherProps {
   onCreateNew?: () => void
   collapsed?: boolean
+  className?: string
 }
 
 export function WorkspaceSwitcher({
   onCreateNew,
   collapsed,
+  className,
 }: WorkspaceSwitcherProps) {
   const [open, setOpen] = useState(false)
   const { workspace, workspaces, setWorkspace } = useWorkspace()
@@ -106,7 +109,7 @@ export function WorkspaceSwitcher({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between h-auto py-2"
+          className={cn("w-full justify-between h-auto py-2", className)}
         >
           {workspace ? (
             <div className="flex items-center gap-2">
