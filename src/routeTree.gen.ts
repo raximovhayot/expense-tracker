@@ -21,7 +21,6 @@ import { Route as ProtectedPreferencesRouteImport } from './routes/_protected/pr
 import { Route as ProtectedIncomeRouteImport } from './routes/_protected/income'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
 import { Route as ProtectedBudgetsRouteImport } from './routes/_protected/budgets'
-import { Route as AuthSignUpRouteImport } from './routes/_auth/sign-up'
 import { Route as AuthSignOutRouteImport } from './routes/_auth/sign-out'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as ApiHelloRouteImport } from './routes/_api/hello'
@@ -84,11 +83,6 @@ const ProtectedBudgetsRoute = ProtectedBudgetsRouteImport.update({
   path: '/budgets',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const AuthSignUpRoute = AuthSignUpRouteImport.update({
-  id: '/sign-up',
-  path: '/sign-up',
-  getParentRoute: () => AuthRoute,
-} as any)
 const AuthSignOutRoute = AuthSignOutRouteImport.update({
   id: '/sign-out',
   path: '/sign-out',
@@ -110,7 +104,6 @@ export interface FileRoutesByFullPath {
   '/hello': typeof ApiHelloRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-out': typeof AuthSignOutRoute
-  '/sign-up': typeof AuthSignUpRoute
   '/budgets': typeof ProtectedBudgetsRoute
   '/dashboard': typeof ProtectedDashboardRoute
   '/income': typeof ProtectedIncomeRoute
@@ -125,7 +118,6 @@ export interface FileRoutesByTo {
   '/hello': typeof ApiHelloRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-out': typeof AuthSignOutRoute
-  '/sign-up': typeof AuthSignUpRoute
   '/budgets': typeof ProtectedBudgetsRoute
   '/dashboard': typeof ProtectedDashboardRoute
   '/income': typeof ProtectedIncomeRoute
@@ -144,7 +136,6 @@ export interface FileRoutesById {
   '/_api/hello': typeof ApiHelloRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-out': typeof AuthSignOutRoute
-  '/_auth/sign-up': typeof AuthSignUpRoute
   '/_protected/budgets': typeof ProtectedBudgetsRoute
   '/_protected/dashboard': typeof ProtectedDashboardRoute
   '/_protected/income': typeof ProtectedIncomeRoute
@@ -161,7 +152,6 @@ export interface FileRouteTypes {
     | '/hello'
     | '/sign-in'
     | '/sign-out'
-    | '/sign-up'
     | '/budgets'
     | '/dashboard'
     | '/income'
@@ -176,7 +166,6 @@ export interface FileRouteTypes {
     | '/hello'
     | '/sign-in'
     | '/sign-out'
-    | '/sign-up'
     | '/budgets'
     | '/dashboard'
     | '/income'
@@ -194,7 +183,6 @@ export interface FileRouteTypes {
     | '/_api/hello'
     | '/_auth/sign-in'
     | '/_auth/sign-out'
-    | '/_auth/sign-up'
     | '/_protected/budgets'
     | '/_protected/dashboard'
     | '/_protected/income'
@@ -299,13 +287,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedBudgetsRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_auth/sign-up': {
-      id: '/_auth/sign-up'
-      path: '/sign-up'
-      fullPath: '/sign-up'
-      preLoaderRoute: typeof AuthSignUpRouteImport
-      parentRoute: typeof AuthRoute
-    }
     '/_auth/sign-out': {
       id: '/_auth/sign-out'
       path: '/sign-out'
@@ -333,13 +314,11 @@ declare module '@tanstack/react-router' {
 interface AuthRouteChildren {
   AuthSignInRoute: typeof AuthSignInRoute
   AuthSignOutRoute: typeof AuthSignOutRoute
-  AuthSignUpRoute: typeof AuthSignUpRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthSignInRoute: AuthSignInRoute,
   AuthSignOutRoute: AuthSignOutRoute,
-  AuthSignUpRoute: AuthSignUpRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
@@ -389,12 +368,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
