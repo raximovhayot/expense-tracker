@@ -1,6 +1,5 @@
 import { getCurrentUser } from '@/server/functions/auth'
-import { redirect, Outlet } from '@tanstack/react-router'
-import { createFileRoute } from '@tanstack/react-router'
+import { redirect, Outlet, createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_auth')({
   loader: async ({ location }) => {
