@@ -1,0 +1,481 @@
+// Localization system for English and Uzbek
+
+export type Language = 'en' | 'uz'
+
+export const translations = {
+  en: {
+    // Common
+    app_name: 'BudgetFlow',
+    loading: 'Loading...',
+    save: 'Save',
+    cancel: 'Cancel',
+    delete: 'Delete',
+    edit: 'Edit',
+    add: 'Add',
+    create: 'Create',
+    update: 'Update',
+    search: 'Search',
+    filter: 'Filter',
+    all: 'All',
+    none: 'None',
+    yes: 'Yes',
+    no: 'No',
+    confirm: 'Confirm',
+    back: 'Back',
+    next: 'Next',
+    close: 'Close',
+
+    // Navigation
+    nav_dashboard: 'Dashboard',
+    nav_income: 'Income',
+    nav_budgets: 'Budgets',
+    nav_transactions: 'Transactions',
+    nav_recurring: 'Recurring',
+    nav_settings: 'Settings',
+    nav_preferences: 'Preferences',
+    nav_workspace_settings: 'Workspace Settings',
+    nav_sign_out: 'Sign Out',
+
+    // Dashboard
+    dashboard_title: 'Dashboard',
+    dashboard_welcome: 'Welcome back',
+    dashboard_total_income: 'Total Income',
+    dashboard_total_expenses: 'Total Expenses',
+    dashboard_net_balance: 'Net Balance',
+    dashboard_budget_status: 'Budget Status',
+    dashboard_this_month: 'This Month',
+    dashboard_income_vs_expenses: 'Income vs Expenses',
+    dashboard_budget_overview: 'Budget Overview',
+    dashboard_recent_transactions: 'Recent Transactions',
+    dashboard_no_data:
+      'No data yet. Start by adding income sources and budgets.',
+
+    // Workspace
+    workspace_title: 'Workspace',
+    workspace_create: 'Create Workspace',
+    workspace_switch: 'Switch Workspace',
+    workspace_settings: 'Workspace Settings',
+    workspace_name: 'Workspace Name',
+    workspace_description: 'Description',
+    workspace_currency: 'Currency',
+    workspace_language: 'Language',
+    workspace_members: 'Members',
+    workspace_member_count: '{count} members',
+    workspace_invitations: 'Invitations',
+    workspace_invite: 'Invite Member',
+    workspace_invite_email: 'Email Address',
+    workspace_invite_role: 'Role',
+    workspace_invite_sent: 'Invitation sent successfully',
+    workspace_role_owner: 'Owner',
+    workspace_role_editor: 'Editor',
+    workspace_role_viewer: 'Viewer',
+    workspace_pending: 'Pending',
+    workspace_accepted: 'Accepted',
+    workspace_delete: 'Delete Workspace',
+    workspace_delete_confirm:
+      'Are you sure you want to delete this workspace? This action cannot be undone.',
+    workspace_created: 'Workspace created successfully',
+    workspace_updated: 'Workspace updated successfully',
+    workspace_deleted: 'Workspace deleted successfully',
+    workspace_no_workspaces: 'No workspaces yet',
+    workspace_create_first: 'Create your first workspace to get started',
+
+    // Income
+    income_title: 'Income Sources',
+    income_add: 'Add Income Source',
+    income_edit: 'Edit Income Source',
+    income_name: 'Name',
+    income_type: 'Type',
+    income_amount: 'Amount',
+    income_frequency: 'Frequency',
+    income_notes: 'Notes',
+    income_active: 'Active',
+    income_inactive: 'Inactive',
+    income_type_salary: 'Salary',
+    income_type_freelance: 'Freelance',
+    income_type_investment: 'Investment',
+    income_type_rental: 'Rental',
+    income_type_business: 'Business',
+    income_type_other: 'Other',
+    income_freq_monthly: 'Monthly',
+    income_freq_weekly: 'Weekly',
+    income_freq_biweekly: 'Bi-weekly',
+    income_freq_quarterly: 'Quarterly',
+    income_freq_annual: 'Annual',
+    income_freq_one_time: 'One-time',
+    income_created: 'Income source created',
+    income_updated: 'Income source updated',
+    income_deleted: 'Income source deleted',
+    income_no_sources: 'No income sources yet',
+    income_add_first: 'Add your first income source',
+    income_total_monthly: 'Total Monthly Income',
+
+    // Budgets
+    budget_title: 'Budget Planning',
+    budget_categories: 'Categories',
+    budget_add_category: 'Add Category',
+    budget_edit_category: 'Edit Category',
+    budget_category_name: 'Category Name',
+    budget_category_icon: 'Icon',
+    budget_category_color: 'Color',
+    budget_monthly_plan: 'Monthly Budget Plan',
+    budget_planned: 'Planned',
+    budget_spent: 'Spent',
+    budget_remaining: 'Remaining',
+    budget_over_budget: 'Over Budget',
+    budget_on_track: 'On Track',
+    budget_set_amount: 'Set Budget Amount',
+    budget_no_categories: 'No budget categories yet',
+    budget_add_first_category: 'Add your first budget category',
+    budget_created: 'Budget created',
+    budget_updated: 'Budget updated',
+    budget_deleted: 'Budget deleted',
+    budget_category_created: 'Category created',
+    budget_category_updated: 'Category updated',
+    budget_category_deleted: 'Category deleted',
+
+    // Transactions
+    transaction_title: 'Transactions',
+    transaction_add: 'Add Transaction',
+    transaction_edit: 'Edit Transaction',
+    transaction_type: 'Type',
+    transaction_type_income: 'Income',
+    transaction_type_expense: 'Expense',
+    transaction_category: 'Category',
+    transaction_amount: 'Amount',
+    transaction_date: 'Date',
+    transaction_description: 'Description',
+    transaction_tags: 'Tags',
+    transaction_created: 'Transaction created',
+    transaction_updated: 'Transaction updated',
+    transaction_deleted: 'Transaction deleted',
+    transaction_no_transactions: 'No transactions yet',
+    transaction_add_first: 'Add your first transaction',
+    transaction_filter_type: 'Filter by Type',
+    transaction_filter_category: 'Filter by Category',
+    transaction_filter_date: 'Filter by Date',
+
+    // Recurring Expenses
+    recurring_title: 'Recurring Expenses',
+    recurring_add: 'Add Recurring Expense',
+    recurring_edit: 'Edit Recurring Expense',
+    recurring_name: 'Name',
+    recurring_amount: 'Amount',
+    recurring_frequency: 'Frequency',
+    recurring_start_date: 'Start Date',
+    recurring_end_date: 'End Date',
+    recurring_next_due: 'Next Due',
+    recurring_active: 'Active',
+    recurring_inactive: 'Inactive',
+    recurring_freq_monthly: 'Monthly',
+    recurring_freq_quarterly: 'Quarterly',
+    recurring_freq_annual: 'Annual',
+    recurring_created: 'Recurring expense created',
+    recurring_updated: 'Recurring expense updated',
+    recurring_deleted: 'Recurring expense deleted',
+    recurring_no_expenses: 'No recurring expenses yet',
+    recurring_add_first: 'Add your first recurring expense',
+
+    // Preferences
+    preferences_title: 'Preferences',
+    preferences_default_workspace: 'Default Workspace',
+    preferences_default_language: 'Default Language',
+    preferences_default_currency: 'Default Currency',
+    preferences_theme: 'Theme',
+    preferences_theme_light: 'Light',
+    preferences_theme_dark: 'Dark',
+    preferences_theme_system: 'System',
+    preferences_notifications: 'Notifications',
+    preferences_email_notifications: 'Email Notifications',
+    preferences_saved: 'Preferences saved',
+
+    // Currency
+    currency_usd: 'US Dollar',
+    currency_uzs: 'Uzbek Som',
+
+    // Language
+    language_en: 'English',
+    language_uz: "O'zbek",
+
+    // Errors
+    error_generic: 'Something went wrong',
+    error_not_found: 'Not found',
+    error_unauthorized: 'Unauthorized',
+    error_forbidden: 'Access denied',
+    error_validation: 'Please check your input',
+
+    // Landing
+    landing_hero_title: 'Take Control of Your Finances',
+    landing_hero_subtitle:
+      'Track income, plan budgets, and manage expenses across multiple workspaces with real-time insights.',
+    landing_cta_start: 'Get Started Free',
+    landing_cta_signin: 'Sign In',
+    landing_feature_workspaces: 'Multi-Workspace',
+    landing_feature_workspaces_desc:
+      'Separate personal and business finances with dedicated workspaces.',
+    landing_feature_budgets: 'Smart Budgets',
+    landing_feature_budgets_desc:
+      'Plan monthly budgets by category and track spending in real-time.',
+    landing_feature_recurring: 'Recurring Automation',
+    landing_feature_recurring_desc:
+      'Automate monthly, quarterly, and annual expense tracking.',
+    landing_feature_collaboration: 'Team Collaboration',
+    landing_feature_collaboration_desc:
+      'Invite family or team members with role-based access.',
+    landing_feature_currency: 'Multi-Currency',
+    landing_feature_currency_desc:
+      'Support for USD and UZS with real-time conversion.',
+    landing_feature_language: 'Bilingual Support',
+    landing_feature_language_desc:
+      'Full support for English and Uzbek languages.',
+  },
+  uz: {
+    // Common
+    app_name: 'BudgetFlow',
+    loading: 'Yuklanmoqda...',
+    save: 'Saqlash',
+    cancel: 'Bekor qilish',
+    delete: "O'chirish",
+    edit: 'Tahrirlash',
+    add: "Qo'shish",
+    create: 'Yaratish',
+    update: 'Yangilash',
+    search: 'Qidirish',
+    filter: 'Filtr',
+    all: 'Hammasi',
+    none: "Yo'q",
+    yes: 'Ha',
+    no: "Yo'q",
+    confirm: 'Tasdiqlash',
+    back: 'Orqaga',
+    next: 'Keyingi',
+    close: 'Yopish',
+
+    // Navigation
+    nav_dashboard: 'Boshqaruv paneli',
+    nav_income: 'Daromad',
+    nav_budgets: 'Byudjetlar',
+    nav_transactions: 'Tranzaksiyalar',
+    nav_recurring: 'Takroriy',
+    nav_settings: 'Sozlamalar',
+    nav_preferences: 'Afzalliklar',
+    nav_workspace_settings: 'Ish maydoni sozlamalari',
+    nav_sign_out: 'Chiqish',
+
+    // Dashboard
+    dashboard_title: 'Boshqaruv paneli',
+    dashboard_welcome: 'Xush kelibsiz',
+    dashboard_total_income: 'Jami daromad',
+    dashboard_total_expenses: 'Jami xarajatlar',
+    dashboard_net_balance: 'Sof balans',
+    dashboard_budget_status: 'Byudjet holati',
+    dashboard_this_month: 'Bu oy',
+    dashboard_income_vs_expenses: 'Daromad va xarajatlar',
+    dashboard_budget_overview: "Byudjet ko'rinishi",
+    dashboard_recent_transactions: 'Oxirgi tranzaksiyalar',
+    dashboard_no_data:
+      "Ma'lumot yo'q. Daromad manbalari va byudjetlarni qo'shishdan boshlang.",
+
+    // Workspace
+    workspace_title: 'Ish maydoni',
+    workspace_create: 'Ish maydoni yaratish',
+    workspace_switch: "Ish maydonini o'zgartirish",
+    workspace_settings: 'Ish maydoni sozlamalari',
+    workspace_name: 'Ish maydoni nomi',
+    workspace_description: 'Tavsif',
+    workspace_currency: 'Valyuta',
+    workspace_language: 'Til',
+    workspace_members: "A'zolar",
+    workspace_member_count: "{count} a'zo",
+    workspace_invitations: 'Taklifnomalar',
+    workspace_invite: "A'zo taklif qilish",
+    workspace_invite_email: 'Email manzil',
+    workspace_invite_role: 'Rol',
+    workspace_invite_sent: 'Taklifnoma muvaffaqiyatli yuborildi',
+    workspace_role_owner: 'Egasi',
+    workspace_role_editor: 'Muharrir',
+    workspace_role_viewer: "Ko'ruvchi",
+    workspace_pending: 'Kutilmoqda',
+    workspace_accepted: 'Qabul qilindi',
+    workspace_delete: "Ish maydonini o'chirish",
+    workspace_delete_confirm:
+      "Ish maydonini o'chirishni xohlaysizmi? Bu amalni qaytarib bo'lmaydi.",
+    workspace_created: 'Ish maydoni yaratildi',
+    workspace_updated: 'Ish maydoni yangilandi',
+    workspace_deleted: "Ish maydoni o'chirildi",
+    workspace_no_workspaces: "Ish maydonlari yo'q",
+    workspace_create_first:
+      'Boshlash uchun birinchi ish maydoningizni yarating',
+
+    // Income
+    income_title: 'Daromad manbalari',
+    income_add: "Daromad manbai qo'shish",
+    income_edit: 'Daromad manbaini tahrirlash',
+    income_name: 'Nomi',
+    income_type: 'Turi',
+    income_amount: 'Miqdor',
+    income_frequency: 'Chastotasi',
+    income_notes: 'Izohlar',
+    income_active: 'Faol',
+    income_inactive: 'Nofaol',
+    income_type_salary: 'Maosh',
+    income_type_freelance: 'Frilanser',
+    income_type_investment: 'Investitsiya',
+    income_type_rental: 'Ijara',
+    income_type_business: 'Biznes',
+    income_type_other: 'Boshqa',
+    income_freq_monthly: 'Oylik',
+    income_freq_weekly: 'Haftalik',
+    income_freq_biweekly: 'Ikki haftalik',
+    income_freq_quarterly: 'Choraklik',
+    income_freq_annual: 'Yillik',
+    income_freq_one_time: 'Bir martalik',
+    income_created: 'Daromad manbai yaratildi',
+    income_updated: 'Daromad manbai yangilandi',
+    income_deleted: "Daromad manbai o'chirildi",
+    income_no_sources: "Daromad manbalari yo'q",
+    income_add_first: "Birinchi daromad manbaingizni qo'shing",
+    income_total_monthly: 'Jami oylik daromad',
+
+    // Budgets
+    budget_title: 'Byudjet rejalashtirish',
+    budget_categories: 'Kategoriyalar',
+    budget_add_category: "Kategoriya qo'shish",
+    budget_edit_category: 'Kategoriyani tahrirlash',
+    budget_category_name: 'Kategoriya nomi',
+    budget_category_icon: 'Belgi',
+    budget_category_color: 'Rang',
+    budget_monthly_plan: 'Oylik byudjet rejasi',
+    budget_planned: 'Rejalashtirilgan',
+    budget_spent: 'Sarflangan',
+    budget_remaining: 'Qolgan',
+    budget_over_budget: 'Byudjetdan oshib ketdi',
+    budget_on_track: "To'g'ri yo'lda",
+    budget_set_amount: 'Byudjet miqdorini belgilash',
+    budget_no_categories: "Byudjet kategoriyalari yo'q",
+    budget_add_first_category: "Birinchi byudjet kategoriyangizni qo'shing",
+    budget_created: 'Byudjet yaratildi',
+    budget_updated: 'Byudjet yangilandi',
+    budget_deleted: "Byudjet o'chirildi",
+    budget_category_created: 'Kategoriya yaratildi',
+    budget_category_updated: 'Kategoriya yangilandi',
+    budget_category_deleted: "Kategoriya o'chirildi",
+
+    // Transactions
+    transaction_title: 'Tranzaksiyalar',
+    transaction_add: "Tranzaksiya qo'shish",
+    transaction_edit: 'Tranzaksiyani tahrirlash',
+    transaction_type: 'Turi',
+    transaction_type_income: 'Daromad',
+    transaction_type_expense: 'Xarajat',
+    transaction_category: 'Kategoriya',
+    transaction_amount: 'Miqdor',
+    transaction_date: 'Sana',
+    transaction_description: 'Tavsif',
+    transaction_tags: 'Teglar',
+    transaction_created: 'Tranzaksiya yaratildi',
+    transaction_updated: 'Tranzaksiya yangilandi',
+    transaction_deleted: "Tranzaksiya o'chirildi",
+    transaction_no_transactions: "Tranzaksiyalar yo'q",
+    transaction_add_first: "Birinchi tranzaksiyangizni qo'shing",
+    transaction_filter_type: "Turi bo'yicha filtr",
+    transaction_filter_category: "Kategoriya bo'yicha filtr",
+    transaction_filter_date: "Sana bo'yicha filtr",
+
+    // Recurring Expenses
+    recurring_title: 'Takroriy xarajatlar',
+    recurring_add: "Takroriy xarajat qo'shish",
+    recurring_edit: 'Takroriy xarajatni tahrirlash',
+    recurring_name: 'Nomi',
+    recurring_amount: 'Miqdor',
+    recurring_frequency: 'Chastotasi',
+    recurring_start_date: 'Boshlanish sanasi',
+    recurring_end_date: 'Tugash sanasi',
+    recurring_next_due: 'Keyingi muddat',
+    recurring_active: 'Faol',
+    recurring_inactive: 'Nofaol',
+    recurring_freq_monthly: 'Oylik',
+    recurring_freq_quarterly: 'Choraklik',
+    recurring_freq_annual: 'Yillik',
+    recurring_created: 'Takroriy xarajat yaratildi',
+    recurring_updated: 'Takroriy xarajat yangilandi',
+    recurring_deleted: "Takroriy xarajat o'chirildi",
+    recurring_no_expenses: "Takroriy xarajatlar yo'q",
+    recurring_add_first: "Birinchi takroriy xarajatingizni qo'shing",
+
+    // Preferences
+    preferences_title: 'Afzalliklar',
+    preferences_default_workspace: 'Standart ish maydoni',
+    preferences_default_language: 'Standart til',
+    preferences_default_currency: 'Standart valyuta',
+    preferences_theme: 'Mavzu',
+    preferences_theme_light: "Yorug'",
+    preferences_theme_dark: "Qorong'u",
+    preferences_theme_system: 'Tizim',
+    preferences_notifications: 'Bildirishnomalar',
+    preferences_email_notifications: 'Email bildirishnomalar',
+    preferences_saved: 'Afzalliklar saqlandi',
+
+    // Currency
+    currency_usd: 'AQSh dollari',
+    currency_uzs: "O'zbek so'mi",
+
+    // Language
+    language_en: 'English',
+    language_uz: "O'zbek",
+
+    // Errors
+    error_generic: 'Xatolik yuz berdi',
+    error_not_found: 'Topilmadi',
+    error_unauthorized: 'Ruxsat berilmagan',
+    error_forbidden: 'Kirish taqiqlangan',
+    error_validation: "Kiritilgan ma'lumotlarni tekshiring",
+
+    // Landing
+    landing_hero_title: 'Moliyangizni nazorat qiling',
+    landing_hero_subtitle:
+      'Daromadni kuzating, byudjetlarni rejalashtiring va bir nechta ish maydonlarida xarajatlarni real vaqtda boshqaring.',
+    landing_cta_start: 'Bepul boshlash',
+    landing_cta_signin: 'Kirish',
+    landing_feature_workspaces: "Ko'p ish maydoni",
+    landing_feature_workspaces_desc:
+      'Shaxsiy va biznes moliyasini alohida ish maydonlari bilan ajrating.',
+    landing_feature_budgets: 'Aqlli byudjetlar',
+    landing_feature_budgets_desc:
+      "Kategoriya bo'yicha oylik byudjetlarni rejalashtiring va xarajatlarni real vaqtda kuzating.",
+    landing_feature_recurring: 'Takroriy avtomatlashtirish',
+    landing_feature_recurring_desc:
+      'Oylik, choraklik va yillik xarajatlarni avtomatik kuzating.',
+    landing_feature_collaboration: 'Jamoa hamkorligi',
+    landing_feature_collaboration_desc:
+      "Oila yoki jamoa a'zolarini rol asosida taklif qiling.",
+    landing_feature_currency: "Ko'p valyuta",
+    landing_feature_currency_desc:
+      "USD va UZS uchun real vaqtda konvertatsiya bilan qo'llab-quvvatlash.",
+    landing_feature_language: "Ikki tilli qo'llab-quvvatlash",
+    landing_feature_language_desc:
+      "Ingliz va o'zbek tillari uchun to'liq qo'llab-quvvatlash.",
+  },
+} as const
+
+export type TranslationKey = keyof typeof translations.en
+
+export function t(
+  key: TranslationKey,
+  lang: Language = 'en',
+  params?: Record<string, string | number>,
+): string {
+  let text: string = translations[lang][key] || translations.en[key] || key
+
+  if (params) {
+    Object.entries(params).forEach(([paramKey, value]) => {
+      text = text.replace(`{${paramKey}}`, String(value))
+    })
+  }
+
+  return text
+}
+
+export function getLanguageName(lang: Language): string {
+  return lang === 'en' ? 'English' : "O'zbek"
+}

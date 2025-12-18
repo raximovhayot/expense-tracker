@@ -1,0 +1,1077 @@
+{
+  "projectId": "694323a700372aec2626",
+  "databases": [
+    {
+      "$id": "imagine-project-db",
+      "name": "Imagine Project DB",
+      "enabled": true
+    }
+  ],
+  "collections": [
+    {
+      "$id": "workspaces",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "imagine-project-db",
+      "name": "workspaces",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "createdBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "name",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "description",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "currency",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "language",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "memberCount",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": null,
+          "max": null,
+          "default": 1
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_createdBy",
+          "type": "key",
+          "status": "available",
+          "attributes": ["createdBy"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "workspace_members",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "imagine-project-db",
+      "name": "workspace_members",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "createdBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "workspaceId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "userId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "userEmail",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "role",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_createdBy",
+          "type": "key",
+          "status": "available",
+          "attributes": ["createdBy"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_workspaceId",
+          "type": "key",
+          "status": "available",
+          "attributes": ["workspaceId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_userId",
+          "type": "key",
+          "status": "available",
+          "attributes": ["userId"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "workspace_invitations",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "imagine-project-db",
+      "name": "workspace_invitations",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "createdBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "workspaceId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "email",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "role",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "status",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "invitedBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "expiresAt",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "format": "",
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_createdBy",
+          "type": "key",
+          "status": "available",
+          "attributes": ["createdBy"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_workspaceId",
+          "type": "key",
+          "status": "available",
+          "attributes": ["workspaceId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_email",
+          "type": "key",
+          "status": "available",
+          "attributes": ["email"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_status",
+          "type": "key",
+          "status": "available",
+          "attributes": ["status"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "income_sources",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "imagine-project-db",
+      "name": "income_sources",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "createdBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "workspaceId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "name",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 50,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "amount",
+          "type": "double",
+          "required": true,
+          "array": false,
+          "min": null,
+          "max": null,
+          "default": null
+        },
+        {
+          "key": "currency",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "frequency",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "isActive",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": true
+        },
+        {
+          "key": "notes",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 1000,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_createdBy",
+          "type": "key",
+          "status": "available",
+          "attributes": ["createdBy"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_workspaceId",
+          "type": "key",
+          "status": "available",
+          "attributes": ["workspaceId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_type",
+          "type": "key",
+          "status": "available",
+          "attributes": ["type"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "budget_categories",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "imagine-project-db",
+      "name": "budget_categories",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "createdBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "workspaceId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "name",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "icon",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 50,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "color",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "isDefault",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_createdBy",
+          "type": "key",
+          "status": "available",
+          "attributes": ["createdBy"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_workspaceId",
+          "type": "key",
+          "status": "available",
+          "attributes": ["workspaceId"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "monthly_budgets",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "imagine-project-db",
+      "name": "monthly_budgets",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "createdBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "workspaceId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "categoryId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "year",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": null,
+          "max": null,
+          "default": null
+        },
+        {
+          "key": "month",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": null,
+          "max": null,
+          "default": null
+        },
+        {
+          "key": "plannedAmount",
+          "type": "double",
+          "required": true,
+          "array": false,
+          "min": null,
+          "max": null,
+          "default": null
+        },
+        {
+          "key": "currency",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_createdBy",
+          "type": "key",
+          "status": "available",
+          "attributes": ["createdBy"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_workspaceId",
+          "type": "key",
+          "status": "available",
+          "attributes": ["workspaceId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_categoryId",
+          "type": "key",
+          "status": "available",
+          "attributes": ["categoryId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_year_month",
+          "type": "key",
+          "status": "available",
+          "attributes": ["year", "month"],
+          "orders": ["DESC", "DESC"]
+        }
+      ]
+    },
+    {
+      "$id": "transactions",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "imagine-project-db",
+      "name": "transactions",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "createdBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "workspaceId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "type",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "categoryId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "incomeSourceId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "amount",
+          "type": "double",
+          "required": true,
+          "array": false,
+          "min": null,
+          "max": null,
+          "default": null
+        },
+        {
+          "key": "currency",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "convertedAmount",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "min": null,
+          "max": null,
+          "default": null
+        },
+        {
+          "key": "exchangeRate",
+          "type": "double",
+          "required": false,
+          "array": false,
+          "min": null,
+          "max": null,
+          "default": null
+        },
+        {
+          "key": "description",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 500,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "transactionDate",
+          "type": "datetime",
+          "required": true,
+          "array": false,
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "recurringExpenseId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "tags",
+          "type": "string",
+          "required": false,
+          "array": true,
+          "size": 50,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_createdBy",
+          "type": "key",
+          "status": "available",
+          "attributes": ["createdBy"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_workspaceId",
+          "type": "key",
+          "status": "available",
+          "attributes": ["workspaceId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_type",
+          "type": "key",
+          "status": "available",
+          "attributes": ["type"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_categoryId",
+          "type": "key",
+          "status": "available",
+          "attributes": ["categoryId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_transactionDate",
+          "type": "key",
+          "status": "available",
+          "attributes": ["transactionDate"],
+          "orders": ["DESC"]
+        }
+      ]
+    },
+    {
+      "$id": "recurring_expenses",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "imagine-project-db",
+      "name": "recurring_expenses",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "createdBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "workspaceId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "name",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 255,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "categoryId",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "amount",
+          "type": "double",
+          "required": true,
+          "array": false,
+          "min": null,
+          "max": null,
+          "default": null
+        },
+        {
+          "key": "currency",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "frequency",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "startDate",
+          "type": "datetime",
+          "required": true,
+          "array": false,
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "endDate",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "nextDueDate",
+          "type": "datetime",
+          "required": true,
+          "array": false,
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "lastProcessedDate",
+          "type": "datetime",
+          "required": false,
+          "array": false,
+          "format": "",
+          "default": null
+        },
+        {
+          "key": "isActive",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": true
+        },
+        {
+          "key": "notes",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 500,
+          "default": null,
+          "encrypt": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_createdBy",
+          "type": "key",
+          "status": "available",
+          "attributes": ["createdBy"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_workspaceId",
+          "type": "key",
+          "status": "available",
+          "attributes": ["workspaceId"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_nextDueDate",
+          "type": "key",
+          "status": "available",
+          "attributes": ["nextDueDate"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_isActive",
+          "type": "key",
+          "status": "available",
+          "attributes": ["isActive"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "user_preferences",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "imagine-project-db",
+      "name": "user_preferences",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "createdBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "defaultWorkspaceId",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "defaultLanguage",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "defaultCurrency",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "theme",
+          "type": "string",
+          "required": false,
+          "array": false,
+          "size": 20,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "notificationsEnabled",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": true
+        },
+        {
+          "key": "emailNotifications",
+          "type": "boolean",
+          "required": false,
+          "array": false,
+          "default": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_createdBy",
+          "type": "key",
+          "status": "available",
+          "attributes": ["createdBy"],
+          "orders": ["ASC"]
+        }
+      ]
+    },
+    {
+      "$id": "exchange_rates",
+      "$permissions": [
+        "create(\"any\")",
+        "read(\"any\")",
+        "update(\"any\")",
+        "delete(\"any\")"
+      ],
+      "databaseId": "imagine-project-db",
+      "name": "exchange_rates",
+      "enabled": true,
+      "documentSecurity": true,
+      "attributes": [
+        {
+          "key": "createdBy",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 64,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "fromCurrency",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "toCurrency",
+          "type": "string",
+          "required": true,
+          "array": false,
+          "size": 10,
+          "default": null,
+          "encrypt": false
+        },
+        {
+          "key": "rate",
+          "type": "double",
+          "required": true,
+          "array": false,
+          "min": null,
+          "max": null,
+          "default": null
+        },
+        {
+          "key": "fetchedAt",
+          "type": "datetime",
+          "required": true,
+          "array": false,
+          "format": "",
+          "default": null
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_createdBy",
+          "type": "key",
+          "status": "available",
+          "attributes": ["createdBy"],
+          "orders": ["ASC"]
+        },
+        {
+          "key": "idx_currencies",
+          "type": "key",
+          "status": "available",
+          "attributes": ["fromCurrency", "toCurrency"],
+          "orders": ["ASC", "ASC"]
+        },
+        {
+          "key": "idx_fetchedAt",
+          "type": "key",
+          "status": "available",
+          "attributes": ["fetchedAt"],
+          "orders": ["DESC"]
+        }
+      ]
+    }
+  ]
+}
