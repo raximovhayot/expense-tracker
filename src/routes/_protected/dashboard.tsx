@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { BudgetRadarChart } from '@/components/dashboard/budget-radar-chart'
-import { BudgetOverview } from '@/components/dashboard/budget-overview'
-import { IncomeExpenseChart } from '@/components/dashboard/income-expense-chart'
+
+
 import { RecentTransactions } from '@/components/dashboard/recent-transactions'
 import { useWorkspace } from '@/hooks/use-workspace'
 import { useI18n } from '@/hooks/use-i18n'
@@ -229,15 +229,8 @@ function DashboardPage() {
           <p className="text-xs text-muted-foreground">Add widgets to customize your view</p>
         </div>
       </div>
-      <IncomeExpenseChart
-        income={summary?.totalIncome || 0}
-        expenses={summary?.totalExpenses || 0}
-        currency={currency}
-      />
-      <BudgetOverview
-        items={budgetOverview?.overview || []}
-        currency={currency}
-      />
+
+
     </div>
   )
 }
