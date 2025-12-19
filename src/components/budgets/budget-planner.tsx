@@ -52,6 +52,7 @@ interface BudgetPlannerProps {
   year: number
   month: number
   onMonthChange: (year: number, month: number) => void
+  onCategoryClick: (category: BudgetCategories) => void
   onUpdate: () => void
 }
 
@@ -66,6 +67,20 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   book: Book,
   user: User,
   'more-horizontal': MoreHorizontal,
+  briefcase: Briefcase,
+  gift: Gift,
+  coffee: Coffee,
+  smartphone: Smartphone,
+  wifi: Wifi,
+  music: Music,
+  plane: Plane,
+  baby: Baby,
+  'paw-print': PawPrint,
+  dumbbell: Dumbbell,
+  shield: Shield,
+  landmark: Landmark,
+  receipt: Receipt,
+  wrench: Wrench
 }
 
 const monthNames = [
@@ -83,6 +98,37 @@ const monthNames = [
   'December',
 ]
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Plus } from 'lucide-react'
+import {
+  Briefcase,
+  Gift,
+  Coffee,
+  Smartphone,
+  Wifi,
+  Music,
+  Plane,
+  Baby,
+  PawPrint,
+  Dumbbell,
+  Shield,
+  Landmark,
+  Receipt,
+  Wrench
+} from 'lucide-react'
+
 export function BudgetPlanner({
   categories,
   budgets,
@@ -91,16 +137,23 @@ export function BudgetPlanner({
   month,
   onMonthChange,
   onUpdate,
+  onCategoryClick,
 }: BudgetPlannerProps) {
-  const [editingBudgets, setEditingBudgets] = useState<Record<string, number>>(
-    {},
-  )
+  const [editingBudgets, setEditingBudgets] = useState<Record<string, number>>({})
   const [saving, setSaving] = useState(false)
+  const [showAddBudget, setShowAddBudget] = useState(false)
+  const [newBudgetCategory, setNewBudgetCategory] = useState<string>('')
+  const [newBudgetAmount, setNewBudgetAmount] = useState('')
+
   const { workspace, canEdit, currency } = useWorkspace()
   const { t } = useI18n()
 
   const setBudget = useServerFn(setBudgetFn)
   const copyBudgets = useServerFn(copyBudgetsFromPreviousMonthFn)
+
+  // Derived state
+  const activeCategories = categories.filter(c => budgets.some(b => b.categoryId === c.$id && b.plannedAmount > 0))
+  const inactiveCategories = categories.filter(c => !activeCategories.find(ac => ac.$id === c.$id))
 
   const handlePrevMonth = () => {
     if (month === 1) {
@@ -147,6 +200,35 @@ export function BudgetPlanner({
         delete next[categoryId]
         return next
       })
+      onUpdate()
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : t('error_generic')
+      toast.error(errorMessage)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleAddBudget = async () => {
+    if (!workspace || !newBudgetCategory || !newBudgetAmount) return
+
+    setSaving(true)
+    try {
+      await setBudget({
+        data: {
+          workspaceId: workspace.$id,
+          categoryId: newBudgetCategory,
+          year,
+          month,
+          plannedAmount: parseFloat(newBudgetAmount),
+          currency: currency,
+        },
+      })
+      toast.success(t('budget_updated'))
+      setShowAddBudget(false)
+      setNewBudgetCategory('')
+      setNewBudgetAmount('')
       onUpdate()
     } catch (error: unknown) {
       const errorMessage =
@@ -213,19 +295,23 @@ export function BudgetPlanner({
         </CardContent>
       </Card>
 
-      {/* Copy from Previous Month */}
+      {/* Actions */}
       {canEdit && (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <Button onClick={() => setShowAddBudget(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Set Budget
+          </Button>
           <Button variant="outline" size="sm" onClick={handleCopyFromPrevious}>
             <Copy className="h-4 w-4 mr-2" />
-            Copy from Previous Month
+            Copy Previous
           </Button>
         </div>
       )}
 
       {/* Budget Categories */}
       <div className="grid gap-4 md:grid-cols-2">
-        {categories.map((category) => {
+        {activeCategories.map((category) => {
           const Icon =
             iconMap[category.icon || 'more-horizontal'] || MoreHorizontal
           const currentBudget = getBudgetForCategory(category.$id)
@@ -234,7 +320,7 @@ export function BudgetPlanner({
           const isEditing = editValue !== undefined
 
           return (
-            <Card key={category.$id}>
+            <Card key={category.$id} className="cursor-pointer transition-shadow hover:shadow-md" onClick={() => onCategoryClick(category)}>
               <CardContent className="py-4">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
@@ -297,7 +383,7 @@ export function BudgetPlanner({
 
                 {/* Budget Input */}
                 {canEdit && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <Input
                       type="number"
                       step="0.01"
@@ -324,7 +410,50 @@ export function BudgetPlanner({
             </Card>
           )
         })}
+
+        {activeCategories.length === 0 && (
+          <div className="col-span-full text-center py-12 text-muted-foreground border-2 border-dashed rounded-lg">
+            No budgets set for this month. Click "Set Budget" to get started.
+          </div>
+        )}
       </div>
+
+      <Dialog open={showAddBudget} onOpenChange={setShowAddBudget}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Set Budget Category</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Category</label>
+              <Select value={newBudgetCategory} onValueChange={setNewBudgetCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {inactiveCategories.map(cat => (
+                    <SelectItem key={cat.$id} value={cat.$id}>{cat.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Monthly Amount</label>
+              <Input
+                type="number"
+                value={newBudgetAmount}
+                onChange={(e) => setNewBudgetAmount(e.target.value)}
+                placeholder="Enter amount..."
+              />
+            </div>
+
+            <Button className="w-full" onClick={handleAddBudget} disabled={!newBudgetCategory || !newBudgetAmount || saving}>
+              {saving ? 'Saving...' : 'Set Budget'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

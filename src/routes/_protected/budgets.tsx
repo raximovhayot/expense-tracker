@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BudgetPlanner } from '@/components/budgets/budget-planner'
 import { CategoryForm } from '@/components/budgets/category-form'
 import { Card, CardContent } from '@/components/ui/card'
@@ -18,12 +17,11 @@ import {
 import {
   listBudgetItemsFn,
   deleteBudgetItemFn,
-  populateFromRecurringFn,
 } from '@/server/functions/budget-items'
 import { BudgetItemList } from '@/components/budgets/budget-item-list'
 import { BudgetItemForm } from '@/components/budgets/budget-item-form'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Plus, Edit, Trash2, MoreHorizontal, Sparkles } from 'lucide-react'
+import { Plus, Edit, Trash2, MoreHorizontal } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,7 +38,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { toast } from 'sonner'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
+import { formatCurrency } from '@/lib/currency'
 import type {
   BudgetCategories,
   MonthlyBudgets,
@@ -73,14 +84,16 @@ function BudgetsPage() {
   const [deletingCategory, setDeletingCategory] =
     useState<BudgetCategories | null>(null)
 
+  const [showCategoryList, setShowCategoryList] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<BudgetCategories | null>(null)
+
   // Budget Items State
   const [budgetItems, setBudgetItems] = useState<BudgetItems[]>([])
   const [showItemForm, setShowItemForm] = useState(false)
   const [editingItem, setEditingItem] = useState<BudgetItems | null>(null)
-  const [populating, setPopulating] = useState(false)
   const [deletingItem, setDeletingItem] = useState<BudgetItems | null>(null)
 
-  const { workspace, canEdit } = useWorkspace()
+  const { workspace, canEdit, currency } = useWorkspace()
   const { t } = useI18n()
 
   const fetchCategories = useServerFn(listCategoriesFn)
@@ -89,7 +102,6 @@ function BudgetsPage() {
   const deleteCategory = useServerFn(deleteCategoryFn)
   const fetchBudgetItems = useServerFn(listBudgetItemsFn)
   const deleteBudgetItem = useServerFn(deleteBudgetItemFn)
-  const populateFromRecurring = useServerFn(populateFromRecurringFn)
 
   const loadData = async () => {
     if (!workspace) return
@@ -170,23 +182,7 @@ function BudgetsPage() {
     }
   }
 
-  const handlePopulateFromRecurring = async () => {
-    if (!workspace) return
-    setPopulating(true)
-    try {
-      const result = await populateFromRecurring({ data: { workspaceId: workspace.$id, year, month } })
-      if (result.created > 0) {
-        toast.success(`Created ${result.created} items from recurring expenses`)
-        loadData()
-      } else {
-        toast.info('No new recurring items found for this month')
-      }
-    } catch {
-      toast.error(t('error_generic'))
-    } finally {
-      setPopulating(false)
-    }
-  }
+
 
   if (!workspace) {
     return (
@@ -222,130 +218,185 @@ function BudgetsPage() {
             Plan your monthly budgets and track spending by category
           </p>
         </div>
+        {canEdit && (
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setShowCategoryList(true)}>
+              Manage Categories
+            </Button>
+            <Button onClick={() => setShowCategoryForm(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              {t('budget_add_category')}
+            </Button>
+          </div>
+        )}
       </div>
 
-      <Tabs defaultValue="planner" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="planner">{t('budget_monthly_plan')}</TabsTrigger>
-          <TabsTrigger value="items">Detailed Items</TabsTrigger>
-          <TabsTrigger value="categories">{t('budget_categories')}</TabsTrigger>
-        </TabsList>
+      <BudgetPlanner
+        categories={categories}
+        budgets={budgets}
+        overview={overview}
+        year={year}
+        month={month}
+        onMonthChange={handleMonthChange}
+        onUpdate={loadData}
+        onCategoryClick={setSelectedCategory}
+      />
 
-        <TabsContent value="planner">
-          <BudgetPlanner
-            categories={categories}
-            budgets={budgets}
-            overview={overview}
-            year={year}
-            month={month}
-            onMonthChange={handleMonthChange}
-            onUpdate={loadData}
-          />
-        </TabsContent>
-
-        <TabsContent value="items">
-          <div className="space-y-4">
-            {canEdit && (
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={handlePopulateFromRecurring} disabled={populating}>
-                  <Sparkles className="h-4 w-4 mr-2" />
-                  Populate from Recurring
-                </Button>
-                <Button onClick={() => setShowItemForm(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Item
-                </Button>
-              </div>
-            )}
-            <BudgetItemList
-              items={budgetItems}
-              categories={categories}
-              onEdit={handleEditItem}
-              onDelete={setDeletingItem}
-            />
-          </div>
-        </TabsContent>
-
-        <TabsContent value="categories">
-          <div className="space-y-4">
-            {canEdit && (
-              <div className="flex justify-end">
-                <Button onClick={() => setShowCategoryForm(true)}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  {t('budget_add_category')}
-                </Button>
-              </div>
-            )}
-
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {categories.map((category) => (
-                <Card key={category.$id} className="card-sleek">
-                  <CardContent className="py-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+      {/* Category List Dialog (Management) */}
+      <Dialog open={showCategoryList} onOpenChange={setShowCategoryList}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Manage Categories</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 pt-4">
+            {categories.map((category) => (
+              <Card key={category.$id} className="card-sleek">
+                <CardContent className="py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="h-10 w-10 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: `${category.color}20` }}
+                      >
                         <div
-                          className="h-10 w-10 rounded-lg flex items-center justify-center"
-                          style={{ backgroundColor: `${category.color}20` }}
-                        >
-                          <div
-                            className="h-4 w-4 rounded-full"
-                            style={{
-                              backgroundColor: category.color || '#9B87F5',
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <h3 className="font-medium">{category.name}</h3>
-                          {category.isDefault && (
-                            <span className="text-xs text-muted-foreground">
-                              Default
-                            </span>
-                          )}
-                        </div>
+                          className="h-4 w-4 rounded-full"
+                          style={{
+                            backgroundColor: category.color || '#9B87F5',
+                          }}
+                        />
                       </div>
-
-                      {canEdit && !category.isDefault && (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => handleEditCategory(category)}
-                            >
-                              <Edit className="h-4 w-4 mr-2" />
-                              {t('edit')}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-destructive"
-                              onClick={() => setDeletingCategory(category)}
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              {t('delete')}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
+                      <div>
+                        <h3 className="font-medium">{category.name}</h3>
+                        {category.isDefault && (
+                          <span className="text-xs text-muted-foreground">
+                            Default
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+
+                    {canEdit && !category.isDefault && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              handleEditCategory(category)
+                              setShowCategoryList(false) // Close list to focus on form
+                            }}
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            {t('edit')}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => setDeletingCategory(category)}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            {t('delete')}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </TabsContent>
-      </Tabs>
+        </DialogContent>
+      </Dialog>
 
       {/* Category Form */}
       <CategoryForm
         open={showCategoryForm}
-        onOpenChange={handleCloseCategoryForm}
+        onOpenChange={(open) => {
+          handleCloseCategoryForm(open)
+          if (!open && showCategoryList) {
+            // If we were getting back from editing, maybe reopen list? 
+            // Simplify: just close. User can reopen.
+          }
+        }}
         editingCategory={editingCategory}
         onSuccess={loadData}
       />
 
+      {/* Category Details Sheet */}
+      <Sheet open={!!selectedCategory} onOpenChange={(open) => !open && setSelectedCategory(null)}>
+        <SheetContent className="overflow-y-auto sm:max-w-xl w-full">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              <div
+                className="w-3 h-10 rounded-full"
+                style={{ backgroundColor: selectedCategory?.color || '#333' }}
+              />
+              {selectedCategory?.name} Details
+            </SheetTitle>
+          </SheetHeader>
+
+          <div className="mt-6 space-y-6">
+            {/* Summary for this category */}
+            {(() => {
+              if (!selectedCategory) return null
+              const overviewItem = overview.find(o => o.category.$id === selectedCategory.$id)
+              if (!overviewItem) return <p>No budget data.</p>
+
+
+              return (
+                <div className="grid grid-cols-2 gap-4">
+                  <Card>
+                    <CardContent className="p-4">
+                      <p className="text-sm text-muted-foreground">Planned</p>
+                      <p className="text-xl font-bold">{formatCurrency(overviewItem.planned, currency)}</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="p-4">
+                      <p className="text-sm text-muted-foreground">Spent</p>
+                      <p className="text-xl font-bold">{formatCurrency(overviewItem.spent, currency)}</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              )
+            })()}
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-medium">Transactions</h3>
+                {canEdit && (
+                  <Button size="sm" onClick={() => setShowItemForm(true)}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Item
+                  </Button>
+                )}
+              </div>
+
+              <BudgetItemList
+                items={budgetItems.filter(i => selectedCategory && i.categoryId === selectedCategory.$id)}
+                categories={categories}
+                onEdit={(item) => {
+                  // Close sheet? No, open edit form on top? 
+                  // BudgetItemForm is a Dialog, so it should stack.
+                  handleEditItem(item)
+                }}
+                onDelete={setDeletingItem}
+              />
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
       {/* Budget Item Form */}
+      {/* We need to pass the selected category to the form via default values if we are adding new? 
+          BudgetItemForm takes 'categories'. 
+          If I click 'Add Item' inside the sheet, I probably want it pre-filled with the current category.
+          BudgetItemForm implementation check needed. It likely uses a select for category.
+          I can pass a 'defaultCategoryId' if I modify it, or just let user pick.
+          For now, just standard form.
+      */}
       <BudgetItemForm
         open={showItemForm}
         onOpenChange={(open) => {
@@ -356,6 +407,7 @@ function BudgetsPage() {
         month={month}
         categories={categories}
         editingItem={editingItem}
+        // preSelectedCategoryId={selectedCategory?.$id} // Optional enhancement for later
         onSuccess={loadData}
       />
 

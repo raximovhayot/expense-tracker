@@ -19,13 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+
 import { toast } from 'sonner'
 import { createCategoryFn, updateCategoryFn } from '@/server/functions/budgets'
 import { useWorkspace } from '@/hooks/use-workspace'
@@ -42,6 +36,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
+
 const iconOptions = [
   { value: 'home', label: 'Home' },
   { value: 'utensils', label: 'Food' },
@@ -53,7 +48,82 @@ const iconOptions = [
   { value: 'book', label: 'Education' },
   { value: 'user', label: 'Personal' },
   { value: 'more-horizontal', label: 'Other' },
+  { value: 'briefcase', label: 'Work' },
+  { value: 'gift', label: 'Gifts' },
+  { value: 'coffee', label: 'Coffee' },
+  { value: 'smartphone', label: 'Phone' },
+  { value: 'wifi', label: 'Internet' },
+  { value: 'music', label: 'Music' },
+  { value: 'plane', label: 'Travel' },
+  { value: 'baby', label: 'Baby' },
+  { value: 'paw-print', label: 'Pets' },
+  { value: 'dumbbell', label: 'Fitness' },
+  { value: 'shield', label: 'Insurance' },
+  { value: 'landmark', label: 'Bank' },
+  { value: 'receipt', label: 'Bills' },
+  { value: 'wrench', label: 'Maintenance' },
 ]
+
+import {
+  Home,
+  Utensils,
+  Car,
+  Zap,
+  Heart,
+  Film,
+  ShoppingBag,
+  Book,
+  User,
+  MoreHorizontal,
+  Briefcase,
+  Gift,
+  Coffee,
+  Smartphone,
+  Wifi,
+  Music,
+  Plane,
+  Baby, // Note: verify generic lucide export, usually Baby is available. checking imports.
+  PawPrint,
+  Dumbbell,
+  Shield,
+  Landmark,
+  Receipt,
+  Wrench
+} from 'lucide-react'
+
+// Define this map locally for the form
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  home: Home,
+  utensils: Utensils,
+  car: Car,
+  zap: Zap,
+  heart: Heart,
+  film: Film,
+  'shopping-bag': ShoppingBag,
+  book: Book,
+  user: User,
+  'more-horizontal': MoreHorizontal,
+  briefcase: Briefcase,
+  gift: Gift,
+  coffee: Coffee,
+  smartphone: Smartphone,
+  wifi: Wifi,
+  music: Music,
+  plane: Plane,
+  baby: Baby,
+  'paw-print': PawPrint,
+  dumbbell: Dumbbell,
+  shield: Shield,
+  landmark: Landmark,
+  receipt: Receipt,
+  wrench: Wrench
+}
+
+function IconPreview({ name }: { name: string }) {
+  // Simple mapping for display in the form
+  const Icon = iconMap[name] || MoreHorizontal
+  return <Icon className="h-4 w-4" />
+}
 
 const colorOptions = [
   { value: '#9B87F5', label: 'Purple' },
@@ -189,23 +259,31 @@ export function CategoryForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t('budget_category_icon')}</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || undefined}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select icon" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {iconOptions.map((icon) => (
-                        <SelectItem key={icon.value} value={icon.value}>
-                          {icon.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <div className="grid grid-cols-5 gap-2 border rounded-md p-2 max-h-[200px] overflow-y-auto">
+                      {iconOptions.map((icon) => {
+                        const isSelected = field.value === icon.value
+                        return (
+                          <button
+                            key={icon.value}
+                            type="button"
+                            onClick={() => field.onChange(icon.value)}
+                            className={`flex flex-col items-center justify-center p-2 rounded-md hover:bg-accent transition-colors ${isSelected ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-background'}`}
+                            title={icon.label}
+                          >
+                            <div className="h-5 w-5 mb-1 flex items-center justify-center">
+                              {/* We can't easily render the dynamic icon component here without importing all of them or having a map available in this scope. 
+                                   The iconMap was in budget-planner. Let's move iconMap to a shared utility or duplicate/expand it here. 
+                                   Actually, for the form to look good, I should probably render the icons.
+                                   Let's just use a simple text/icon placeholder or better yet, import the icons.
+                               */}
+                              <IconPreview name={icon.value} />
+                            </div>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
