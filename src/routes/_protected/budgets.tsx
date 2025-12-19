@@ -3,7 +3,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { Button } from '@/components/ui/button'
 import { BudgetPlanner } from '@/components/budgets/budget-planner'
-import { CategoryForm } from '@/components/budgets/category-form'
 import { Card, CardContent } from '@/components/ui/card'
 import { PageContainer } from '@/components/layout/page-container'
 import { useWorkspace } from '@/hooks/use-workspace'
@@ -12,7 +11,7 @@ import {
   listCategoriesFn,
   listMonthlyBudgetsFn,
   getBudgetOverviewFn,
-  deleteCategoryFn,
+
 } from '@/server/functions/budgets'
 import {
   listBudgetItemsFn,
@@ -21,13 +20,8 @@ import {
 import { BudgetItemList } from '@/components/budgets/budget-item-list'
 import { BudgetItemForm } from '@/components/budgets/budget-item-form'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Plus, Edit, Trash2, MoreHorizontal } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { Plus } from 'lucide-react'
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,12 +32,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import {
   Sheet,
@@ -78,13 +66,8 @@ function BudgetsPage() {
   const [overview, setOverview] = useState<BudgetOverviewItem[]>([])
   const [year, setYear] = useState(new Date().getFullYear())
   const [month, setMonth] = useState(new Date().getMonth() + 1)
-  const [showCategoryForm, setShowCategoryForm] = useState(false)
-  const [editingCategory, setEditingCategory] =
-    useState<BudgetCategories | null>(null)
-  const [deletingCategory, setDeletingCategory] =
-    useState<BudgetCategories | null>(null)
 
-  const [showCategoryList, setShowCategoryList] = useState(false)
+
   const [selectedCategory, setSelectedCategory] = useState<BudgetCategories | null>(null)
 
   // Budget Items State
@@ -99,7 +82,7 @@ function BudgetsPage() {
   const fetchCategories = useServerFn(listCategoriesFn)
   const fetchBudgets = useServerFn(listMonthlyBudgetsFn)
   const fetchOverview = useServerFn(getBudgetOverviewFn)
-  const deleteCategory = useServerFn(deleteCategoryFn)
+
   const fetchBudgetItems = useServerFn(listBudgetItemsFn)
   const deleteBudgetItem = useServerFn(deleteBudgetItemFn)
 
@@ -136,33 +119,7 @@ function BudgetsPage() {
     setMonth(newMonth)
   }
 
-  const handleEditCategory = (category: BudgetCategories) => {
-    setEditingCategory(category)
-    setShowCategoryForm(true)
-  }
 
-  const handleCloseCategoryForm = (open: boolean) => {
-    setShowCategoryForm(open)
-    if (!open) {
-      setEditingCategory(null)
-    }
-  }
-
-  const handleDeleteCategory = async () => {
-    if (!deletingCategory) return
-
-    try {
-      await deleteCategory({ data: { id: deletingCategory.$id } })
-      toast.success(t('budget_category_deleted'))
-      loadData()
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : t('error_generic')
-      toast.error(errorMessage)
-    } finally {
-      setDeletingCategory(null)
-    }
-  }
 
   const handleEditItem = (item: BudgetItems) => {
     setEditingItem(item)
@@ -220,13 +177,7 @@ function BudgetsPage() {
         </div>
         {canEdit && (
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setShowCategoryList(true)}>
-              Manage Categories
-            </Button>
-            <Button onClick={() => setShowCategoryForm(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              {t('budget_add_category')}
-            </Button>
+            {/* Category management moved to settings */}
           </div>
         )}
       </div>
@@ -242,87 +193,9 @@ function BudgetsPage() {
         onCategoryClick={setSelectedCategory}
       />
 
-      {/* Category List Dialog (Management) */}
-      <Dialog open={showCategoryList} onOpenChange={setShowCategoryList}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Manage Categories</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3 pt-4">
-            {categories.map((category) => (
-              <Card key={category.$id} className="card-sleek">
-                <CardContent className="py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="h-10 w-10 rounded-lg flex items-center justify-center"
-                        style={{ backgroundColor: `${category.color}20` }}
-                      >
-                        <div
-                          className="h-4 w-4 rounded-full"
-                          style={{
-                            backgroundColor: category.color || '#9B87F5',
-                          }}
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-medium">{category.name}</h3>
-                        {category.isDefault && (
-                          <span className="text-xs text-muted-foreground">
-                            Default
-                          </span>
-                        )}
-                      </div>
-                    </div>
 
-                    {canEdit && !category.isDefault && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              handleEditCategory(category)
-                              setShowCategoryList(false) // Close list to focus on form
-                            }}
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            {t('edit')}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-destructive"
-                            onClick={() => setDeletingCategory(category)}
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            {t('delete')}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* Category Form */}
-      <CategoryForm
-        open={showCategoryForm}
-        onOpenChange={(open) => {
-          handleCloseCategoryForm(open)
-          if (!open && showCategoryList) {
-            // If we were getting back from editing, maybe reopen list? 
-            // Simplify: just close. User can reopen.
-          }
-        }}
-        editingCategory={editingCategory}
-        onSuccess={loadData}
-      />
+
 
       {/* Category Details Sheet */}
       <Sheet open={!!selectedCategory} onOpenChange={(open) => !open && setSelectedCategory(null)}>
@@ -424,31 +297,8 @@ function BudgetsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Delete Confirmation */}
-      <AlertDialog
-        open={!!deletingCategory}
-        onOpenChange={() => setDeletingCategory(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('delete')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete "{deletingCategory?.name}"? This
-              will also delete all associated budgets.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteCategory}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {t('delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </PageContainer>
   )
 }
+
+

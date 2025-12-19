@@ -56,32 +56,7 @@ interface BudgetPlannerProps {
   onUpdate: () => void
 }
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  home: Home,
-  utensils: Utensils,
-  car: Car,
-  zap: Zap,
-  heart: Heart,
-  film: Film,
-  'shopping-bag': ShoppingBag,
-  book: Book,
-  user: User,
-  'more-horizontal': MoreHorizontal,
-  briefcase: Briefcase,
-  gift: Gift,
-  coffee: Coffee,
-  smartphone: Smartphone,
-  wifi: Wifi,
-  music: Music,
-  plane: Plane,
-  baby: Baby,
-  'paw-print': PawPrint,
-  dumbbell: Dumbbell,
-  shield: Shield,
-  landmark: Landmark,
-  receipt: Receipt,
-  wrench: Wrench
-}
+
 
 const monthNames = [
   'January',
@@ -112,22 +87,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Plus } from 'lucide-react'
-import {
-  Briefcase,
-  Gift,
-  Coffee,
-  Smartphone,
-  Wifi,
-  Music,
-  Plane,
-  Baby,
-  PawPrint,
-  Dumbbell,
-  Shield,
-  Landmark,
-  Receipt,
-  Wrench
-} from 'lucide-react'
+import { CategoryIcon } from './category-icon'
 
 export function BudgetPlanner({
   categories,
@@ -139,7 +99,7 @@ export function BudgetPlanner({
   onUpdate,
   onCategoryClick,
 }: BudgetPlannerProps) {
-  const [editingBudgets, setEditingBudgets] = useState<Record<string, number>>({})
+
   const [saving, setSaving] = useState(false)
   const [showAddBudget, setShowAddBudget] = useState(false)
   const [newBudgetCategory, setNewBudgetCategory] = useState<string>('')
@@ -153,7 +113,6 @@ export function BudgetPlanner({
 
   // Derived state
   const activeCategories = categories.filter(c => budgets.some(b => b.categoryId === c.$id && b.plannedAmount > 0))
-  const inactiveCategories = categories.filter(c => !activeCategories.find(ac => ac.$id === c.$id))
 
   const handlePrevMonth = () => {
     if (month === 1) {
@@ -171,44 +130,6 @@ export function BudgetPlanner({
     }
   }
 
-  const handleBudgetChange = (categoryId: string, value: string) => {
-    const amount = parseFloat(value) || 0
-    setEditingBudgets((prev) => ({ ...prev, [categoryId]: amount }))
-  }
-
-  const handleSaveBudget = async (categoryId: string) => {
-    if (!workspace) return
-
-    const amount = editingBudgets[categoryId]
-    if (amount === undefined) return
-
-    setSaving(true)
-    try {
-      await setBudget({
-        data: {
-          workspaceId: workspace.$id,
-          categoryId,
-          year,
-          month,
-          plannedAmount: amount,
-          currency: currency,
-        },
-      })
-      toast.success(t('budget_updated'))
-      setEditingBudgets((prev) => {
-        const next = { ...prev }
-        delete next[categoryId]
-        return next
-      })
-      onUpdate()
-    } catch (error: unknown) {
-      const errorMessage =
-        error instanceof Error ? error.message : t('error_generic')
-      toast.error(errorMessage)
-    } finally {
-      setSaving(false)
-    }
-  }
 
   const handleAddBudget = async () => {
     if (!workspace || !newBudgetCategory || !newBudgetAmount) return
@@ -312,12 +233,10 @@ export function BudgetPlanner({
       {/* Budget Categories */}
       <div className="grid gap-4 md:grid-cols-2">
         {activeCategories.map((category) => {
-          const Icon =
-            iconMap[category.icon || 'more-horizontal'] || MoreHorizontal
+
           const currentBudget = getBudgetForCategory(category.$id)
           const overviewItem = getOverviewForCategory(category.$id)
-          const editValue = editingBudgets[category.$id]
-          const isEditing = editValue !== undefined
+
 
           return (
             <Card key={category.$id} className="cursor-pointer transition-shadow hover:shadow-md" onClick={() => onCategoryClick(category)}>
@@ -329,7 +248,7 @@ export function BudgetPlanner({
                       style={{ backgroundColor: `${category.color}20` }}
                     >
                       <span style={{ color: category.color || undefined }}>
-                        <Icon className="h-5 w-5" />
+                        <CategoryIcon name={category.icon} className="h-5 w-5" />
                       </span>
                     </div>
                     <div>
@@ -381,31 +300,7 @@ export function BudgetPlanner({
                   </div>
                 )}
 
-                {/* Budget Input */}
-                {canEdit && (
-                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder={t('budget_set_amount')}
-                      value={isEditing ? editValue : currentBudget || ''}
-                      onChange={(e) =>
-                        handleBudgetChange(category.$id, e.target.value)
-                      }
-                      className="flex-1"
-                    />
-                    {isEditing && (
-                      <Button
-                        size="icon"
-                        onClick={() => handleSaveBudget(category.$id)}
-                        disabled={saving}
-                      >
-                        <Save className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                )}
+
               </CardContent>
             </Card>
           )
@@ -431,9 +326,14 @@ export function BudgetPlanner({
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {inactiveCategories.map(cat => (
-                    <SelectItem key={cat.$id} value={cat.$id}>{cat.name}</SelectItem>
-                  ))}
+                  {categories.map(cat => {
+                    const isActive = activeCategories.some(ac => ac.$id === cat.$id)
+                    return (
+                      <SelectItem key={cat.$id} value={cat.$id}>
+                        {cat.name} {isActive ? '(Current)' : ''}
+                      </SelectItem>
+                    )
+                  })}
                 </SelectContent>
               </Select>
             </div>

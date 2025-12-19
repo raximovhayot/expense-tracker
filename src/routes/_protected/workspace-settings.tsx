@@ -45,12 +45,25 @@ import {
   listInvitationsFn,
   cancelInvitationFn,
 } from '@/server/functions/workspaces'
+import {
+  listCategoriesFn,
+  deleteCategoryFn,
+} from '@/server/functions/budgets'
+import { CategoryForm } from '@/components/budgets/category-form'
+import { CategoryIcon } from '@/components/budgets/category-icon'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Loader2, UserPlus, Trash2, Mail, X } from 'lucide-react'
+import { Loader2, UserPlus, Trash2, Mail, X, Plus, Edit, MoreHorizontal } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import type { TranslationKey } from '@/lib/i18n'
 import type {
   WorkspaceMembers,
   WorkspaceInvitations,
+  BudgetCategories,
 } from '@/server/lib/appwrite.types'
 
 export const Route = createFileRoute('/_protected/workspace-settings')({
@@ -72,6 +85,14 @@ function WorkspaceSettingsPage() {
   const [invitations, setInvitations] = useState<WorkspaceInvitations[]>([])
   const [showInviteDialog, setShowInviteDialog] = useState(false)
 
+  // Category State
+  const [categories, setCategories] = useState<BudgetCategories[]>([])
+  const [showCategoryForm, setShowCategoryForm] = useState(false)
+  const [editingCategory, setEditingCategory] = useState<BudgetCategories | null>(null)
+  const [deletingCategory, setDeletingCategory] = useState<BudgetCategories | null>(null)
+
+
+
   const { workspace, isOwner, updateWorkspace, removeWorkspace } =
     useWorkspace()
   const { t } = useI18n()
@@ -82,6 +103,11 @@ function WorkspaceSettingsPage() {
   const fetchMembers = useServerFn(listMembersFn)
   const fetchInvitations = useServerFn(listInvitationsFn)
   const cancelInvitation = useServerFn(cancelInvitationFn)
+
+  const fetchCategories = useServerFn(listCategoriesFn)
+  const deleteCategory = useServerFn(deleteCategoryFn)
+
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -96,13 +122,16 @@ function WorkspaceSettingsPage() {
 
     setLoading(true)
     try {
-      const [membersResult, invitationsResult] = await Promise.all([
-        fetchMembers({ data: { workspaceId: workspace.$id } }),
-        fetchInvitations({ data: { workspaceId: workspace.$id } }),
-      ])
+      const [membersResult, invitationsResult, categoriesResult] =
+        await Promise.all([
+          fetchMembers({ data: { workspaceId: workspace.$id } }),
+          fetchInvitations({ data: { workspaceId: workspace.$id } }),
+          fetchCategories({ data: { workspaceId: workspace.$id } }),
+        ])
 
       setMembers(membersResult.members)
       setInvitations(invitationsResult.invitations)
+      setCategories(categoriesResult.categories)
 
       form.reset({
         name: workspace.name,
@@ -174,6 +203,34 @@ function WorkspaceSettingsPage() {
       const errorMessage =
         error instanceof Error ? error.message : t('error_generic')
       toast.error(errorMessage)
+    }
+  }
+
+  const handleDeleteCategory = async () => {
+    if (!deletingCategory) return
+
+    try {
+      await deleteCategory({ data: { id: deletingCategory.$id } })
+      toast.success(t('budget_category_deleted'))
+      loadData()
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : t('error_generic')
+      toast.error(errorMessage)
+    } finally {
+      setDeletingCategory(null)
+    }
+  }
+
+  const handleEditCategory = (category: BudgetCategories) => {
+    setEditingCategory(category)
+    setShowCategoryForm(true)
+  }
+
+  const handleCloseCategoryForm = (open: boolean) => {
+    setShowCategoryForm(open)
+    if (!open) {
+      setEditingCategory(null)
     }
   }
 
@@ -258,6 +315,83 @@ function WorkspaceSettingsPage() {
               )}
             </form>
           </Form>
+        </CardContent>
+      </Card>
+
+      {/* Budget Categories */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>{t('budget_categories')}</CardTitle>
+              <CardDescription>
+                Manage categories for your budget
+              </CardDescription>
+            </div>
+            {isOwner && (
+              <Button onClick={() => setShowCategoryForm(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                {t('budget_add_category')}
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {categories.map((category) => (
+              <Card key={category.$id} className="card-sleek">
+                <CardContent className="py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="h-10 w-10 rounded-lg flex items-center justify-center transition-colors"
+                        style={{ backgroundColor: `${category.color}20` }}
+                      >
+                        <span style={{ color: category.color || '#9B87F5' }}>
+                          <CategoryIcon name={category.icon} className="h-5 w-5" />
+                        </span>
+                      </div>
+                      <div>
+                        <h3 className="font-medium">{category.name}</h3>
+                        {category.isDefault && (
+                          <span className="text-xs text-muted-foreground">
+                            Default
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {isOwner && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => handleEditCategory(category)}
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            {t('edit')}
+                          </DropdownMenuItem>
+                          {!category.isDefault && (
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => setDeletingCategory(category)}
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              {t('delete')}
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </CardContent>
       </Card>
 
@@ -372,6 +506,41 @@ function WorkspaceSettingsPage() {
           </CardContent>
         </Card>
       )}
+
+
+
+      {/* Category Form */}
+      <CategoryForm
+        open={showCategoryForm}
+        onOpenChange={handleCloseCategoryForm}
+        editingCategory={editingCategory}
+        onSuccess={loadData}
+      />
+
+      {/* Delete Category Confirmation */}
+      <AlertDialog
+        open={!!deletingCategory}
+        onOpenChange={() => setDeletingCategory(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('delete')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{deletingCategory?.name}"? This
+              will also delete all associated budgets.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteCategory}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t('delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Invite Dialog */}
       <InviteMemberDialog

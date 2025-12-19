@@ -36,94 +36,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
-
-const iconOptions = [
-  { value: 'home', label: 'Home' },
-  { value: 'utensils', label: 'Food' },
-  { value: 'car', label: 'Transport' },
-  { value: 'zap', label: 'Utilities' },
-  { value: 'heart', label: 'Health' },
-  { value: 'film', label: 'Entertainment' },
-  { value: 'shopping-bag', label: 'Shopping' },
-  { value: 'book', label: 'Education' },
-  { value: 'user', label: 'Personal' },
-  { value: 'more-horizontal', label: 'Other' },
-  { value: 'briefcase', label: 'Work' },
-  { value: 'gift', label: 'Gifts' },
-  { value: 'coffee', label: 'Coffee' },
-  { value: 'smartphone', label: 'Phone' },
-  { value: 'wifi', label: 'Internet' },
-  { value: 'music', label: 'Music' },
-  { value: 'plane', label: 'Travel' },
-  { value: 'baby', label: 'Baby' },
-  { value: 'paw-print', label: 'Pets' },
-  { value: 'dumbbell', label: 'Fitness' },
-  { value: 'shield', label: 'Insurance' },
-  { value: 'landmark', label: 'Bank' },
-  { value: 'receipt', label: 'Bills' },
-  { value: 'wrench', label: 'Maintenance' },
-]
-
-import {
-  Home,
-  Utensils,
-  Car,
-  Zap,
-  Heart,
-  Film,
-  ShoppingBag,
-  Book,
-  User,
-  MoreHorizontal,
-  Briefcase,
-  Gift,
-  Coffee,
-  Smartphone,
-  Wifi,
-  Music,
-  Plane,
-  Baby, // Note: verify generic lucide export, usually Baby is available. checking imports.
-  PawPrint,
-  Dumbbell,
-  Shield,
-  Landmark,
-  Receipt,
-  Wrench
-} from 'lucide-react'
-
-// Define this map locally for the form
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  home: Home,
-  utensils: Utensils,
-  car: Car,
-  zap: Zap,
-  heart: Heart,
-  film: Film,
-  'shopping-bag': ShoppingBag,
-  book: Book,
-  user: User,
-  'more-horizontal': MoreHorizontal,
-  briefcase: Briefcase,
-  gift: Gift,
-  coffee: Coffee,
-  smartphone: Smartphone,
-  wifi: Wifi,
-  music: Music,
-  plane: Plane,
-  baby: Baby,
-  'paw-print': PawPrint,
-  dumbbell: Dumbbell,
-  shield: Shield,
-  landmark: Landmark,
-  receipt: Receipt,
-  wrench: Wrench
-}
-
-function IconPreview({ name }: { name: string }) {
-  // Simple mapping for display in the form
-  const Icon = iconMap[name] || MoreHorizontal
-  return <Icon className="h-4 w-4" />
-}
+import { CategoryIcon, iconOptions } from './category-icon'
 
 const colorOptions = [
   { value: '#9B87F5', label: 'Purple' },
@@ -277,7 +190,7 @@ export function CategoryForm({
                                    Actually, for the form to look good, I should probably render the icons.
                                    Let's just use a simple text/icon placeholder or better yet, import the icons.
                                */}
-                              <IconPreview name={icon.value} />
+                              <CategoryIcon name={icon.value} className="h-4 w-4" />
                             </div>
                           </button>
                         )
