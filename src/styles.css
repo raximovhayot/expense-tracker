@@ -50,113 +50,113 @@
 }
 
 :root {
-  /* Oceanic Future Light: Clean Cool White with Deep Navy Text */
-  --background: oklch(0.98 0.01 220);
-  --foreground: oklch(0.15 0.04 230);
+  /* Emerald Future Light: Pale Mint White with Deep Green Text */
+  --background: oklch(0.98 0.01 160);
+  --foreground: oklch(0.2 0.05 150);
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.04 230);
+  --card-foreground: oklch(0.2 0.05 150);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.04 230);
+  --popover-foreground: oklch(0.2 0.05 150);
 
-  --primary: oklch(0.55 0.15 230);
-  /* Deep Ocean Blue */
-  --primary-foreground: oklch(0.98 0.01 220);
+  --primary: oklch(0.55 0.18 150);
+  /* Emerald Green */
+  --primary-foreground: oklch(0.98 0.01 160);
 
-  --secondary: oklch(0.96 0.01 220);
-  --secondary-foreground: oklch(0.3 0.04 230);
+  --secondary: oklch(0.96 0.02 160);
+  --secondary-foreground: oklch(0.25 0.05 150);
 
-  --muted: oklch(0.96 0.01 220);
-  --muted-foreground: oklch(0.5 0.04 230);
+  --muted: oklch(0.96 0.02 160);
+  --muted-foreground: oklch(0.5 0.05 150);
 
-  --accent: oklch(0.94 0.02 220);
-  --accent-foreground: oklch(0.3 0.04 230);
+  --accent: oklch(0.94 0.03 160);
+  --accent-foreground: oklch(0.25 0.05 150);
 
   --destructive: oklch(0.6 0.18 20);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.92 0.01 220);
-  --input: oklch(0.92 0.01 220);
-  --ring: oklch(0.55 0.15 230);
+  --border: oklch(0.90 0.02 160);
+  --input: oklch(0.90 0.02 160);
+  --ring: oklch(0.55 0.18 150);
 
-  /* Chart Colors - Oceanic Spectrum */
-  --chart-1: oklch(0.55 0.15 230);
-  /* Deep Blue */
-  --chart-2: oklch(0.65 0.15 200);
-  /* Cyan */
-  --chart-3: oklch(0.7 0.12 180);
-  /* Teal */
-  --chart-4: oklch(0.75 0.15 90);
+  /* Chart Colors - Emerald/Gold Spectrum */
+  --chart-1: oklch(0.6 0.18 150);
+  /* Emerald */
+  --chart-2: oklch(0.8 0.18 85);
   /* Gold */
-  --chart-5: oklch(0.6 0.12 300);
-  /* Purple */
+  --chart-3: oklch(0.65 0.15 180);
+  /* Teal */
+  --chart-4: oklch(0.85 0.2 130);
+  /* Lime */
+  --chart-5: oklch(0.6 0.05 250);
+  /* Slate */
 
   --radius: 0.75rem;
 
-  --sidebar: oklch(0.98 0.01 220);
-  --sidebar-foreground: oklch(0.3 0.04 230);
-  --sidebar-primary: oklch(0.55 0.15 230);
-  --sidebar-primary-foreground: oklch(0.98 0.01 220);
-  --sidebar-accent: oklch(0.95 0.02 220);
-  --sidebar-accent-foreground: oklch(0.2 0.04 230);
-  --sidebar-border: oklch(0.92 0.01 220);
-  --sidebar-ring: oklch(0.55 0.15 230);
+  --sidebar: oklch(0.98 0.01 160);
+  --sidebar-foreground: oklch(0.25 0.05 150);
+  --sidebar-primary: oklch(0.55 0.18 150);
+  --sidebar-primary-foreground: oklch(0.98 0.01 160);
+  --sidebar-accent: oklch(0.94 0.03 160);
+  --sidebar-accent-foreground: oklch(0.25 0.05 150);
+  --sidebar-border: oklch(0.90 0.02 160);
+  --sidebar-ring: oklch(0.55 0.18 150);
 }
 
 .dark {
-  /* Oceanic Future Dark: Deep Midnight Navy */
-  --background: oklch(0.15 0.04 230);
-  /* Deep Navy */
-  --foreground: oklch(0.96 0.01 220);
+  /* Emerald Future Dark: Deep Jungle with Neon Mint */
+  --background: oklch(0.12 0.04 160);
+  /* Deep Dark Teal */
+  --foreground: oklch(0.98 0.01 160);
 
-  --card: oklch(0.18 0.04 230);
-  /* Slightly lighter navy */
-  --card-foreground: oklch(0.96 0.01 220);
+  --card: oklch(0.14 0.05 160);
+  /* Darker Pine */
+  --card-foreground: oklch(0.98 0.01 160);
 
-  --popover: oklch(0.18 0.04 230);
-  --popover-foreground: oklch(0.96 0.01 220);
+  --popover: oklch(0.14 0.05 160);
+  --popover-foreground: oklch(0.98 0.01 160);
 
-  --primary: oklch(0.7 0.18 200);
-  /* Electric Cyan */
-  --primary-foreground: oklch(0.15 0.04 230);
+  --primary: oklch(0.7 0.2 150);
+  /* Neon Mint */
+  --primary-foreground: oklch(0.12 0.04 160);
 
-  --secondary: oklch(0.22 0.05 230);
-  --secondary-foreground: oklch(0.96 0.01 220);
+  --secondary: oklch(0.18 0.06 160);
+  --secondary-foreground: oklch(0.98 0.01 160);
 
-  --muted: oklch(0.22 0.05 230);
-  --muted-foreground: oklch(0.7 0.04 230);
+  --muted: oklch(0.18 0.06 160);
+  --muted-foreground: oklch(0.7 0.05 160);
 
-  --accent: oklch(0.25 0.06 230);
-  --accent-foreground: oklch(0.96 0.01 220);
+  --accent: oklch(0.22 0.08 160);
+  --accent-foreground: oklch(0.98 0.01 160);
 
   --destructive: oklch(0.4 0.15 20);
   --destructive-foreground: oklch(0.96 0 0);
 
-  --border: oklch(0.25 0.05 230);
-  --input: oklch(0.25 0.05 230);
-  --ring: oklch(0.7 0.18 200);
+  --border: oklch(0.22 0.06 160);
+  --input: oklch(0.22 0.06 160);
+  --ring: oklch(0.7 0.2 150);
 
-  /* Chart Colors - Neon Ocean */
-  --chart-1: oklch(0.7 0.18 200);
-  /* Electric Cyan */
-  --chart-2: oklch(0.65 0.18 250);
-  /* Neon Blue */
-  --chart-3: oklch(0.8 0.15 170);
-  /* Bright Teal */
-  --chart-4: oklch(0.85 0.15 90);
-  /* Electric Lime/Gold */
-  --chart-5: oklch(0.7 0.2 320);
-  /* Magenta */
+  /* Chart Colors - Neon Jungle */
+  --chart-1: oklch(0.7 0.2 150);
+  /* Neon Mint */
+  --chart-2: oklch(0.85 0.18 85);
+  /* Bright Gold */
+  --chart-3: oklch(0.75 0.15 180);
+  /* Cyan */
+  --chart-4: oklch(0.85 0.2 130);
+  /* Lime */
+  --chart-5: oklch(0.7 0.1 250);
+  /* Lavender */
 
-  --sidebar: oklch(0.15 0.04 230);
-  --sidebar-foreground: oklch(0.8 0.04 230);
-  --sidebar-primary: oklch(0.7 0.18 200);
-  --sidebar-primary-foreground: oklch(0.15 0.04 230);
-  --sidebar-accent: oklch(0.2 0.05 230);
-  --sidebar-accent-foreground: oklch(0.96 0.01 220);
-  --sidebar-border: oklch(0.25 0.05 230);
-  --sidebar-ring: oklch(0.7 0.18 200);
+  --sidebar: oklch(0.12 0.04 160);
+  --sidebar-foreground: oklch(0.8 0.04 160);
+  --sidebar-primary: oklch(0.7 0.2 150);
+  --sidebar-primary-foreground: oklch(0.12 0.04 160);
+  --sidebar-accent: oklch(0.18 0.06 160);
+  --sidebar-accent-foreground: oklch(0.98 0.01 160);
+  --sidebar-border: oklch(0.22 0.06 160);
+  --sidebar-ring: oklch(0.7 0.2 150);
 }
 
 @layer base {
