@@ -16,6 +16,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
     Table,
@@ -76,15 +77,17 @@ export function DebtList({ debts, onEdit, onUpdate, currency }: DebtListProps) {
 
     if (debts.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg bg-card text-card-foreground">
-                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                    <ArrowRight className="h-6 w-6 text-muted-foreground" />
-                </div>
-                <h3 className="text-lg font-semibold">{t('debts_no_debts')}</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                    {t('debts_add_first')}
-                </p>
-            </div>
+            <Card className="card-sleek">
+                <CardContent className="flex flex-col items-center justify-center py-12 text-center text-card-foreground">
+                    <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
+                        <ArrowRight className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-lg font-semibold">{t('debts_no_debts')}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                        {t('debts_add_first')}
+                    </p>
+                </CardContent>
+            </Card>
         )
     }
 
