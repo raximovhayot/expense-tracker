@@ -32,14 +32,16 @@ import type { Debts } from '@/server/lib/appwrite.types'
 import { useServerFn } from '@tanstack/react-start'
 import { deleteDebtFn, updateDebtFn } from '@/server/functions/debts'
 import { toast } from 'sonner'
+import { formatCurrency, type Currency } from '@/lib/currency'
 
 interface DebtListProps {
     debts: Debts[]
     onEdit: (debt: Debts) => void
     onUpdate: () => void
+    currency: string
 }
 
-export function DebtList({ debts, onEdit, onUpdate }: DebtListProps) {
+export function DebtList({ debts, onEdit, onUpdate, currency }: DebtListProps) {
     const { t } = useI18n()
     const deleteDebt = useServerFn(deleteDebtFn)
     const updateDebt = useServerFn(updateDebtFn)
@@ -87,7 +89,7 @@ export function DebtList({ debts, onEdit, onUpdate }: DebtListProps) {
     }
 
     return (
-        <div className="rounded-md border bg-card">
+        <div className="rounded-xl border border-white/20 dark:border-white/10 bg-white/50 dark:bg-black/20 backdrop-blur-sm overflow-hidden">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -129,11 +131,8 @@ export function DebtList({ debts, onEdit, onUpdate }: DebtListProps) {
                                 </Badge>
                             </TableCell>
                             <TableCell>
-                                <div className="font-mono">
-                                    {new Intl.NumberFormat('en-US', {
-                                        style: 'currency',
-                                        currency: debt.currency,
-                                    }).format(debt.amount)}
+                                <div className="font-mono font-medium">
+                                    {formatCurrency(debt.amount, (debt.currency || currency) as Currency)}
                                 </div>
                             </TableCell>
                             <TableCell>

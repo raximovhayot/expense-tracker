@@ -69,9 +69,9 @@ export const listCategoriesFn = createServerFn({ method: 'GET' })
       Query.orderAsc('name'),
     ]
 
-    if (data.type) {
-      queries.push(Query.equal('type', [data.type]))
-    }
+    // if (data.type) {
+    //   queries.push(Query.equal('type', [data.type]))
+    // }
 
     const categories = await db.budgetCategories.list(queries)
 
@@ -93,7 +93,7 @@ export const createCategoryFn = createServerFn({ method: 'POST' })
       name: data.name.trim(),
       icon: data.icon || null,
       color: data.color || '#9B87F5',
-      type: data.type,
+      // type attribute removed as it is not in the schema
       isDefault: false,
     })
 
@@ -114,7 +114,7 @@ export const updateCategoryFn = createServerFn({ method: 'POST' })
     if (data.name) updateData.name = data.name.trim()
     if (data.icon !== undefined) updateData.icon = data.icon
     if (data.color !== undefined) updateData.color = data.color
-    if (data.type) updateData.type = data.type
+    // type attribute removed as it is not in the schema
 
     const category = await db.budgetCategories.update(data.id, updateData)
     return { category }

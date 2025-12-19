@@ -11,6 +11,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Plus } from 'lucide-react'
 import type { Debts } from '@/server/lib/appwrite.types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { PageContainer } from '@/components/layout/page-container'
+import { formatCurrency } from '@/lib/currency'
 
 export const Route = createFileRoute('/_protected/debts')({
     component: DebtsPage,
@@ -22,7 +24,7 @@ function DebtsPage() {
     const [showDialog, setShowDialog] = useState(false)
     const [editingDebt, setEditingDebt] = useState<Debts | null>(null)
 
-    const { workspace, canEdit } = useWorkspace()
+    const { workspace, canEdit, currency } = useWorkspace()
     const { t } = useI18n()
     const fetchDebts = useServerFn(listDebtsFn)
 
@@ -95,47 +97,57 @@ function DebtsPage() {
     }
 
     return (
-        <div className="p-8 space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold">{t('debts_title')}</h1>
+        <PageContainer>
+            <div className="flex items-center justify-center lg:justify-between mb-6">
+                <div className="text-center lg:text-left">
+                    <h1 className="text-2xl font-bold tracking-tight">{t('debts_title')}</h1>
                     <p className="text-muted-foreground mt-1">
                         Track money lent and borrowed
                     </p>
                 </div>
                 {canEdit && (
-                    <Button onClick={() => setShowDialog(true)}>
+                    <Button onClick={() => setShowDialog(true)} className="hidden lg:flex">
                         <Plus className="h-4 w-4 mr-2" />
                         {t('debts_add')}
                     </Button>
                 )}
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
+            {/* Mobile Add Button */}
+            {canEdit && (
+                <div className="lg:hidden w-full mb-6">
+                    <Button onClick={() => setShowDialog(true)} className="w-full">
+                        <Plus className="h-4 w-4 mr-2" />
+                        {t('debts_add')}
+                    </Button>
+                </div>
+            )}
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+                <Card className="card-sleek">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
                             {t('debts_total_lent')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-green-600">
-                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalLent)}
+                        <div className="text-2xl font-bold text-emerald-500">
+                            {formatCurrency(totalLent, currency)}
                         </div>
                         <p className="text-xs text-muted-foreground">
                             Active loans given
                         </p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="card-sleek">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
                             {t('debts_total_borrowed')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-red-600">
-                            {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalBorrowed)}
+                        <div className="text-2xl font-bold text-red-500">
+                            {formatCurrency(totalBorrowed, currency)}
                         </div>
                         <p className="text-xs text-muted-foreground">
                             Active debts owed
@@ -148,6 +160,7 @@ function DebtsPage() {
                 debts={debts}
                 onEdit={handleEdit}
                 onUpdate={loadData}
+                currency={currency}
             />
 
             <DebtDialog
@@ -156,6 +169,6 @@ function DebtsPage() {
                 editingDebt={editingDebt}
                 onSuccess={loadData}
             />
-        </div>
+        </PageContainer>
     )
 }

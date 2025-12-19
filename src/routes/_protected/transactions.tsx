@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { Button } from '@/components/ui/button'
+import { PageContainer } from '@/components/layout/page-container'
 import { TransactionList } from '@/components/transactions/transaction-list'
 import { TransactionForm } from '@/components/transactions/transaction-form'
 import { useWorkspace } from '@/hooks/use-workspace'
@@ -103,11 +104,11 @@ function TransactionsPage() {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <PageContainer>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between space-y-2">
         <div>
-          <h1 className="text-2xl font-bold">{t('transaction_title')}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t('transaction_title')}</h1>
           <p className="text-muted-foreground mt-1">
             View and manage all your transactions
           </p>
@@ -136,6 +137,6 @@ function TransactionsPage() {
         categories={categories}
         onSuccess={loadData}
       />
-    </div>
+    </PageContainer>
   )
 }

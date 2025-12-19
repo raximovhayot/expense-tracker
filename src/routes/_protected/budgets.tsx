@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BudgetPlanner } from '@/components/budgets/budget-planner'
 import { CategoryForm } from '@/components/budgets/category-form'
 import { Card, CardContent } from '@/components/ui/card'
+import { PageContainer } from '@/components/layout/page-container'
 import { useWorkspace } from '@/hooks/use-workspace'
 import { useI18n } from '@/hooks/use-i18n'
 import {
@@ -212,11 +213,11 @@ function BudgetsPage() {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <PageContainer>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">{t('budget_title')}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t('budget_title')}</h1>
           <p className="text-muted-foreground mt-1">
             Plan your monthly budgets and track spending by category
           </p>
@@ -278,7 +279,7 @@ function BudgetsPage() {
 
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {categories.map((category) => (
-                <Card key={category.$id}>
+                <Card key={category.$id} className="card-sleek">
                   <CardContent className="py-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -396,6 +397,6 @@ function BudgetsPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </PageContainer>
   )
 }

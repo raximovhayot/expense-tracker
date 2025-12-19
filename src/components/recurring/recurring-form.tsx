@@ -268,7 +268,7 @@ export function RecurringForm({
                     </FormControl>
                     <SelectContent>
                       {categories
-                        .filter((c) => c.type === form.watch('type'))
+                        // .filter((c) => c.type === form.watch('type'))
                         .map((cat) => (
                           <SelectItem key={cat.$id} value={cat.$id}>
                             {cat.name}

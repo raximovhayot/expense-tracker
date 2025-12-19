@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { Button } from '@/components/ui/button'
+import { PageContainer } from '@/components/layout/page-container'
 import { RecurringList } from '@/components/recurring/recurring-list'
 import { RecurringForm } from '@/components/recurring/recurring-form'
 import { useWorkspace } from '@/hooks/use-workspace'
@@ -125,11 +126,11 @@ function RecurringPage() {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <PageContainer>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between space-y-2">
         <div>
-          <h1 className="text-2xl font-bold">{t('recurring_title')}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{t('recurring_title')}</h1>
           <p className="text-muted-foreground mt-1">
             Automate tracking of monthly, quarterly, and annual expenses
           </p>
@@ -168,6 +169,6 @@ function RecurringPage() {
         categories={categories}
         onSuccess={loadData}
       />
-    </div>
+    </PageContainer>
   )
 }

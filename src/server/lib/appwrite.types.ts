@@ -32,7 +32,7 @@ export type BudgetCategories = Models.Document & {
   name: string
   icon: string | null
   color: string | null
-  type: 'income' | 'expense'
+  // type: 'income' | 'expense'
   isDefault: boolean
 }
 

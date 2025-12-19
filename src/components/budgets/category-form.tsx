@@ -104,7 +104,7 @@ export function CategoryForm({
         name: editingCategory.name,
         icon: editingCategory.icon,
         color: editingCategory.color,
-        type: editingCategory.type as 'income' | 'expense',
+        type: 'expense',
       })
     } else {
       form.reset({
@@ -224,8 +224,8 @@ export function CategoryForm({
                         type="button"
                         onClick={() => field.onChange(color.value)}
                         className={`w-8 h-8 rounded-full border-2 transition-all ${field.value === color.value
-                            ? 'border-foreground scale-110'
-                            : 'border-transparent'
+                          ? 'border-foreground scale-110'
+                          : 'border-transparent'
                           }`}
                         style={{ backgroundColor: color.value }}
                         title={color.label}
