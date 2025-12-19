@@ -11,17 +11,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Copy,
-  Save,
-  Home,
-  Utensils,
-  Car,
-  Zap,
-  Heart,
-  Film,
-  ShoppingBag,
-  Book,
-  User,
-  MoreHorizontal,
 } from 'lucide-react'
 import {
   setBudgetFn,
@@ -180,9 +169,7 @@ export function BudgetPlanner({
     }
   }
 
-  const getBudgetForCategory = (categoryId: string) => {
-    return budgets.find((b) => b.categoryId === categoryId)?.plannedAmount || 0
-  }
+
 
   const getOverviewForCategory = (categoryId: string) => {
     return overview.find((o) => o.category.$id === categoryId)
@@ -234,7 +221,7 @@ export function BudgetPlanner({
       <div className="grid gap-4 md:grid-cols-2">
         {activeCategories.map((category) => {
 
-          const currentBudget = getBudgetForCategory(category.$id)
+
           const overviewItem = getOverviewForCategory(category.$id)
 
 

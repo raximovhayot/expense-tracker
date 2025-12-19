@@ -3,7 +3,6 @@ import { Outlet } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { AppSidebar } from './app-sidebar'
 import { MobileNav } from './mobile-nav'
-import { MobileHeader } from './mobile-header'
 import { CreateWorkspaceDialog } from '@/components/workspace/create-workspace-dialog'
 import { useWorkspace } from '@/hooks/use-workspace'
 import { useAuth } from '@/hooks/use-auth'
@@ -152,16 +151,15 @@ export function AppLayout() {
           <AppSidebar onCreateWorkspace={() => setShowCreateWorkspace(true)} />
         </div>
 
-        {/* Mobile Header & Nav */}
-        <div className="md:hidden block fixed top-0 left-0 right-0 z-50">
-          <MobileHeader onCreateWorkspace={() => setShowCreateWorkspace(true)} />
-        </div>
+        {/* Mobile Nav */}
         <div className="md:hidden block fixed bottom-0 left-0 right-0 z-50">
-          <MobileNav />
+          <div className="pointer-events-auto">
+            <MobileNav />
+          </div>
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto h-full w-full pt-[calc(3.5rem+env(safe-area-inset-top))] pb-32 md:pt-4 md:pb-4 md:px-4">
+        <main className="flex-1 overflow-auto h-full w-full pb-20 md:pb-4 md:pt-4 md:px-4 no-scrollbar">
           <div className="h-full w-full animate-enter">
             <Outlet />
           </div>

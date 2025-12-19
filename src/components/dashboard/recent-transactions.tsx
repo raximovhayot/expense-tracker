@@ -42,7 +42,7 @@ export function RecentTransactions({
             key={transaction.$id}
             className={cn(
               "flex items-center justify-between p-3 rounded-2xl transition-colors hover:bg-muted/30 group",
-              compact ? "" : "border-b border-border last:border-0"
+              compact ? "mb-1 last:mb-0" : "border-b border-border last:border-0"
             )}
           >
             <div className="flex items-center gap-4">

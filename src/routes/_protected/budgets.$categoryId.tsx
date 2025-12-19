@@ -20,7 +20,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import {
   Plus,
   ArrowLeft,
-  Trash2,
   Calendar,
   Wallet,
   AlertCircle,
@@ -70,8 +69,8 @@ function BudgetDetailsPage() {
   // Ideally, we should read from query params to keep context.
   // Let's rely on standard current date for now, or better, existing context if possible.
   // Since we don't have global context for this yet, let's use local state initialized to now.
-  const [year, setYear] = useState(new Date().getFullYear())
-  const [month, setMonth] = useState(new Date().getMonth() + 1)
+  const [year] = useState(new Date().getFullYear())
+  const [month] = useState(new Date().getMonth() + 1)
 
   const [budgetItems, setBudgetItems] = useState<BudgetItems[]>([])
   const [showItemForm, setShowItemForm] = useState(false)

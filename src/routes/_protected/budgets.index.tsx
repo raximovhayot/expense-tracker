@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
-import { Button } from '@/components/ui/button'
 import { BudgetPlanner } from '@/components/budgets/budget-planner'
-import { Card, CardContent } from '@/components/ui/card'
 import { PageContainer } from '@/components/layout/page-container'
 import { useWorkspace } from '@/hooks/use-workspace'
 import { useI18n } from '@/hooks/use-i18n'
@@ -14,12 +12,9 @@ import {
 
 } from '@/server/functions/budgets'
 import { Skeleton } from '@/components/ui/skeleton'
-import { formatCurrency } from '@/lib/currency'
-import { cn } from '@/lib/utils'
 import type {
   BudgetCategories,
   MonthlyBudgets,
-  BudgetItems,
 } from '@/server/lib/appwrite.types'
 
 interface BudgetOverviewItem {

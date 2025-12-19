@@ -146,8 +146,48 @@ function DashboardPage() {
         "min-h-full animate-enter pb-32", // Base styles + animation + mobile padding
       )}
     >
-      {/* Bento Grid Layout - Summary Area */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+
+      {/* Mobile Feed Layout (Visible on small screens) */}
+      <div className="md:hidden space-y-4">
+        <div className="relative overflow-hidden rounded-3xl bg-black text-white p-6 shadow-2xl">
+          <div className="absolute top-0 right-0 p-8 opacity-20">
+            <Building2 className="w-32 h-32 text-emerald-500" />
+          </div>
+          <div className="relative z-10 flex flex-col items-center justify-center text-center space-y-1 py-4">
+            <p className="text-xs font-medium text-emerald-400 uppercase tracking-widest">Total Balance</p>
+            <h2 className="text-4xl font-bold tracking-tighter">
+              {formatCurrency(summary?.netBalance || 0, currency)}
+            </h2>
+            <div className="flex items-center gap-2 mt-2 bg-white/10 px-3 py-1 rounded-full backdrop-blur-md">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span className="text-[10px] font-medium text-emerald-100">Live</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-white/20 p-4 rounded-2xl flex flex-col justify-center items-center shadow-sm">
+            <div className="bg-teal-500/10 p-2 rounded-full mb-2">
+              <ArrowUpRight className="h-5 w-5 text-teal-500" />
+            </div>
+            <p className="text-[10px] text-muted-foreground font-medium uppercase">Income</p>
+            <p className="text-lg font-bold">{formatCurrency(summary?.totalIncome || 0, currency)}</p>
+          </div>
+          <div className="bg-white/60 dark:bg-white/5 backdrop-blur-md border border-white/20 p-4 rounded-2xl flex flex-col justify-center items-center shadow-sm">
+            <div className="bg-red-500/10 p-2 rounded-full mb-2">
+              <ArrowDownRight className="h-5 w-5 text-red-500" />
+            </div>
+            <p className="text-[10px] text-muted-foreground font-medium uppercase">Expense</p>
+            <p className="text-lg font-bold">{formatCurrency(summary?.totalExpenses || 0, currency)}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Bento Grid (Hidden on Mobile) */}
+      <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
 
         {/* Net Balance */}
         <div className="col-span-2 card-sleek p-5 md:p-8 flex flex-col justify-between relative overflow-hidden group">
@@ -196,9 +236,9 @@ function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mt-6 md:mt-0">
         {/* Secondary Charts / Insights */}
-        <div className="lg:col-span-1 card-sleek p-6">
+        <div className="lg:col-span-1 card-sleek p-6 hidden md:block">
           <div className="flex items-center justify-between mb-6">
             <h3 className="font-semibold text-lg tracking-tight">Budget Overview</h3>
           </div>
@@ -208,12 +248,12 @@ function DashboardPage() {
         </div>
 
         {/* Recent Transactions List */}
-        <div className="lg:col-span-2 card-sleek overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-border flex items-center justify-between bg-card">
-            <h3 className="font-semibold text-lg tracking-tight">{t('dashboard_recent_transactions')}</h3>
-            <Button variant="outline" size="sm" className="h-8 text-xs">View All</Button>
+        <div className="lg:col-span-2 card-sleek overflow-hidden flex flex-col rounded-2xl md:rounded-xl bg-transparent md:bg-white/60 dark:md:bg-white/5 border-0 md:border">
+          <div className="p-4 md:p-6 border-b-0 md:border-b border-border flex items-center justify-between bg-transparent md:bg-card">
+            <h3 className="font-semibold text-lg tracking-tight ml-2 md:ml-0">{t('dashboard_recent_transactions')}</h3>
+            <Button variant="outline" size="sm" className="h-8 text-xs rounded-full bg-white/50 backdrop-blur-sm">View All</Button>
           </div>
-          <div className="overflow-y-auto max-h-[400px] p-0">
+          <div className="overflow-visible md:overflow-y-auto max-h-none md:max-h-[400px] p-0">
             <RecentTransactions
               transactions={recentTransactions}
               categories={categories}

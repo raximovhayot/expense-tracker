@@ -6,32 +6,42 @@
 
 @theme inline {
   --font-sans: 'Inter', sans-serif;
-  /* Setup Inter as default sans */
-  --font-mono: var(--font-mono);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+  
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -40,6 +50,7 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -50,113 +61,101 @@
 }
 
 :root {
-  /* Emerald Future Light: Pale Mint White with Deep Green Text */
-  --background: oklch(0.98 0.01 160);
-  --foreground: oklch(0.2 0.05 150);
+  /* Clean Minimalist Light: Pure White & Stark Black */
+  --background: oklch(1 0 0); /* Pure White */
+  --foreground: oklch(0.14 0.05 260); /* Deep Navy/Black */
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.05 150);
+  --card-foreground: oklch(0.14 0.05 260);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.05 150);
+  --popover-foreground: oklch(0.14 0.05 260);
 
-  --primary: oklch(0.55 0.18 150);
-  /* Emerald Green */
-  --primary-foreground: oklch(0.98 0.01 160);
+  /* Primary Action: Stark Black */
+  --primary: oklch(0.14 0.05 260);
+  --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.96 0.02 160);
-  --secondary-foreground: oklch(0.25 0.05 150);
+  /* Soft Gray for secondary elements */
+  --secondary: oklch(0.97 0 0); 
+  --secondary-foreground: oklch(0.14 0.05 260);
 
-  --muted: oklch(0.96 0.02 160);
-  --muted-foreground: oklch(0.5 0.05 150);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.55 0 0);
 
-  --accent: oklch(0.94 0.03 160);
-  --accent-foreground: oklch(0.25 0.05 150);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.14 0.05 260);
 
-  --destructive: oklch(0.6 0.18 20);
-  --destructive-foreground: oklch(0.98 0 0);
+  /* Functional Colors */
+  --destructive: oklch(0.57 0.25 25); /* Red */
+  --destructive-foreground: oklch(1 0 0);
 
-  --border: oklch(0.90 0.02 160);
-  --input: oklch(0.90 0.02 160);
-  --ring: oklch(0.55 0.18 150);
+  --border: oklch(0.92 0 0);
+  --input: oklch(0.92 0 0);
+  --ring: oklch(0.14 0.05 260);
 
-  /* Chart Colors - Emerald/Gold Spectrum */
-  --chart-1: oklch(0.6 0.18 150);
-  /* Emerald */
-  --chart-2: oklch(0.8 0.18 85);
-  /* Gold */
-  --chart-3: oklch(0.65 0.15 180);
-  /* Teal */
-  --chart-4: oklch(0.85 0.2 130);
-  /* Lime */
-  --chart-5: oklch(0.6 0.05 250);
-  /* Slate */
+  /* Chart Colors based on design */
+  --chart-1: oklch(0.14 0.05 260); /* Black (Summary) */
+  --chart-2: oklch(0.57 0.25 25); /* Red (Expenses) */
+  --chart-3: oklch(0.55 0.28 285); /* Purple (Investment) */
+  --chart-4: oklch(0.85 0.18 85); /* Amber/Gold (Savings) */
+  --chart-5: oklch(0.7 0.15 150); /* Green placeholder */
 
-  --radius: 0.75rem;
+  --radius: 1.25rem; /* Rounded 20px */
 
-  --sidebar: oklch(0.98 0.01 160);
-  --sidebar-foreground: oklch(0.25 0.05 150);
-  --sidebar-primary: oklch(0.55 0.18 150);
-  --sidebar-primary-foreground: oklch(0.98 0.01 160);
-  --sidebar-accent: oklch(0.94 0.03 160);
-  --sidebar-accent-foreground: oklch(0.25 0.05 150);
-  --sidebar-border: oklch(0.90 0.02 160);
-  --sidebar-ring: oklch(0.55 0.18 150);
+  --sidebar: oklch(0.98 0 0);
+  --sidebar-foreground: oklch(0.14 0.05 260);
+  --sidebar-primary: oklch(0.14 0.05 260);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.96 0 0);
+  --sidebar-accent-foreground: oklch(0.14 0.05 260);
+  --sidebar-border: oklch(0.92 0 0);
+  --sidebar-ring: oklch(0.14 0.05 260);
 }
 
 .dark {
-  /* Emerald Future Dark: Deep Jungle with Neon Mint */
-  --background: oklch(0.12 0.04 160);
-  /* Deep Dark Teal */
-  --foreground: oklch(0.98 0.01 160);
+  /* Clean Minimalist Dark: Deep Gray & Crisp White */
+  --background: oklch(0.1 0 0);
+  --foreground: oklch(1 0 0);
 
-  --card: oklch(0.14 0.05 160);
-  /* Darker Pine */
-  --card-foreground: oklch(0.98 0.01 160);
+  --card: oklch(0.12 0 0);
+  --card-foreground: oklch(1 0 0);
 
-  --popover: oklch(0.14 0.05 160);
-  --popover-foreground: oklch(0.98 0.01 160);
+  --popover: oklch(0.12 0 0);
+  --popover-foreground: oklch(1 0 0);
 
-  --primary: oklch(0.7 0.2 150);
-  /* Neon Mint */
-  --primary-foreground: oklch(0.12 0.04 160);
+  --primary: oklch(1 0 0);
+  --primary-foreground: oklch(0.1 0 0);
 
-  --secondary: oklch(0.18 0.06 160);
-  --secondary-foreground: oklch(0.98 0.01 160);
+  --secondary: oklch(0.18 0 0);
+  --secondary-foreground: oklch(1 0 0);
 
-  --muted: oklch(0.18 0.06 160);
-  --muted-foreground: oklch(0.7 0.05 160);
+  --muted: oklch(0.18 0 0);
+  --muted-foreground: oklch(0.7 0 0);
 
-  --accent: oklch(0.22 0.08 160);
-  --accent-foreground: oklch(0.98 0.01 160);
+  --accent: oklch(0.18 0 0);
+  --accent-foreground: oklch(1 0 0);
 
-  --destructive: oklch(0.4 0.15 20);
-  --destructive-foreground: oklch(0.96 0 0);
+  --destructive: oklch(0.5 0.2 25);
+  --destructive-foreground: oklch(1 0 0);
 
-  --border: oklch(0.22 0.06 160);
-  --input: oklch(0.22 0.06 160);
-  --ring: oklch(0.7 0.2 150);
+  --border: oklch(0.2 0 0);
+  --input: oklch(0.2 0 0);
+  --ring: oklch(0.8 0 0);
 
-  /* Chart Colors - Neon Jungle */
-  --chart-1: oklch(0.7 0.2 150);
-  /* Neon Mint */
-  --chart-2: oklch(0.85 0.18 85);
-  /* Bright Gold */
-  --chart-3: oklch(0.75 0.15 180);
-  /* Cyan */
-  --chart-4: oklch(0.85 0.2 130);
-  /* Lime */
-  --chart-5: oklch(0.7 0.1 250);
-  /* Lavender */
+  --chart-1: oklch(1 0 0);
+  --chart-2: oklch(0.5 0.2 25);
+  --chart-3: oklch(0.55 0.28 285);
+  --chart-4: oklch(0.85 0.18 85);
+  --chart-5: oklch(0.7 0.15 150);
 
-  --sidebar: oklch(0.12 0.04 160);
-  --sidebar-foreground: oklch(0.8 0.04 160);
-  --sidebar-primary: oklch(0.7 0.2 150);
-  --sidebar-primary-foreground: oklch(0.12 0.04 160);
-  --sidebar-accent: oklch(0.18 0.06 160);
-  --sidebar-accent-foreground: oklch(0.98 0.01 160);
-  --sidebar-border: oklch(0.22 0.06 160);
-  --sidebar-ring: oklch(0.7 0.2 150);
+  --sidebar: oklch(0.1 0 0);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(1 0 0);
+  --sidebar-primary-foreground: oklch(0.1 0 0);
+  --sidebar-accent: oklch(0.18 0 0);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.2 0 0);
+  --sidebar-ring: oklch(0.8 0 0);
 }
 
 @layer base {
@@ -174,35 +173,45 @@
 
 @layer utilities {
 
-  /* Premium Glassmorphism */
+  /* Clean Surface Utilities */
   .glass-panel {
-    @apply bg-white/5 dark:bg-black/40 backdrop-blur-xl border border-white/10 dark:border-white/5 shadow-2xl;
+    @apply bg-background/80 backdrop-blur-xl border border-border/50 shadow-sm;
   }
 
-  /* Use for Cards */
+  /* Minimalist Card */
   .glass-card {
-    @apply bg-white/60 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
+    @apply bg-card text-card-foreground border border-border/40 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 rounded-2xl;
   }
 
-  /* Sleek Fintech Card: Standard border, subtle shadow, background blur (Legacy support) */
+  /* Standard Card (Sleek) */
   .card-sleek {
-    @apply bg-white/60 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 rounded-xl;
+    @apply bg-card text-card-foreground border border-border/40 shadow-none transition-all duration-200 hover:border-border rounded-3xl;
+  }
+  
+  /* Soft Card (No border, just bg) */
+  .card-soft {
+    @apply bg-muted/30 border-none shadow-none rounded-3xl;
   }
 
   /* Typography Utilities for Data */
   .label-data {
-    @apply text-xs font-semibold uppercase tracking-wider text-muted-foreground/80;
+    @apply text-xs font-bold uppercase tracking-widest text-muted-foreground/80;
   }
 
   .value-data {
     @apply font-mono font-medium tracking-tight text-foreground;
   }
 
+  .label-tiny {
+    @apply text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wide;
+  }
+
+
   /* Animations */
   @keyframes enter {
     from {
       opacity: 0;
-      transform: translateY(10px) scale(0.95);
+      transform: translateY(10px) scale(0.98);
     }
 
     to {
@@ -212,7 +221,7 @@
   }
 
   .animate-enter {
-    animation: enter 0.5s ease-out forwards;
+    animation: enter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   /* Safe areas */
@@ -222,5 +231,10 @@
 
   .pt-safe-area-top {
     padding-top: env(safe-area-inset-top);
+  }
+
+  /* Mobile Utilities */
+  .mobile-container {
+    @apply px-4 pb-32 pt-20;
   }
 }
