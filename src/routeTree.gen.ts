@@ -20,10 +20,11 @@ import { Route as ProtectedRecurringRouteImport } from './routes/_protected/recu
 import { Route as ProtectedPreferencesRouteImport } from './routes/_protected/preferences'
 import { Route as ProtectedDebtsRouteImport } from './routes/_protected/debts'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
-import { Route as ProtectedBudgetsRouteImport } from './routes/_protected/budgets'
 import { Route as AuthSignOutRouteImport } from './routes/_auth/sign-out'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as ApiHelloRouteImport } from './routes/_api/hello'
+import { Route as ProtectedBudgetsIndexRouteImport } from './routes/_protected/budgets.index'
+import { Route as ProtectedBudgetsCategoryIdRouteImport } from './routes/_protected/budgets.$categoryId'
 
 const OauthCallbackRoute = OauthCallbackRouteImport.update({
   id: '/oauth-callback',
@@ -78,11 +79,6 @@ const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const ProtectedBudgetsRoute = ProtectedBudgetsRouteImport.update({
-  id: '/budgets',
-  path: '/budgets',
-  getParentRoute: () => ProtectedRoute,
-} as any)
 const AuthSignOutRoute = AuthSignOutRouteImport.update({
   id: '/sign-out',
   path: '/sign-out',
@@ -98,13 +94,23 @@ const ApiHelloRoute = ApiHelloRouteImport.update({
   path: '/hello',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProtectedBudgetsIndexRoute = ProtectedBudgetsIndexRouteImport.update({
+  id: '/budgets/',
+  path: '/budgets/',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedBudgetsCategoryIdRoute =
+  ProtectedBudgetsCategoryIdRouteImport.update({
+    id: '/budgets/$categoryId',
+    path: '/budgets/$categoryId',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/oauth-callback': typeof OauthCallbackRoute
   '/hello': typeof ApiHelloRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-out': typeof AuthSignOutRoute
-  '/budgets': typeof ProtectedBudgetsRoute
   '/dashboard': typeof ProtectedDashboardRoute
   '/debts': typeof ProtectedDebtsRoute
   '/preferences': typeof ProtectedPreferencesRoute
@@ -112,13 +118,14 @@ export interface FileRoutesByFullPath {
   '/transactions': typeof ProtectedTransactionsRoute
   '/workspace-settings': typeof ProtectedWorkspaceSettingsRoute
   '/': typeof PublicIndexRoute
+  '/budgets/$categoryId': typeof ProtectedBudgetsCategoryIdRoute
+  '/budgets': typeof ProtectedBudgetsIndexRoute
 }
 export interface FileRoutesByTo {
   '/oauth-callback': typeof OauthCallbackRoute
   '/hello': typeof ApiHelloRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-out': typeof AuthSignOutRoute
-  '/budgets': typeof ProtectedBudgetsRoute
   '/dashboard': typeof ProtectedDashboardRoute
   '/debts': typeof ProtectedDebtsRoute
   '/preferences': typeof ProtectedPreferencesRoute
@@ -126,6 +133,8 @@ export interface FileRoutesByTo {
   '/transactions': typeof ProtectedTransactionsRoute
   '/workspace-settings': typeof ProtectedWorkspaceSettingsRoute
   '/': typeof PublicIndexRoute
+  '/budgets/$categoryId': typeof ProtectedBudgetsCategoryIdRoute
+  '/budgets': typeof ProtectedBudgetsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,7 +145,6 @@ export interface FileRoutesById {
   '/_api/hello': typeof ApiHelloRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-out': typeof AuthSignOutRoute
-  '/_protected/budgets': typeof ProtectedBudgetsRoute
   '/_protected/dashboard': typeof ProtectedDashboardRoute
   '/_protected/debts': typeof ProtectedDebtsRoute
   '/_protected/preferences': typeof ProtectedPreferencesRoute
@@ -144,6 +152,8 @@ export interface FileRoutesById {
   '/_protected/transactions': typeof ProtectedTransactionsRoute
   '/_protected/workspace-settings': typeof ProtectedWorkspaceSettingsRoute
   '/_public/': typeof PublicIndexRoute
+  '/_protected/budgets/$categoryId': typeof ProtectedBudgetsCategoryIdRoute
+  '/_protected/budgets/': typeof ProtectedBudgetsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -152,7 +162,6 @@ export interface FileRouteTypes {
     | '/hello'
     | '/sign-in'
     | '/sign-out'
-    | '/budgets'
     | '/dashboard'
     | '/debts'
     | '/preferences'
@@ -160,13 +169,14 @@ export interface FileRouteTypes {
     | '/transactions'
     | '/workspace-settings'
     | '/'
+    | '/budgets/$categoryId'
+    | '/budgets'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/oauth-callback'
     | '/hello'
     | '/sign-in'
     | '/sign-out'
-    | '/budgets'
     | '/dashboard'
     | '/debts'
     | '/preferences'
@@ -174,6 +184,8 @@ export interface FileRouteTypes {
     | '/transactions'
     | '/workspace-settings'
     | '/'
+    | '/budgets/$categoryId'
+    | '/budgets'
   id:
     | '__root__'
     | '/_auth'
@@ -183,7 +195,6 @@ export interface FileRouteTypes {
     | '/_api/hello'
     | '/_auth/sign-in'
     | '/_auth/sign-out'
-    | '/_protected/budgets'
     | '/_protected/dashboard'
     | '/_protected/debts'
     | '/_protected/preferences'
@@ -191,6 +202,8 @@ export interface FileRouteTypes {
     | '/_protected/transactions'
     | '/_protected/workspace-settings'
     | '/_public/'
+    | '/_protected/budgets/$categoryId'
+    | '/_protected/budgets/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -280,13 +293,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedDashboardRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_protected/budgets': {
-      id: '/_protected/budgets'
-      path: '/budgets'
-      fullPath: '/budgets'
-      preLoaderRoute: typeof ProtectedBudgetsRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
     '/_auth/sign-out': {
       id: '/_auth/sign-out'
       path: '/sign-out'
@@ -308,6 +314,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiHelloRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_protected/budgets/': {
+      id: '/_protected/budgets/'
+      path: '/budgets'
+      fullPath: '/budgets'
+      preLoaderRoute: typeof ProtectedBudgetsIndexRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/budgets/$categoryId': {
+      id: '/_protected/budgets/$categoryId'
+      path: '/budgets/$categoryId'
+      fullPath: '/budgets/$categoryId'
+      preLoaderRoute: typeof ProtectedBudgetsCategoryIdRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
   }
 }
 
@@ -324,23 +344,25 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface ProtectedRouteChildren {
-  ProtectedBudgetsRoute: typeof ProtectedBudgetsRoute
   ProtectedDashboardRoute: typeof ProtectedDashboardRoute
   ProtectedDebtsRoute: typeof ProtectedDebtsRoute
   ProtectedPreferencesRoute: typeof ProtectedPreferencesRoute
   ProtectedRecurringRoute: typeof ProtectedRecurringRoute
   ProtectedTransactionsRoute: typeof ProtectedTransactionsRoute
   ProtectedWorkspaceSettingsRoute: typeof ProtectedWorkspaceSettingsRoute
+  ProtectedBudgetsCategoryIdRoute: typeof ProtectedBudgetsCategoryIdRoute
+  ProtectedBudgetsIndexRoute: typeof ProtectedBudgetsIndexRoute
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
-  ProtectedBudgetsRoute: ProtectedBudgetsRoute,
   ProtectedDashboardRoute: ProtectedDashboardRoute,
   ProtectedDebtsRoute: ProtectedDebtsRoute,
   ProtectedPreferencesRoute: ProtectedPreferencesRoute,
   ProtectedRecurringRoute: ProtectedRecurringRoute,
   ProtectedTransactionsRoute: ProtectedTransactionsRoute,
   ProtectedWorkspaceSettingsRoute: ProtectedWorkspaceSettingsRoute,
+  ProtectedBudgetsCategoryIdRoute: ProtectedBudgetsCategoryIdRoute,
+  ProtectedBudgetsIndexRoute: ProtectedBudgetsIndexRoute,
 }
 
 const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(

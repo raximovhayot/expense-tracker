@@ -51,6 +51,7 @@ interface BudgetItemFormProps {
     month: number
     categories: BudgetCategories[]
     editingItem?: BudgetItems | null
+    defaultCategoryId?: string
     onSuccess: () => void
 }
 
@@ -61,6 +62,7 @@ export function BudgetItemForm({
     month,
     categories,
     editingItem,
+    defaultCategoryId,
     onSuccess,
 }: BudgetItemFormProps) {
     const { t } = useI18n()
@@ -93,6 +95,7 @@ export function BudgetItemForm({
         } else {
             form.reset({
                 name: '',
+                categoryId: defaultCategoryId,
                 quantityType: 'fixed',
                 quantity: 1,
                 unitPrice: 0,

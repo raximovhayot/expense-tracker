@@ -219,11 +219,11 @@ export function BudgetPlanner({
       {/* Actions */}
       {canEdit && (
         <div className="flex justify-end gap-2">
-          <Button onClick={() => setShowAddBudget(true)}>
+          <Button onClick={() => setShowAddBudget(true)} className="shadow-sm hover:shadow transition-all">
             <Plus className="h-4 w-4 mr-2" />
             Set Budget
           </Button>
-          <Button variant="outline" size="sm" onClick={handleCopyFromPrevious}>
+          <Button variant="outline" size="sm" onClick={handleCopyFromPrevious} className="h-9">
             <Copy className="h-4 w-4 mr-2" />
             Copy Previous
           </Button>

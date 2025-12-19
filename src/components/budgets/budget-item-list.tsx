@@ -2,7 +2,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import type { BudgetItems, BudgetCategories } from '@/server/lib/appwrite.types'
-import { Edit, Trash2, CheckCircle2 } from 'lucide-react'
+import { Edit, Trash2, CheckCircle2, MoreHorizontal } from 'lucide-react'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { useState } from 'react'
 import { TransactionForm } from '../transactions/transaction-form'
 import { cn } from '@/lib/utils'
@@ -56,7 +62,7 @@ export function BudgetItemList({
                 const isDone = item.isPurchased
 
                 return (
-                    <Card key={item.$id} className={cn("transition-colors", isDone && "bg-muted/30")}>
+                    <Card key={item.$id} className={cn("card-sleek transition-colors border-0", isDone && "bg-muted/30")}>
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between gap-4">
 
@@ -105,12 +111,26 @@ export function BudgetItemList({
                                         <div className="text-xs text-muted-foreground">/ {planned.toFixed(2)}</div>
                                     </div>
 
-                                    <Button variant="ghost" size="icon" onClick={() => onEdit(item)}>
-                                        <Edit className="h-4 w-4" />
-                                    </Button>
-                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => onDelete(item)}>
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon">
+                                                <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onClick={() => onEdit(item)}>
+                                                <Edit className="h-4 w-4 mr-2" />
+                                                Edit
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                className="text-destructive"
+                                                onClick={() => onDelete(item)}
+                                            >
+                                                <Trash2 className="h-4 w-4 mr-2" />
+                                                Delete
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
 
                             </div>
