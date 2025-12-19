@@ -168,6 +168,7 @@ const COLLECTIONS: Collection[] = [
             { key: 'description', type: 'string', size: 1000, required: false },
             { key: 'transactionDate', type: 'datetime', required: true },
             { key: 'recurringExpenseId', type: 'string', size: 36, required: false },
+            { key: 'debtId', type: 'string', size: 36, required: false },
             { key: 'tags', type: 'string', size: 50, required: false, array: true },
         ],
         indexes: [
@@ -244,6 +245,30 @@ const COLLECTIONS: Collection[] = [
             { key: 'idx_isPaid', type: 'key', attrs: ['isPaid'] },
         ],
     },
+    {
+        id: 'budget_items',
+        name: 'Budget Items',
+        attrs: [
+            { key: 'createdBy', type: 'string', size: 36, required: true },
+            { key: 'workspaceId', type: 'string', size: 36, required: true },
+            { key: 'year', type: 'integer', required: true },
+            { key: 'month', type: 'integer', required: true },
+            { key: 'categoryId', type: 'string', size: 36, required: false }, // Optional link to category
+            { key: 'recurringExpenseId', type: 'string', size: 36, required: false }, // Optional link to source
+            { key: 'name', type: 'string', size: 255, required: true },
+            { key: 'quantityType', type: 'string', size: 20, required: true }, // 'fixed', 'unit', 'weight'
+            { key: 'quantity', type: 'float', required: true }, // 1 for fixed, count for unit, kg for weight
+            { key: 'unitPrice', type: 'float', required: true }, // Price per unit/kg or total for fixed
+            { key: 'plannedAmount', type: 'float', required: true }, // Calculated total
+            { key: 'actualAmount', type: 'float', required: false }, // Actual spent
+            { key: 'isPurchased', type: 'boolean', required: false },
+            { key: 'currency', type: 'string', size: 10, required: true },
+        ],
+        indexes: [
+            { key: 'idx_workspace_date', type: 'key', attrs: ['workspaceId', 'year', 'month'] },
+            { key: 'idx_recurringId', type: 'key', attrs: ['recurringExpenseId'] },
+        ],
+    },
 ]
 
 // =============================================================================
@@ -314,28 +339,31 @@ async function createCollection(coll: Collection) {
     console.log(`\n📁 ${coll.name} (${coll.id})`)
 
     // Check if exists
+    let collectionExists = false
     try {
         await databases.getCollection(DATABASE_ID, coll.id)
-        console.log('   ✓ Already exists')
-        return
+        console.log('   ✓ Collection exists')
+        collectionExists = true
     } catch {
-        // Continue to create
+        // Does not exist
     }
 
-    // Create collection
-    await databases.createCollection(
-        DATABASE_ID,
-        coll.id,
-        coll.name,
-        [
-            Permission.read(Role.users()),
-            Permission.create(Role.users()),
-            Permission.update(Role.users()),
-            Permission.delete(Role.users()),
-        ],
-        true
-    )
-    console.log('   ✓ Created')
+    // Create collection if needed
+    if (!collectionExists) {
+        await databases.createCollection(
+            DATABASE_ID,
+            coll.id,
+            coll.name,
+            [
+                Permission.read(Role.users()),
+                Permission.create(Role.users()),
+                Permission.update(Role.users()),
+                Permission.delete(Role.users()),
+            ],
+            true
+        )
+        console.log('   ✓ Created collection')
+    }
 
     // Create attributes
     for (const attr of coll.attrs) {

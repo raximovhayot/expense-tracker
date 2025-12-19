@@ -3,9 +3,8 @@ import {
     LayoutDashboard,
     PiggyBank,
     Receipt,
-    Settings,
     Plus,
-    Wallet
+    HandCoins,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -18,8 +17,8 @@ export function MobileNav() {
     const navItems = [
         { href: '/dashboard', label: 'nav_dashboard', icon: LayoutDashboard },
         { href: '/budgets', label: 'nav_budgets', icon: PiggyBank },
-        { href: '/income', label: 'nav_income', icon: Wallet },
         { href: '/transactions', label: 'nav_transactions', icon: Receipt },
+        { href: '/debts', label: 'nav_debts', icon: HandCoins },
     ]
 
     return (

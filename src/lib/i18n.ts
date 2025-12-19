@@ -133,6 +133,9 @@ export const translations = {
     budget_category_created: 'Category created',
     budget_category_updated: 'Category updated',
     budget_category_deleted: 'Category deleted',
+    budget_item_created: 'Budget item created',
+    budget_item_updated: 'Budget item updated',
+    budget_item_deleted: 'Budget item deleted',
 
     // Transactions
     transaction_title: 'Transactions',
@@ -173,8 +176,6 @@ export const translations = {
     recurring_freq_quarterly: 'Quarterly',
     recurring_freq_annual: 'Annual',
     recurring_freq_one_time: 'One-time',
-    recurring_freq_quarterly: 'Quarterly',
-    recurring_freq_annual: 'Annual',
     recurring_created: 'Recurring expense created',
     recurring_updated: 'Recurring expense updated',
     recurring_deleted: 'Recurring expense deleted',
@@ -390,6 +391,9 @@ export const translations = {
     budget_category_created: 'Kategoriya yaratildi',
     budget_category_updated: 'Kategoriya yangilandi',
     budget_category_deleted: "Kategoriya o'chirildi",
+    budget_item_created: 'Byudjet moddasi yaratildi',
+    budget_item_updated: 'Byudjet moddasi yangilandi',
+    budget_item_deleted: "Byudjet moddasi o'chirildi",
 
     // Transactions
     transaction_title: 'Tranzaksiyalar',
@@ -430,8 +434,6 @@ export const translations = {
     recurring_freq_quarterly: 'Choraklik',
     recurring_freq_annual: 'Yillik',
     recurring_freq_one_time: 'Bir martalik',
-    recurring_freq_quarterly: 'Choraklik',
-    recurring_freq_annual: 'Yillik',
     recurring_created: 'Takroriy xarajat yaratildi',
     recurring_updated: 'Takroriy xarajat yangilandi',
     recurring_deleted: "Takroriy xarajat o'chirildi",

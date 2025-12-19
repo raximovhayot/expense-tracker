@@ -15,6 +15,9 @@ const createTransactionSchema = z.object({
   exchangeRate: z.number().nullable().optional(),
   description: z.string().max(500).nullable().optional(),
   transactionDate: z.string(),
+  recurringExpenseId: z.string().nullable().optional(),
+  debtId: z.string().nullable().optional(),
+  budgetItemId: z.string().nullable().optional(),
   tags: z.array(z.string()).nullable().optional(),
 })
 
@@ -28,6 +31,9 @@ const updateTransactionSchema = z.object({
   exchangeRate: z.number().nullable().optional(),
   description: z.string().max(500).nullable().optional(),
   transactionDate: z.string().optional(),
+  recurringExpenseId: z.string().nullable().optional(),
+  debtId: z.string().nullable().optional(),
+  budgetItemId: z.string().nullable().optional(),
   tags: z.array(z.string()).nullable().optional(),
 })
 
@@ -138,7 +144,9 @@ export const createTransactionFn = createServerFn({ method: 'POST' })
       exchangeRate: data.exchangeRate || null,
       description: data.description?.trim() || null,
       transactionDate: data.transactionDate,
-      recurringExpenseId: null,
+      recurringExpenseId: data.recurringExpenseId || null,
+      debtId: data.debtId || null,
+      budgetItemId: data.budgetItemId || null,
       tags: data.tags || null,
     })
 
@@ -168,6 +176,7 @@ export const updateTransactionFn = createServerFn({ method: 'POST' })
     if (data.description !== undefined)
       updateData.description = data.description?.trim() || null
     if (data.transactionDate) updateData.transactionDate = data.transactionDate
+    if (data.budgetItemId !== undefined) updateData.budgetItemId = data.budgetItemId
     if (data.tags !== undefined) updateData.tags = data.tags
 
     const transaction = await db.transactions.update(data.id, updateData)

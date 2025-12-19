@@ -79,6 +79,25 @@ export const createDebtFn = createServerFn({ method: 'POST' })
             notes: data.notes ? data.notes : null,
         })
 
+        // Create associated transaction
+        await db.transactions.create({
+            createdBy: currentUser.$id,
+            workspaceId: data.workspaceId,
+            type: data.type === 'lent' ? 'expense' : 'income', // Lending is expense (outflow), Borrowing is income (inflow)
+            categoryId: null,
+            amount: data.amount,
+            currency: data.currency,
+            convertedAmount: null,
+            exchangeRate: null,
+            description: data.type === 'lent'
+                ? `Lent to ${data.personName}`
+                : `Borrowed from ${data.personName}`,
+            transactionDate: new Date().toISOString(),
+            recurringExpenseId: null,
+            debtId: debt.$id,
+            tags: ['debt'],
+        })
+
         return { debt }
     })
 
@@ -89,9 +108,12 @@ export const updateDebtFn = createServerFn({ method: 'POST' })
         const { currentUser } = await authMiddleware()
         if (!currentUser) throw new Error('Unauthorized')
 
+        // Fetch existing debt to check status and permissions
+        const existingDebt = await db.debts.get(data.id)
+
         // Verify membership
         const memberships = await db.workspaceMembers.list([
-            Query.equal('workspaceId', [data.workspaceId]),
+            Query.equal('workspaceId', [existingDebt.workspaceId]),
             Query.equal('userId', [currentUser.$id]),
         ])
 
@@ -104,12 +126,28 @@ export const updateDebtFn = createServerFn({ method: 'POST' })
         delete updateData.id
         delete updateData.workspaceId
 
-        // Handle nullable fields explicitly if they are undefined in input but meant to be cleared? 
-        // Usually updates only touch provided fields.
-        // If we want to clear them, we might need a specific strategy or just pass null.
-        // simplified: only update keys that are present.
-
         const debt = await db.debts.update(data.id, updateData)
+
+        // Check if debt was just marked as paid
+        if (data.isPaid === true && !existingDebt.isPaid) {
+            await db.transactions.create({
+                createdBy: currentUser.$id,
+                workspaceId: existingDebt.workspaceId,
+                type: existingDebt.type === 'lent' ? 'income' : 'expense', // Repayment: Getting back lend (income) or paying back borrow (expense)
+                categoryId: null,
+                amount: existingDebt.amount,
+                currency: existingDebt.currency,
+                convertedAmount: null,
+                exchangeRate: null,
+                description: existingDebt.type === 'lent'
+                    ? `Repayment from ${existingDebt.personName}`
+                    : `Repayment to ${existingDebt.personName}`,
+                transactionDate: new Date().toISOString(),
+                recurringExpenseId: null,
+                debtId: debt.$id,
+                tags: ['debt', 'repayment'],
+            })
+        }
 
         return { debt }
     })

@@ -59,6 +59,8 @@ export type Transactions = Models.Document & {
   description: string | null
   transactionDate: string
   recurringExpenseId: string | null
+  debtId: string | null
+  budgetItemId: string | null
   tags: string[] | null
 }
 
@@ -108,4 +110,36 @@ export type Debts = Models.Document & {
   dueDate: string | null
   isPaid: boolean
   notes: string | null
+}
+
+export type BudgetItems = Models.Document & {
+  createdBy: string
+  workspaceId: string
+  year: number
+  month: number
+  categoryId: string | null
+  recurringExpenseId: string | null
+  name: string
+  quantityType: 'fixed' | 'unit' | 'weight'
+  quantity: number
+  unitPrice: number
+  plannedAmount: number
+  actualAmount: number | null
+  isPurchased: boolean
+  currency: string
+}
+
+export type IncomeSources = Models.Document & {
+  createdBy: string
+  workspaceId: string
+  name: string
+  description: string | null
+  color: string | null
+  icon: string | null
+  isActive: boolean
+  notes: string | null
+  frequency: string
+  currency: string
+  amount: number
+  type: string
 }

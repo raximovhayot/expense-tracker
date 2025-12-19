@@ -14,8 +14,15 @@ import {
   getBudgetOverviewFn,
   deleteCategoryFn,
 } from '@/server/functions/budgets'
+import {
+  listBudgetItemsFn,
+  deleteBudgetItemFn,
+  populateFromRecurringFn,
+} from '@/server/functions/budget-items'
+import { BudgetItemList } from '@/components/budgets/budget-item-list'
+import { BudgetItemForm } from '@/components/budgets/budget-item-form'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Plus, Edit, Trash2, MoreHorizontal } from 'lucide-react'
+import { Plus, Edit, Trash2, MoreHorizontal, Sparkles } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +43,7 @@ import { toast } from 'sonner'
 import type {
   BudgetCategories,
   MonthlyBudgets,
+  BudgetItems,
 } from '@/server/lib/appwrite.types'
 
 interface BudgetOverviewItem {
@@ -64,6 +72,13 @@ function BudgetsPage() {
   const [deletingCategory, setDeletingCategory] =
     useState<BudgetCategories | null>(null)
 
+  // Budget Items State
+  const [budgetItems, setBudgetItems] = useState<BudgetItems[]>([])
+  const [showItemForm, setShowItemForm] = useState(false)
+  const [editingItem, setEditingItem] = useState<BudgetItems | null>(null)
+  const [populating, setPopulating] = useState(false)
+  const [deletingItem, setDeletingItem] = useState<BudgetItems | null>(null)
+
   const { workspace, canEdit } = useWorkspace()
   const { t } = useI18n()
 
@@ -71,22 +86,27 @@ function BudgetsPage() {
   const fetchBudgets = useServerFn(listMonthlyBudgetsFn)
   const fetchOverview = useServerFn(getBudgetOverviewFn)
   const deleteCategory = useServerFn(deleteCategoryFn)
+  const fetchBudgetItems = useServerFn(listBudgetItemsFn)
+  const deleteBudgetItem = useServerFn(deleteBudgetItemFn)
+  const populateFromRecurring = useServerFn(populateFromRecurringFn)
 
   const loadData = async () => {
     if (!workspace) return
 
     setLoading(true)
     try {
-      const [categoriesResult, budgetsResult, overviewResult] =
+      const [categoriesResult, budgetsResult, overviewResult, itemsResult] =
         await Promise.all([
           fetchCategories({ data: { workspaceId: workspace.$id } }),
           fetchBudgets({ data: { workspaceId: workspace.$id, year, month } }),
           fetchOverview({ data: { workspaceId: workspace.$id, year, month } }),
+          fetchBudgetItems({ data: { workspaceId: workspace.$id, year, month } }),
         ])
 
       setCategories(categoriesResult.categories)
       setBudgets(budgetsResult.budgets)
       setOverview(overviewResult.overview)
+      setBudgetItems(itemsResult.items)
     } catch (error) {
       console.error('Failed to load budget data:', error)
     } finally {
@@ -131,6 +151,42 @@ function BudgetsPage() {
     }
   }
 
+  const handleEditItem = (item: BudgetItems) => {
+    setEditingItem(item)
+    setShowItemForm(true)
+  }
+
+  const handleDeleteItem = async () => {
+    if (!deletingItem) return
+    try {
+      await deleteBudgetItem({ data: { id: deletingItem.$id } })
+      toast.success('Budget item deleted')
+      loadData()
+    } catch (error) {
+      toast.error(t('error_generic'))
+    } finally {
+      setDeletingItem(null)
+    }
+  }
+
+  const handlePopulateFromRecurring = async () => {
+    if (!workspace) return
+    setPopulating(true)
+    try {
+      const result = await populateFromRecurring({ data: { workspaceId: workspace.$id, year, month } })
+      if (result.created > 0) {
+        toast.success(`Created ${result.created} items from recurring expenses`)
+        loadData()
+      } else {
+        toast.info('No new recurring items found for this month')
+      }
+    } catch (error) {
+      toast.error(t('error_generic'))
+    } finally {
+      setPopulating(false)
+    }
+  }
+
   if (!workspace) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -170,6 +226,7 @@ function BudgetsPage() {
       <Tabs defaultValue="planner" className="space-y-6">
         <TabsList>
           <TabsTrigger value="planner">{t('budget_monthly_plan')}</TabsTrigger>
+          <TabsTrigger value="items">Detailed Items</TabsTrigger>
           <TabsTrigger value="categories">{t('budget_categories')}</TabsTrigger>
         </TabsList>
 
@@ -183,6 +240,29 @@ function BudgetsPage() {
             onMonthChange={handleMonthChange}
             onUpdate={loadData}
           />
+        </TabsContent>
+
+        <TabsContent value="items">
+          <div className="space-y-4">
+            {canEdit && (
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={handlePopulateFromRecurring} disabled={populating}>
+                  <Sparkles className="h-4 w-4 mr-2" />
+                  Populate from Recurring
+                </Button>
+                <Button onClick={() => setShowItemForm(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Item
+                </Button>
+              </div>
+            )}
+            <BudgetItemList
+              items={budgetItems}
+              categories={categories}
+              onEdit={handleEditItem}
+              onDelete={setDeletingItem}
+            />
+          </div>
         </TabsContent>
 
         <TabsContent value="categories">
@@ -263,6 +343,34 @@ function BudgetsPage() {
         editingCategory={editingCategory}
         onSuccess={loadData}
       />
+
+      {/* Budget Item Form */}
+      <BudgetItemForm
+        open={showItemForm}
+        onOpenChange={(open) => {
+          setShowItemForm(open)
+          if (!open) setEditingItem(null)
+        }}
+        year={year}
+        month={month}
+        categories={categories}
+        editingItem={editingItem}
+        onSuccess={loadData}
+      />
+
+      {/* Delete Item Confirmation */}
+      <AlertDialog open={!!deletingItem} onOpenChange={() => setDeletingItem(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('delete')}</AlertDialogTitle>
+            <AlertDialogDescription>Are you sure you want to delete "{deletingItem?.name}"?</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteItem} className="bg-destructive hover:bg-destructive/90">{t('delete')}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete Confirmation */}
       <AlertDialog

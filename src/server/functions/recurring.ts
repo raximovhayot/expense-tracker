@@ -2,8 +2,8 @@ import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { db } from '../lib/db'
 import { authMiddleware } from './auth'
-import { Query, ID } from 'node-appwrite'
-import { addDays, addMonths, addYears, addWeeks } from 'date-fns'
+import { Query } from 'node-appwrite'
+import { addMonths, addYears, addWeeks } from 'date-fns'
 
 // Schemas
 const createRecurringSchema = z.object({
@@ -181,7 +181,7 @@ export const processDueTransactionsFn = createServerFn({ method: 'POST' })
         categoryId: recurring.categoryId,
         description: `Recurring: ${recurring.name}`,
         transactionDate: recurring.nextDueDate,
-        // No incomeSourceId needed as we use categoryId now
+        recurringExpenseId: recurring.$id,
       })
 
       // Calculate next due date

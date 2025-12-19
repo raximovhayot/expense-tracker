@@ -148,9 +148,9 @@ function DashboardPage() {
             <Building2 className="h-4 w-4" />
             <span>{workspace.name}</span>
             <span>•</span>
-            <span>
-              {t('workspace_member_count', { count: workspace.memberCount })}
-            </span>
+            {/* <span>
+              {t('workspace_member_count', { count: (workspace as any).memberCount || 1 })}
+            </span> */}
           </div>
         </div>
       </div>

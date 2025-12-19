@@ -193,7 +193,7 @@ export const deleteWorkspaceFn = createServerFn({ method: 'POST' })
     const [
       members,
       invitations,
-      income,
+      // income sources removed
       categories,
       budgets,
       transactions,
@@ -201,22 +201,20 @@ export const deleteWorkspaceFn = createServerFn({ method: 'POST' })
     ] = await Promise.all([
       db.workspaceMembers.list([Query.equal('workspaceId', [data.id])]),
       db.workspaceInvitations.list([Query.equal('workspaceId', [data.id])]),
-      db.incomeSources.list([Query.equal('workspaceId', [data.id])]),
       db.budgetCategories.list([Query.equal('workspaceId', [data.id])]),
       db.monthlyBudgets.list([Query.equal('workspaceId', [data.id])]),
       db.transactions.list([Query.equal('workspaceId', [data.id])]),
-      db.recurringExpenses.list([Query.equal('workspaceId', [data.id])]),
+      db.recurringTransactions.list([Query.equal('workspaceId', [data.id])]),
     ])
 
     // Delete all in parallel
     await Promise.all([
       ...members.rows.map((m) => db.workspaceMembers.delete(m.$id)),
       ...invitations.rows.map((i) => db.workspaceInvitations.delete(i.$id)),
-      ...income.rows.map((i) => db.incomeSources.delete(i.$id)),
       ...categories.rows.map((c) => db.budgetCategories.delete(c.$id)),
       ...budgets.rows.map((b) => db.monthlyBudgets.delete(b.$id)),
       ...transactions.rows.map((t) => db.transactions.delete(t.$id)),
-      ...recurring.rows.map((r) => db.recurringExpenses.delete(r.$id)),
+      ...recurring.rows.map((r) => db.recurringTransactions.delete(r.$id)),
     ])
 
     await db.workspaces.delete(data.id)
