@@ -146,7 +146,7 @@ export function AppLayout() {
 
   return (
     <>
-      <div className="flex h-screen bg-background relative overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-background to-background">
+      <div className="flex h-[100dvh] bg-background relative overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-background to-background">
         {/* Desktop Sidebar - Floating Dock Style */}
         <div className="hidden md:flex h-screen p-4 pr-0 z-20">
           <AppSidebar onCreateWorkspace={() => setShowCreateWorkspace(true)} />
@@ -161,7 +161,7 @@ export function AppLayout() {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto h-full w-full pt-14 pb-20 md:pt-4 md:pb-4 md:px-4">
+        <main className="flex-1 overflow-auto h-full w-full pt-[calc(3.5rem+env(safe-area-inset-top))] pb-32 md:pt-4 md:pb-4 md:px-4">
           <div className="h-full w-full animate-enter">
             <Outlet />
           </div>

@@ -23,6 +23,7 @@ import type {
   BudgetCategories,
   Transactions,
 } from '@/server/lib/appwrite.types'
+import { cn } from '@/lib/utils'
 
 interface TransactionSummary {
   totalIncome: number
@@ -140,22 +141,26 @@ function DashboardPage() {
 
 
   return (
-    <div className="pb-24 lg:pb-0 space-y-8 animate-enter px-4 md:px-0">
+    <div
+      className={cn(
+        "min-h-full animate-enter pb-32", // Base styles + animation + mobile padding
+      )}
+    >
       {/* Bento Grid Layout - Summary Area */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
 
         {/* Net Balance */}
-        <div className="col-span-1 md:col-span-2 lg:col-span-2 card-sleek p-8 flex flex-col justify-between relative overflow-hidden group">
+        <div className="col-span-2 card-sleek p-5 md:p-8 flex flex-col justify-between relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-8 opacity-5 transition-opacity group-hover:opacity-10 duration-500">
             <Building2 className="w-40 h-40" />
           </div>
           <div className="space-y-2 relative z-10">
             <p className="label-data text-primary/80">Total Balance</p>
-            <h2 className="text-5xl font-bold tracking-tighter text-glow">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tighter text-glow">
               {formatCurrency(summary?.netBalance || 0, currency)}
             </h2>
           </div>
-          <div className="mt-8 flex items-center gap-3 text-sm text-muted-foreground relative z-10">
+          <div className="mt-6 md:mt-8 flex items-center gap-3 text-sm text-muted-foreground relative z-10">
             <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
@@ -165,27 +170,27 @@ function DashboardPage() {
         </div>
 
         {/* Total Income */}
-        <div className="col-span-1 card-sleek p-6 flex flex-col justify-center space-y-4">
+        <div className="col-span-1 card-sleek p-4 md:p-6 flex flex-col justify-center space-y-2 md:space-y-4">
           <div className="flex items-center justify-between">
-            <p className="label-data">Total Income</p>
-            <div className="p-2.5 rounded-xl bg-teal-500/10 text-teal-500">
-              <ArrowUpRight className="h-5 w-5" />
+            <p className="label-data text-[10px] md:text-xs">Total Income</p>
+            <div className="p-2 md:p-2.5 rounded-xl bg-teal-500/10 text-teal-500">
+              <ArrowUpRight className="h-4 w-4 md:h-5 md:w-5" />
             </div>
           </div>
-          <p className="text-3xl font-semibold tracking-tight">
+          <p className="text-xl md:text-3xl font-semibold tracking-tight">
             {formatCurrency(summary?.totalIncome || 0, currency)}
           </p>
         </div>
 
         {/* Total Expenses */}
-        <div className="col-span-1 card-sleek p-6 flex flex-col justify-center space-y-4">
+        <div className="col-span-1 card-sleek p-4 md:p-6 flex flex-col justify-center space-y-2 md:space-y-4">
           <div className="flex items-center justify-between">
-            <p className="label-data">Total Expenses</p>
-            <div className="p-2.5 rounded-xl bg-red-500/10 text-red-500">
-              <ArrowDownRight className="h-5 w-5" />
+            <p className="label-data text-[10px] md:text-xs">Total Expenses</p>
+            <div className="p-2 md:p-2.5 rounded-xl bg-red-500/10 text-red-500">
+              <ArrowDownRight className="h-4 w-4 md:h-5 md:w-5" />
             </div>
           </div>
-          <p className="text-3xl font-semibold tracking-tight">
+          <p className="text-xl md:text-3xl font-semibold tracking-tight">
             {formatCurrency(summary?.totalExpenses || 0, currency)}
           </p>
         </div>

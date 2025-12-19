@@ -21,7 +21,7 @@ export function MobileHeader({ onCreateWorkspace }: MobileHeaderProps) {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-lg pt-safe-area-top">
-            <div className="flex h-14 items-center justify-between px-4">
+            <div className="flex min-h-[3.5rem] py-2 items-center justify-between px-4">
                 {/* Left: Logo/Home */}
                 <Link to="/dashboard" className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">

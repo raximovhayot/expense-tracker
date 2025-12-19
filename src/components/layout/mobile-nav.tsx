@@ -34,20 +34,20 @@ export function MobileNav() {
                             key={item.href}
                             to={item.href}
                             className={cn(
-                                'flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors min-w-[64px]',
+                                'flex flex-col items-center justify-center gap-0.5 p-2 rounded-lg transition-colors min-w-[64px]',
                                 isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                             )}
                         >
                             <Icon className={cn("h-6 w-6", isActive && "fill-current")} />
-                            <span className="text-[10px] font-medium">{t(item.label)}</span>
+                            <span className="text-[11px] font-medium">{t(item.label)}</span>
                         </Link>
                     )
                 })}
 
-                <div className="relative -top-6">
+                <div className="relative -top-5">
                     <Button
                         size="icon"
-                        className="h-14 w-14 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 border-4 border-background"
+                        className="h-12 w-12 rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 border-4 border-background"
                         onClick={() => {
                             // TODO: Open quick add action
                             console.log('Open quick add')
@@ -65,12 +65,12 @@ export function MobileNav() {
                             key={item.href}
                             to={item.href}
                             className={cn(
-                                'flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors min-w-[64px]',
+                                'flex flex-col items-center justify-center gap-0.5 p-2 rounded-lg transition-colors min-w-[64px]',
                                 isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                             )}
                         >
                             <Icon className={cn("h-6 w-6", isActive && "fill-current")} />
-                            <span className="text-[10px] font-medium">{t(item.label)}</span>
+                            <span className="text-[11px] font-medium">{t(item.label)}</span>
                         </Link>
                     )
                 })}
