@@ -38,7 +38,7 @@ import { useEffect } from 'react'
 const debtSchema = z.object({
     type: z.enum(['lent', 'borrowed']),
     personName: z.string().min(1),
-    amount: z.coerce.number().min(0.01),
+    amount: z.number().min(0.01),
     currency: z.string().length(3),
     description: z.string().optional(),
     dueDate: z.string().optional(),
@@ -66,17 +66,20 @@ export function DebtDialog({
     const createDebt = useServerFn(createDebtFn)
     const updateDebt = useServerFn(updateDebtFn)
 
+    const defaultValues: DebtFormValues = {
+        type: 'lent',
+        personName: '',
+        amount: 0,
+        currency: 'USD',
+        description: '',
+        dueDate: '',
+        isPaid: false,
+        notes: '',
+    }
+
     const form = useForm<DebtFormValues>({
-        resolver: zodResolver(debtSchema),
-        defaultValues: {
-            type: 'lent',
-            personName: '',
-            amount: 0,
-            currency: 'USD',
-            description: '',
-            isPaid: false,
-            notes: '',
-        },
+        resolver: zodResolver(debtSchema) as any,
+        defaultValues,
     })
 
     useEffect(() => {
@@ -98,6 +101,7 @@ export function DebtDialog({
                 amount: 0,
                 currency: 'USD',
                 description: '',
+                dueDate: '',
                 isPaid: false,
                 notes: '',
             })
@@ -222,7 +226,14 @@ export function DebtDialog({
                                 <FormItem>
                                     <FormLabel>{t('debts_amount')}</FormLabel>
                                     <FormControl>
-                                        <Input type="number" step="0.01" {...field} />
+                                        <Input
+                                            type="number"
+                                            step="0.01"
+                                            {...field}
+                                            onChange={(e) =>
+                                                field.onChange(parseFloat(e.target.value) || 0)
+                                            }
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

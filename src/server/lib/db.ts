@@ -23,6 +23,7 @@ import type {
   ExchangeRates,
   Debts,
   BudgetItems,
+  IncomeSources,
 } from './appwrite.types'
 
 // Initialize client
@@ -122,6 +123,7 @@ export const db = {
   exchangeRates: createCollectionClient<ExchangeRates>('exchange_rates'),
   debts: createCollectionClient<Debts>('debts'),
   budgetItems: createCollectionClient<BudgetItems>('budget_items'),
+  incomeSources: createCollectionClient<IncomeSources>('income_sources'),
 }
 
 // Re-export Query for convenience
