@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
-import { StatsCards } from '@/components/dashboard/stats-cards'
+import { BudgetRadarChart } from '@/components/dashboard/budget-radar-chart'
 import { BudgetOverview } from '@/components/dashboard/budget-overview'
 import { IncomeExpenseChart } from '@/components/dashboard/income-expense-chart'
 import { RecentTransactions } from '@/components/dashboard/recent-transactions'
@@ -16,7 +16,9 @@ import {
   listCategoriesFn,
 } from '@/server/functions/budgets'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Building2 } from 'lucide-react'
+import { Plus, Building2, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { formatCurrency } from '@/lib/currency'
+import { Button } from '@/components/ui/button'
 import type {
   BudgetCategories,
   Transactions,
@@ -136,51 +138,101 @@ function DashboardPage() {
     )
   }
 
-  const budgetUsedPercent = budgetOverview?.summary?.overallPercentage || 0
 
   return (
-    <div className="p-8 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">{t('dashboard_title')}</h1>
-          <div className="flex items-center gap-2 mt-1 text-muted-foreground">
-            <Building2 className="h-4 w-4" />
-            <span>{workspace.name}</span>
-            <span>•</span>
-            {/* <span>
-              {t('workspace_member_count', { count: (workspace as any).memberCount || 1 })}
-            </span> */}
+    <div className="pb-24 lg:pb-0 space-y-10 animate-fade-in px-4 md:px-0">
+      {/* Bento Grid Layout - Summary Area */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        {/* Net Balance */}
+        <div className="col-span-1 md:col-span-2 lg:col-span-2 card-sleek p-6 flex flex-col justify-between relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <Building2 className="w-32 h-32" />
+          </div>
+          <div className="space-y-1 relative z-10">
+            <p className="label-data">Total Balance</p>
+            <h2 className="text-4xl font-bold tracking-tight">
+              {formatCurrency(summary?.netBalance || 0, currency)}
+            </h2>
+          </div>
+          <div className="mt-8 flex items-center gap-2 text-sm text-muted-foreground relative z-10">
+            <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Live Sync Active</span>
+          </div>
+        </div>
+
+        {/* Total Income */}
+        <div className="col-span-1 card-sleek p-6 flex flex-col justify-center space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="label-data">Total Income</p>
+            <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+              <ArrowUpRight className="h-4 w-4" />
+            </div>
+          </div>
+          <p className="text-2xl font-semibold tracking-tight">
+            {formatCurrency(summary?.totalIncome || 0, currency)}
+          </p>
+        </div>
+
+        {/* Total Expenses */}
+        <div className="col-span-1 card-sleek p-6 flex flex-col justify-center space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="label-data">Total Expenses</p>
+            <div className="p-1.5 rounded-md bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400">
+              <ArrowDownRight className="h-4 w-4" />
+            </div>
+          </div>
+          <p className="text-2xl font-semibold tracking-tight">
+            {formatCurrency(summary?.totalExpenses || 0, currency)}
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Secondary Charts / Insights */}
+        <div className="lg:col-span-1 card-sleek p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-semibold text-lg tracking-tight">Budget Overview</h3>
+          </div>
+          <BudgetRadarChart
+            items={budgetOverview?.overview || []}
+          />
+        </div>
+
+        {/* Recent Transactions List */}
+        <div className="lg:col-span-2 card-sleek overflow-hidden flex flex-col">
+          <div className="p-6 border-b border-border flex items-center justify-between bg-card">
+            <h3 className="font-semibold text-lg tracking-tight">{t('dashboard_recent_transactions')}</h3>
+            <Button variant="outline" size="sm" className="h-8 text-xs">View All</Button>
+          </div>
+          <div className="overflow-y-auto max-h-[400px] p-0">
+            <RecentTransactions
+              transactions={recentTransactions}
+              categories={categories}
+              currency={currency}
+              compact={true}
+            />
           </div>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <StatsCards
-        totalIncome={summary?.totalIncome || 0}
-        totalExpenses={summary?.totalExpenses || 0}
-        netBalance={summary?.netBalance || 0}
-        budgetUsedPercent={budgetUsedPercent}
+      {/* Placeholder / Extra Widget Area */}
+      <div className="w-full border border-dashed border-border rounded-lg p-8 flex flex-col justify-center items-center text-center space-y-3 hover:bg-muted/30 transition-all group cursor-pointer">
+        <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+          <Plus className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+        </div>
+        <div>
+          <p className="font-medium text-sm">Create custom module</p>
+          <p className="text-xs text-muted-foreground">Add widgets to customize your view</p>
+        </div>
+      </div>
+      <IncomeExpenseChart
+        income={summary?.totalIncome || 0}
+        expenses={summary?.totalExpenses || 0}
         currency={currency}
       />
-
-      {/* Charts Row */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <IncomeExpenseChart
-          income={summary?.totalIncome || 0}
-          expenses={summary?.totalExpenses || 0}
-          currency={currency}
-        />
-        <BudgetOverview
-          items={budgetOverview?.overview || []}
-          currency={currency}
-        />
-      </div>
-
-      {/* Recent Transactions */}
-      <RecentTransactions
-        transactions={recentTransactions}
-        categories={categories}
+      <BudgetOverview
+        items={budgetOverview?.overview || []}
         currency={currency}
       />
     </div>

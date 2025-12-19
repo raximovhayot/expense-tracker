@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { formatCurrency, type Currency } from '@/lib/currency'
 import { useI18n } from '@/hooks/use-i18n'
 import { format } from 'date-fns'
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import type {
   Transactions,
   BudgetCategories,
@@ -13,12 +13,14 @@ interface RecentTransactionsProps {
   transactions: Transactions[]
   categories: BudgetCategories[]
   currency: Currency
+  compact?: boolean
 }
 
 export function RecentTransactions({
   transactions,
   categories,
   currency,
+  compact = false,
 }: RecentTransactionsProps) {
   const { t } = useI18n()
 
@@ -28,83 +30,75 @@ export function RecentTransactions({
     return category?.name || 'Unknown'
   }
 
-  if (transactions.length === 0) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('dashboard_recent_transactions')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            <p>{t('transaction_no_transactions')}</p>
-            <p className="text-sm mt-1">{t('transaction_add_first')}</p>
+  const content = (
+    <div className={cn("space-y-1", compact ? "" : "p-4")}>
+      {transactions.length === 0 ? (
+        <div className="text-center py-8 text-muted-foreground opacity-60">
+          <p className="text-sm">{t('transaction_no_transactions')}</p>
+        </div>
+      ) : (
+        transactions.map((transaction) => (
+          <div
+            key={transaction.$id}
+            className={cn(
+              "flex items-center justify-between p-3 rounded-2xl transition-colors hover:bg-muted/30 group",
+              compact ? "" : "border-b border-border last:border-0"
+            )}
+          >
+            <div className="flex items-center gap-4">
+              <div
+                className={cn(
+                  "h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110",
+                  transaction.type === 'income'
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-destructive/10 text-destructive'
+                )}
+              >
+                {transaction.type === 'income' ? (
+                  <ArrowUpRight className="h-6 w-6" />
+                ) : (
+                  <ArrowDownRight className="h-6 w-6" />
+                )}
+              </div>
+              <div className="flex flex-col">
+                <p className="font-bold text-sm tracking-tight">
+                  {transaction.description || getCategoryName(transaction.categoryId)}
+                </p>
+                <div className="flex items-center gap-2">
+                  <p className="label-tiny">
+                    {format(new Date(transaction.transactionDate), 'MMM d, h:mm a')}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className={cn(
+                "text-lg font-black tracking-tight",
+                transaction.type === 'income' ? 'text-primary' : 'text-destructive'
+              )}>
+                {transaction.type === 'income' ? '+' : '-'}
+                {formatCurrency(transaction.amount, currency)}
+              </p>
+              {transaction.categoryId && !compact && (
+                <p className="label-tiny mt-0.5">{getCategoryName(transaction.categoryId)}</p>
+              )}
+            </div>
           </div>
-        </CardContent>
-      </Card>
-    )
+        ))
+      )}
+    </div>
+  )
+
+  if (compact) {
+    return content
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('dashboard_recent_transactions')}</CardTitle>
+    <Card className="card-soft">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-xl font-bold tracking-tight">{t('dashboard_recent_transactions')}</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {transactions.map((transaction) => (
-            <div
-              key={transaction.$id}
-              className="flex items-center justify-between py-2"
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`p-2 rounded-full ${
-                    transaction.type === 'income'
-                      ? 'bg-green-500/10'
-                      : 'bg-red-500/10'
-                  }`}
-                >
-                  {transaction.type === 'income' ? (
-                    <ArrowUpRight className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <ArrowDownRight className="h-4 w-4 text-red-500" />
-                  )}
-                </div>
-                <div>
-                  <p className="font-medium text-sm">
-                    {transaction.description ||
-                      getCategoryName(transaction.categoryId)}
-                  </p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-xs text-muted-foreground">
-                      {format(
-                        new Date(transaction.transactionDate),
-                        'MMM d, yyyy',
-                      )}
-                    </span>
-                    {transaction.type === 'expense' &&
-                      transaction.categoryId && (
-                        <Badge variant="outline" className="text-xs py-0">
-                          {getCategoryName(transaction.categoryId)}
-                        </Badge>
-                      )}
-                  </div>
-                </div>
-              </div>
-              <span
-                className={`font-semibold ${
-                  transaction.type === 'income'
-                    ? 'text-green-500'
-                    : 'text-red-500'
-                }`}
-              >
-                {transaction.type === 'income' ? '+' : '-'}
-                {formatCurrency(transaction.amount, currency)}
-              </span>
-            </div>
-          ))}
-        </div>
-      </CardContent>
+      <CardContent>{content}</CardContent>
     </Card>
   )
 }
