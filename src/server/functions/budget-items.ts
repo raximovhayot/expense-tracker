@@ -49,7 +49,7 @@ export const listBudgetItemsFn = createServerFn({ method: 'GET' })
             ]),
             db.transactions.list([
                 Query.equal('workspaceId', [data.workspaceId]),
-                Query.isNotNull('budgetItemId'),
+                // Query.isNotNull('budgetItemId'), // Removed due to schema error
                 // We could restrict by date here, but strictly relying on details of the linked budget item is safer? 
                 // Actually, transactions should be in the same month ideally, but let's just fetch all linked to these budget items if possible.
                 // Appwrite doesn't support "in array" for budgetItemId well without multiple queries if list is large.
