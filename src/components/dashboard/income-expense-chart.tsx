@@ -32,12 +32,12 @@ export function IncomeExpenseChart({
     {
       name: t('transaction_type_income'),
       value: income,
-      fill: '#22C55E',
+      fill: 'var(--color-chart-2)',
     },
     {
       name: t('transaction_type_expense'),
       value: expenses,
-      fill: '#EF4444',
+      fill: 'var(--color-destructive)',
     },
   ]
 

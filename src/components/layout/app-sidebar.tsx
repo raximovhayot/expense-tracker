@@ -96,8 +96,8 @@ export function AppSidebar({ onCreateWorkspace }: AppSidebarProps) {
     <TooltipProvider>
       <aside
         className={cn(
-          'flex flex-col h-full border-r bg-card transition-all duration-300',
-          collapsed ? 'w-16' : 'w-64',
+          'flex flex-col h-full glass-panel rounded-2xl transition-all duration-500 ease-in-out',
+          collapsed ? 'w-20' : 'w-72',
         )}
       >
         {/* Header */}

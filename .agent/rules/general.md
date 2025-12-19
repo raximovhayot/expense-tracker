@@ -9,3 +9,5 @@ Use the latest version of Shadcn to install new components, like this command to
 ```bash
 pnpx shadcn@latest add button
 ```
+
+Do not change shadcn base components

@@ -24,7 +24,7 @@ export function MobileNav() {
     ]
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/80 backdrop-blur-lg pb-safe-area-bottom">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-background/60 backdrop-blur-xl pb-safe-area-bottom shadow-[0_-5px_20px_rgba(0,0,0,0.1)]">
             <div className="flex items-center justify-around p-2">
                 {navItems.slice(0, 2).map((item) => {
                     const Icon = item.icon

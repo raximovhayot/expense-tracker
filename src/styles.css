@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-sans);
+  --font-sans: 'Inter', sans-serif;
+  /* Setup Inter as default sans */
   --font-mono: var(--font-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -50,10 +52,9 @@
 :root {
   /* Premium Light: Clean White with Vibrant Indigo */
   --background: oklch(0.99 0.01 240);
-  /* Slightly cool white */
   --foreground: oklch(0.2 0.03 260);
-  /* Deep indigo-black */
 
+  /* Glass cards need semi-transparent bases for fallbacks, but we use utilities mostly */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.2 0.03 260);
 
@@ -61,11 +62,9 @@
   --popover-foreground: oklch(0.2 0.03 260);
 
   --primary: oklch(0.58 0.22 270);
-  /* Vibrant Deep Violet/Indigo */
   --primary-foreground: oklch(0.98 0.01 260);
 
   --secondary: oklch(0.95 0.02 260);
-  /* Very light cool indigo tint */
   --secondary-foreground: oklch(0.35 0.05 260);
 
   --muted: oklch(0.96 0.01 260);
@@ -75,7 +74,6 @@
   --accent-foreground: oklch(0.3 0.05 260);
 
   --destructive: oklch(0.6 0.2 20);
-  /* Vibrant Red */
   --destructive-foreground: oklch(0.98 0 0);
 
   --border: oklch(0.92 0.01 260);
@@ -83,15 +81,10 @@
   --ring: oklch(0.58 0.22 270);
 
   --chart-1: oklch(0.58 0.22 270);
-  /* Primary Indigo */
   --chart-2: oklch(0.65 0.2 180);
-  /* Cyan/Teal */
   --chart-3: oklch(0.7 0.18 40);
-  /* Orange */
   --chart-4: oklch(0.6 0.18 300);
-  /* Pink/Magenta */
   --chart-5: oklch(0.75 0.15 90);
-  /* Yellow/Lime */
 
   --radius: 0.75rem;
 
@@ -108,18 +101,15 @@
 .dark {
   /* Premium Dark: Deep Blue-Black Base */
   --background: oklch(0.12 0.03 260);
-  /* Dark Indigo-Grey */
   --foreground: oklch(0.98 0.01 260);
 
   --card: oklch(0.14 0.03 260);
-  /* Slightly lighter */
   --card-foreground: oklch(0.98 0.01 260);
 
   --popover: oklch(0.14 0.03 260);
   --popover-foreground: oklch(0.98 0.01 260);
 
   --primary: oklch(0.65 0.22 270);
-  /* Lighter Vibrant Violet for dark mode */
   --primary-foreground: oklch(0.98 0.01 260);
 
   --secondary: oklch(0.2 0.04 260);
@@ -161,33 +151,53 @@
 
   body {
     @apply bg-background text-foreground tracking-tight;
-    font-family:
-      -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-      'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  }
-
-  code {
-    font-family:
-      source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
   }
 }
 
 @layer utilities {
 
-  /* Sleek Fintech Card: Standard border, subtle shadow, background blur */
+  /* Premium Glassmorphism */
+  .glass-panel {
+    @apply bg-white/5 dark:bg-black/40 backdrop-blur-xl border border-white/10 dark:border-white/5 shadow-2xl;
+  }
+
+  /* Use for Cards */
+  .glass-card {
+    @apply bg-white/60 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
+  }
+
+  /* Sleek Fintech Card: Standard border, subtle shadow, background blur (Legacy support) */
   .card-sleek {
-    @apply bg-card/80 backdrop-blur-sm border border-border shadow-sm rounded-xl transition-all hover:shadow-md;
+    @apply bg-white/60 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 rounded-xl;
   }
 
   /* Typography Utilities for Data */
   .label-data {
-    @apply text-xs font-semibold uppercase tracking-wider text-muted-foreground;
+    @apply text-xs font-semibold uppercase tracking-wider text-muted-foreground/80;
   }
 
   .value-data {
     @apply font-mono font-medium tracking-tight text-foreground;
+  }
+
+  /* Animations */
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.95);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-enter {
+    animation: enter 0.5s ease-out forwards;
   }
 
   /* Safe areas */
