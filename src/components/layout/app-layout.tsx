@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/use-auth'
 import { listWorkspacesFn } from '@/server/functions/workspaces'
 import { getPreferencesFn } from '@/server/functions/preferences'
 import { Skeleton } from '@/components/ui/skeleton'
+import { UserInvitations } from '@/components/workspace/user-invitations'
 
 export function AppLayout() {
   const [showCreateWorkspace, setShowCreateWorkspace] = useState(false)
@@ -92,35 +93,47 @@ export function AppLayout() {
   if (workspaces.length === 0) {
     return (
       <>
-        <div className="flex h-screen items-center justify-center bg-background">
-          <div className="text-center space-y-4 max-w-md p-8">
-            <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center mx-auto">
-              <svg
-                className="h-8 w-8 text-primary-foreground"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+        <div className="flex min-h-screen items-center justify-center bg-background p-4 overflow-y-auto">
+          <div className="w-full max-w-md space-y-8 py-8">
+            <div className="text-center space-y-4">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center mx-auto">
+                <svg
+                  className="h-8 w-8 text-primary-foreground"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold">Welcome to BudgetFlow</h1>
+              <p className="text-muted-foreground">
+                Create your first workspace to start tracking your finances.
+                Workspaces help you organize different financial contexts like
+                personal, business, or family budgets.
+              </p>
+              <button
+                onClick={() => setShowCreateWorkspace(true)}
+                className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                />
-              </svg>
+                Create Your First Workspace
+              </button>
             </div>
-            <h1 className="text-2xl font-bold">Welcome to BudgetFlow</h1>
-            <p className="text-muted-foreground">
-              Create your first workspace to start tracking your finances.
-              Workspaces help you organize different financial contexts like
-              personal, business, or family budgets.
-            </p>
-            <button
-              onClick={() => setShowCreateWorkspace(true)}
-              className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              Create Your First Workspace
-            </button>
+
+            <UserInvitations
+              onUpdate={async () => {
+                const result = await fetchWorkspaces()
+                setWorkspaces(result.workspaces)
+                if (result.workspaces.length > 0) {
+                  setWorkspace(result.workspaces[0])
+                }
+              }}
+            />
           </div>
         </div>
         <CreateWorkspaceDialog
