@@ -35,10 +35,10 @@ export function AppLayout() {
 
         // Set global preferences
         if (prefsResult.preferences.defaultLanguage) {
-          setLanguage(prefsResult.preferences.defaultLanguage as any)
+          setLanguage(prefsResult.preferences.defaultLanguage as 'en' | 'uz')
         }
         if (prefsResult.preferences.defaultCurrency) {
-          setCurrency(prefsResult.preferences.defaultCurrency as any)
+          setCurrency(prefsResult.preferences.defaultCurrency as 'USD' | 'UZS')
         }
 
         // Set default workspace if available

@@ -162,7 +162,7 @@ function BudgetsPage() {
       await deleteBudgetItem({ data: { id: deletingItem.$id } })
       toast.success('Budget item deleted')
       loadData()
-    } catch (error) {
+    } catch {
       toast.error(t('error_generic'))
     } finally {
       setDeletingItem(null)
@@ -180,7 +180,7 @@ function BudgetsPage() {
       } else {
         toast.info('No new recurring items found for this month')
       }
-    } catch (error) {
+    } catch {
       toast.error(t('error_generic'))
     } finally {
       setPopulating(false)

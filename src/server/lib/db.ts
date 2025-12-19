@@ -44,7 +44,12 @@ interface ListResponse<T> {
   rows: T[]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import { COLLECTIONS } from './collections'
+
+// ... imports remain the same but we will need to update them properly in the full file context if I were rewriting the whole file, 
+// but here I am just touching the `db` object and the helper function.
+
+// Generic helper for collection clients
 function createCollectionClient<T extends Models.Document>(collectionId: string) {
   return {
     create: async (
@@ -112,18 +117,18 @@ function createCollectionClient<T extends Models.Document>(collectionId: string)
 // =============================================================================
 
 export const db = {
-  workspaces: createCollectionClient<Workspaces>('workspaces'),
-  workspaceMembers: createCollectionClient<WorkspaceMembers>('workspace_members'),
-  workspaceInvitations: createCollectionClient<WorkspaceInvitations>('workspace_invitations'),
-  budgetCategories: createCollectionClient<BudgetCategories>('budget_categories'),
-  monthlyBudgets: createCollectionClient<MonthlyBudgets>('monthly_budgets'),
-  transactions: createCollectionClient<Transactions>('transactions'),
-  recurringTransactions: createCollectionClient<RecurringTransactions>('recurring_expenses'),
-  userPreferences: createCollectionClient<UserPreferences>('user_preferences'),
-  exchangeRates: createCollectionClient<ExchangeRates>('exchange_rates'),
-  debts: createCollectionClient<Debts>('debts'),
-  budgetItems: createCollectionClient<BudgetItems>('budget_items'),
-  incomeSources: createCollectionClient<IncomeSources>('income_sources'),
+  workspaces: createCollectionClient<Workspaces>(COLLECTIONS.WORKSPACES),
+  workspaceMembers: createCollectionClient<WorkspaceMembers>(COLLECTIONS.WORKSPACE_MEMBERS),
+  workspaceInvitations: createCollectionClient<WorkspaceInvitations>(COLLECTIONS.WORKSPACE_INVITATIONS),
+  budgetCategories: createCollectionClient<BudgetCategories>(COLLECTIONS.BUDGET_CATEGORIES),
+  monthlyBudgets: createCollectionClient<MonthlyBudgets>(COLLECTIONS.MONTHLY_BUDGETS),
+  transactions: createCollectionClient<Transactions>(COLLECTIONS.TRANSACTIONS),
+  recurringTransactions: createCollectionClient<RecurringTransactions>(COLLECTIONS.RECURRING_TRANSACTIONS),
+  userPreferences: createCollectionClient<UserPreferences>(COLLECTIONS.USER_PREFERENCES),
+  exchangeRates: createCollectionClient<ExchangeRates>(COLLECTIONS.EXCHANGE_RATES),
+  debts: createCollectionClient<Debts>(COLLECTIONS.DEBTS),
+  budgetItems: createCollectionClient<BudgetItems>(COLLECTIONS.BUDGET_ITEMS),
+  incomeSources: createCollectionClient<IncomeSources>(COLLECTIONS.INCOME_SOURCES),
 }
 
 // Re-export Query for convenience

@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import {
@@ -78,7 +78,7 @@ export function DebtDialog({
     }
 
     const form = useForm<DebtFormValues>({
-        resolver: zodResolver(debtSchema) as any,
+        resolver: zodResolver(debtSchema) as unknown as Resolver<DebtFormValues>,
         defaultValues,
     })
 

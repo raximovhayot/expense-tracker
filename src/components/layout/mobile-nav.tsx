@@ -1,10 +1,12 @@
 import { Link, useLocation } from '@tanstack/react-router'
+import { type TranslationKey } from '@/lib/i18n'
 import {
     LayoutDashboard,
     PiggyBank,
     Receipt,
     Plus,
     HandCoins,
+    type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -14,7 +16,7 @@ export function MobileNav() {
     const location = useLocation()
     const { t } = useI18n()
 
-    const navItems = [
+    const navItems: { href: string; label: TranslationKey; icon: LucideIcon }[] = [
         { href: '/dashboard', label: 'nav_dashboard', icon: LayoutDashboard },
         { href: '/budgets', label: 'nav_budgets', icon: PiggyBank },
         { href: '/transactions', label: 'nav_transactions', icon: Receipt },
@@ -37,7 +39,7 @@ export function MobileNav() {
                             )}
                         >
                             <Icon className={cn("h-6 w-6", isActive && "fill-current")} />
-                            <span className="text-[10px] font-medium">{t(item.label as any)}</span>
+                            <span className="text-[10px] font-medium">{t(item.label)}</span>
                         </Link>
                     )
                 })}
@@ -68,7 +70,7 @@ export function MobileNav() {
                             )}
                         >
                             <Icon className={cn("h-6 w-6", isActive && "fill-current")} />
-                            <span className="text-[10px] font-medium">{t(item.label as any)}</span>
+                            <span className="text-[10px] font-medium">{t(item.label)}</span>
                         </Link>
                     )
                 })}
