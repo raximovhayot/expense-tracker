@@ -49,6 +49,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       { title: 'BudgetFlow - Personal Expense Tracker' },
     ],
     links: [
+      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+      { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
       { rel: 'stylesheet', href: appCss },
     ],
     scripts: [...scripts],
@@ -71,7 +73,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
-          enableSystem
+          forcedTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           {children}

@@ -145,17 +145,15 @@ export function AppLayout() {
 
   return (
     <>
-      <div className="flex h-[100dvh] bg-background relative overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-background to-background">
+      <div className="flex h-[100dvh] bg-background relative overflow-hidden">
         {/* Desktop Sidebar - Floating Dock Style */}
         <div className="hidden md:flex h-screen p-4 pr-0 z-20">
           <AppSidebar onCreateWorkspace={() => setShowCreateWorkspace(true)} />
         </div>
 
         {/* Mobile Nav */}
-        <div className="md:hidden block fixed bottom-0 left-0 right-0 z-50">
-          <div className="pointer-events-auto">
-            <MobileNav />
-          </div>
+        <div className="md:hidden block">
+          <MobileNav />
         </div>
 
         {/* Main Content */}

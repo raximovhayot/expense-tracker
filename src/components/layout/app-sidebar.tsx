@@ -67,9 +67,9 @@ export function AppSidebar({ onCreateWorkspace }: AppSidebarProps) {
       <Link
         to={item.href}
         className={cn(
-          'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-          'hover:bg-accent hover:text-accent-foreground',
-          isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground',
+          'flex items-center gap-3 rounded-full px-3 py-2 text-sm font-medium transition-colors',
+          'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+          isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold' : 'text-muted-foreground',
           collapsed && 'justify-center px-2',
         )}
       >
@@ -94,7 +94,7 @@ export function AppSidebar({ onCreateWorkspace }: AppSidebarProps) {
     <TooltipProvider>
       <aside
         className={cn(
-          'flex flex-col h-full glass-panel rounded-2xl transition-all duration-500 ease-in-out',
+          'flex flex-col h-[calc(100vh-2rem)] m-4 rounded-3xl border bg-sidebar text-foreground shadow-sm transition-all duration-300 ease-in-out',
           collapsed ? 'w-20' : 'w-72',
         )}
       >

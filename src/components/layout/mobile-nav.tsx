@@ -23,8 +23,8 @@ export function MobileNav() {
     ]
 
     return (
-        <nav className="fixed bottom-6 left-4 right-4 z-50">
-            <div className="flex items-center justify-between px-2 py-1.5 bg-background/60 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl ring-1 ring-black/5">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t">
+            <div className="flex items-center justify-between px-6 py-2">
                 {navItems.map((item) => {
                     const Icon = item.icon
                     const isCheck = location.pathname.startsWith(item.href) && item.href !== '/'
@@ -35,26 +35,17 @@ export function MobileNav() {
                             key={item.href}
                             to={item.href}
                             className={cn(
-                                'flex flex-1 flex-col items-center justify-center py-1 gap-0.5 transition-all duration-300 relative',
+                                'flex flex-1 flex-col items-center justify-center py-2 gap-1 transition-colors relative',
                                 isActive
                                     ? 'text-primary'
                                     : 'text-muted-foreground hover:text-foreground'
                             )}
                         >
-                            {isActive && (
-                                <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary/20 rounded-b-full blur-sm" />
-                            )}
                             <Icon
-                                className={cn(
-                                    "h-6 w-6 transition-all duration-300",
-                                    isActive && "scale-110 drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]"
-                                )}
+                                className="h-6 w-6"
                                 strokeWidth={isActive ? 2.5 : 2}
                             />
-                            <span className={cn(
-                                "text-[10px] font-medium transition-all duration-300",
-                                isActive ? "opacity-100 translate-y-0" : "opacity-70"
-                            )}>
+                            <span className="text-[10px] font-medium">
                                 {t(item.label)}
                             </span>
                         </Link>
