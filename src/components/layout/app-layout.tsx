@@ -159,7 +159,7 @@ export function AppLayout() {
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto h-full w-full pb-20 md:pb-4 md:pt-4 md:px-4 no-scrollbar">
+        <main className="flex-1 overflow-auto h-full w-full pb-32 md:pb-4 md:pt-4 md:px-4 no-scrollbar">
           <div className="h-full w-full animate-enter">
             <Outlet />
           </div>
