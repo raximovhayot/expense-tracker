@@ -18,7 +18,9 @@ export function CTASection() {
           className="relative rounded-2xl bg-gradient-to-br from-primary to-primary/80 p-8 sm:p-12 lg:p-16 overflow-hidden"
         >
           {/* Background Pattern */}
+          {/* Background Pattern */}
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:32px_32px]" />
+
 
           <div className="relative text-center">
             <div className="inline-flex items-center gap-2 bg-white/20 rounded-full px-4 py-1.5 text-sm text-white mb-6">

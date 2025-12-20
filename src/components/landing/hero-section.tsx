@@ -12,6 +12,7 @@ export function HeroSection() {
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]" />
 
+
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
         <div className="text-center">
           {/* Logo */}
@@ -60,14 +61,14 @@ export function HeroSection() {
           >
             {currentUser ? (
               <Link to="/budgets">
-                <Button size="lg" className="gap-2 px-8">
+                <Button size="lg" className="gap-2 px-8 shadow-lg hover:shadow-xl transition-all">
                   Go to Budgets
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>
             ) : (
               <Link to="/sign-in">
-                <Button size="lg" className="gap-2 px-8">
+                <Button size="lg" className="gap-2 px-8 shadow-lg hover:shadow-xl transition-all">
                   Get Started for Free
                   <ArrowRight className="h-4 w-4" />
                 </Button>
@@ -105,7 +106,7 @@ export function HeroSection() {
           className="mt-16 relative"
         >
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10 pointer-events-none" />
-          <div className="rounded-xl border bg-card shadow-2xl shadow-primary/10 overflow-hidden">
+          <div className="rounded-xl border border-border/50 bg-card shadow-2xl shadow-primary/10 overflow-hidden">
             <div className="bg-muted/50 px-4 py-3 border-b flex items-center gap-2">
               <div className="flex gap-1.5">
                 <div className="h-3 w-3 rounded-full bg-red-500" />
@@ -136,7 +137,7 @@ export function HeroSection() {
                   },
                   { label: 'Budget Used', value: '67%', color: 'text-primary' },
                 ].map((stat, i) => (
-                  <div key={i} className="bg-background rounded-lg p-4 border">
+                  <div key={i} className="bg-background rounded-lg p-4 shadow-sm">
                     <p className="text-xs text-muted-foreground">
                       {stat.label}
                     </p>
