@@ -93,7 +93,7 @@ export function TransactionForm({
     },
   })
 
-  // const watchType = form.watch('type')
+
 
   useEffect(() => {
     if (editingTransaction) {
@@ -216,7 +216,7 @@ export function TransactionForm({
                     </FormControl>
                     <SelectContent>
                       {categories
-                        // .filter((c) => c.type === watchType)
+
                         .map((cat) => (
                           <SelectItem key={cat.$id} value={cat.$id}>
                             {cat.name}

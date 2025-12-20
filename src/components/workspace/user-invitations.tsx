@@ -22,8 +22,16 @@ interface UseInvitationsProps {
     onUpdate?: () => void
 }
 
+// Define the shape of an invitation based on what getUserInvitationsFn returns
+interface Invitation {
+    $id: string
+    workspaceName: string
+    role: string
+    [key: string]: unknown
+}
+
 export function UserInvitations({ onUpdate }: UseInvitationsProps) {
-    const [invitations, setInvitations] = useState<any[]>([])
+    const [invitations, setInvitations] = useState<Invitation[]>([])
     const [loading, setLoading] = useState(true)
     const [processingId, setProcessingId] = useState<string | null>(null)
 
@@ -37,7 +45,8 @@ export function UserInvitations({ onUpdate }: UseInvitationsProps) {
     async function loadInvitations() {
         try {
             const result = await fetchInvitations()
-            setInvitations(result.invitations)
+            // Ensure the result matches our expected type or cast it if we trust the server function
+            setInvitations(result.invitations as Invitation[])
         } catch (error) {
             console.error('Failed to load invitations:', error)
         } finally {
@@ -62,8 +71,9 @@ export function UserInvitations({ onUpdate }: UseInvitationsProps) {
                 // If rejected, just remove from list
                 setInvitations((prev) => prev.filter((i) => i.$id !== invitationId))
             }
-        } catch (error: any) {
-            toast.error(error.message || 'Failed to process invitation')
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : 'Failed to process invitation';
+            toast.error(message)
         } finally {
             setProcessingId(null)
         }
