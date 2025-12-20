@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useServerFn } from '@tanstack/react-start'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
@@ -227,37 +227,39 @@ export function BudgetPlanner({
 
           return (
             <Card key={category.$id} className="cursor-pointer transition-shadow hover:shadow-md" onClick={() => onCategoryClick(category)}>
-              <CardContent className="py-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="p-2 rounded-lg"
-                      style={{ backgroundColor: `${category.color}20` }}
-                    >
-                      <span style={{ color: category.color || undefined }}>
-                        <CategoryIcon name={category.icon} className="h-5 w-5" />
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="font-medium">{category.name}</h3>
-                      {overviewItem && overviewItem.planned > 0 && (
-                        <p className="text-sm text-muted-foreground">
-                          {formatCurrency(overviewItem.spent, currency)} /{' '}
-                          {formatCurrency(overviewItem.planned, currency)}
-                        </p>
-                      )}
-                    </div>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="p-2 rounded-lg"
+                    style={{ backgroundColor: `${category.color}20` }}
+                  >
+                    <span style={{ color: category.color || undefined }}>
+                      <CategoryIcon name={category.icon} className="h-5 w-5" />
+                    </span>
                   </div>
-                  {overviewItem?.isOverBudget && (
-                    <Badge variant="destructive" className="text-xs">
-                      {t('budget_over_budget')}
-                    </Badge>
-                  )}
+                  <div className="space-y-1">
+                    <CardTitle className="text-base font-semibold leading-none tracking-tight">
+                      {category.name}
+                    </CardTitle>
+                    {overviewItem && overviewItem.planned > 0 && (
+                      <CardDescription>
+                        {formatCurrency(overviewItem.spent, currency)} /{' '}
+                        {formatCurrency(overviewItem.planned, currency)}
+                      </CardDescription>
+                    )}
+                  </div>
                 </div>
+                {overviewItem?.isOverBudget && (
+                  <Badge variant="destructive" className="ml-auto">
+                    {t('budget_over_budget')}
+                  </Badge>
+                )}
+              </CardHeader>
 
+              <CardContent>
                 {/* Progress Bar */}
                 {overviewItem && overviewItem.planned > 0 && (
-                  <div className="mb-3">
+                  <div>
                     <Progress
                       value={Math.min(overviewItem.percentage, 100)}
                       className={cn(
@@ -265,13 +267,13 @@ export function BudgetPlanner({
                         overviewItem.isOverBudget && '[&>div]:bg-red-500',
                       )}
                     />
-                    <div className="flex justify-between mt-1">
+                    <div className="flex justify-between mt-2">
                       <span className="text-xs text-muted-foreground">
                         {overviewItem.percentage}% used
                       </span>
                       <span
                         className={cn(
-                          'text-xs',
+                          'text-xs font-medium',
                           overviewItem.isOverBudget
                             ? 'text-red-500'
                             : 'text-green-500',
@@ -286,8 +288,6 @@ export function BudgetPlanner({
                     </div>
                   </div>
                 )}
-
-
               </CardContent>
             </Card>
           )
@@ -341,6 +341,6 @@ export function BudgetPlanner({
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   )
 }

@@ -21,7 +21,6 @@ import { Route as ProtectedPreferencesRouteImport } from './routes/_protected/pr
 import { Route as ProtectedDebtsRouteImport } from './routes/_protected/debts'
 import { Route as AuthSignOutRouteImport } from './routes/_auth/sign-out'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
-import { Route as ApiHelloRouteImport } from './routes/_api/hello'
 import { Route as ProtectedBudgetsIndexRouteImport } from './routes/_protected/budgets.index'
 import { Route as ProtectedBudgetsCategoryIdRouteImport } from './routes/_protected/budgets.$categoryId'
 
@@ -83,11 +82,6 @@ const AuthSignInRoute = AuthSignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => AuthRoute,
 } as any)
-const ApiHelloRoute = ApiHelloRouteImport.update({
-  id: '/_api/hello',
-  path: '/hello',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProtectedBudgetsIndexRoute = ProtectedBudgetsIndexRouteImport.update({
   id: '/budgets/',
   path: '/budgets/',
@@ -102,7 +96,6 @@ const ProtectedBudgetsCategoryIdRoute =
 
 export interface FileRoutesByFullPath {
   '/oauth-callback': typeof OauthCallbackRoute
-  '/hello': typeof ApiHelloRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-out': typeof AuthSignOutRoute
   '/debts': typeof ProtectedDebtsRoute
@@ -116,7 +109,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/oauth-callback': typeof OauthCallbackRoute
-  '/hello': typeof ApiHelloRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-out': typeof AuthSignOutRoute
   '/debts': typeof ProtectedDebtsRoute
@@ -134,7 +126,6 @@ export interface FileRoutesById {
   '/_protected': typeof ProtectedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
   '/oauth-callback': typeof OauthCallbackRoute
-  '/_api/hello': typeof ApiHelloRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-out': typeof AuthSignOutRoute
   '/_protected/debts': typeof ProtectedDebtsRoute
@@ -150,7 +141,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/oauth-callback'
-    | '/hello'
     | '/sign-in'
     | '/sign-out'
     | '/debts'
@@ -164,7 +154,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/oauth-callback'
-    | '/hello'
     | '/sign-in'
     | '/sign-out'
     | '/debts'
@@ -181,7 +170,6 @@ export interface FileRouteTypes {
     | '/_protected'
     | '/_public'
     | '/oauth-callback'
-    | '/_api/hello'
     | '/_auth/sign-in'
     | '/_auth/sign-out'
     | '/_protected/debts'
@@ -199,7 +187,6 @@ export interface RootRouteChildren {
   ProtectedRoute: typeof ProtectedRouteWithChildren
   PublicRoute: typeof PublicRouteWithChildren
   OauthCallbackRoute: typeof OauthCallbackRoute
-  ApiHelloRoute: typeof ApiHelloRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -288,13 +275,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSignInRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_api/hello': {
-      id: '/_api/hello'
-      path: '/hello'
-      fullPath: '/hello'
-      preLoaderRoute: typeof ApiHelloRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_protected/budgets/': {
       id: '/_protected/budgets/'
       path: '/budgets'
@@ -364,7 +344,6 @@ const rootRouteChildren: RootRouteChildren = {
   ProtectedRoute: ProtectedRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
   OauthCallbackRoute: OauthCallbackRoute,
-  ApiHelloRoute: ApiHelloRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
