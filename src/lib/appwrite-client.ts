@@ -88,8 +88,8 @@ export async function signOut(): Promise<void> {
  * Get stored redirect URL and clear it
  */
 export function getAndClearRedirect(): string {
-    if (typeof window === 'undefined') return '/'
-    const redirect = sessionStorage.getItem('auth_redirect') || '/'
+    if (typeof window === 'undefined') return '/budgets'
+    const redirect = sessionStorage.getItem('auth_redirect') || '/budgets'
     sessionStorage.removeItem('auth_redirect')
     return redirect
 }

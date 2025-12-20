@@ -1,6 +1,5 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import {
-  LayoutDashboard,
   PiggyBank,
   Receipt,
   RefreshCw,
@@ -34,7 +33,6 @@ interface NavItem {
 }
 
 const mainNavItems: NavItem[] = [
-  { labelKey: 'nav_dashboard', href: '/dashboard', icon: LayoutDashboard },
   { labelKey: 'nav_budgets', href: '/budgets', icon: PiggyBank },
   { labelKey: 'nav_transactions', href: '/transactions', icon: Receipt },
   { labelKey: 'nav_debts', href: '/debts', icon: HandCoins },
@@ -108,7 +106,7 @@ export function AppSidebar({ onCreateWorkspace }: AppSidebarProps) {
           )}
         >
           {!collapsed && (
-            <Link to="/dashboard" className="flex items-center gap-2">
+            <Link to="/budgets" className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
                 <PiggyBank className="h-5 w-5 text-primary-foreground" />
               </div>

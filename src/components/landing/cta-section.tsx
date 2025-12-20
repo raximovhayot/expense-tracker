@@ -35,9 +35,9 @@ export function CTASection() {
             </p>
 
             {currentUser ? (
-              <Link to="/dashboard">
+              <Link to="/budgets">
                 <Button size="lg" variant="secondary" className="gap-2 px-8">
-                  Go to Dashboard
+                  Go to Budgets
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>

@@ -184,7 +184,7 @@ function WorkspaceSettingsPage() {
       await deleteWorkspaceApi({ data: { id: workspace.$id } })
       removeWorkspace(workspace.$id)
       toast.success(t('workspace_deleted'))
-      navigate({ to: '/dashboard' })
+      navigate({ to: '/budgets' })
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : t('error_generic')

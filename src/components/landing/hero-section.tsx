@@ -59,9 +59,9 @@ export function HeroSection() {
             className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
           >
             {currentUser ? (
-              <Link to="/dashboard">
+              <Link to="/budgets">
                 <Button size="lg" className="gap-2 px-8">
-                  Go to Dashboard
+                  Go to Budgets
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </Link>

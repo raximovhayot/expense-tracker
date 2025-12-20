@@ -27,7 +27,7 @@ export function MobileHeader({ onCreateWorkspace }: MobileHeaderProps) {
         )}>
             <div className="flex h-14 items-center justify-between px-4">
                 {/* Left: Logo/Home */}
-                <Link to="/dashboard" className="flex items-center gap-2">
+                <Link to="/budgets" className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-xl bg-gradient-to-br from-primary to-primary/60 shadow-lg shadow-primary/20 flex items-center justify-center">
                         <PiggyBank className="h-5 w-5 text-primary-foreground" />
                     </div>

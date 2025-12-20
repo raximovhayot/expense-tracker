@@ -19,7 +19,6 @@ import { Route as ProtectedTransactionsRouteImport } from './routes/_protected/t
 import { Route as ProtectedRecurringRouteImport } from './routes/_protected/recurring'
 import { Route as ProtectedPreferencesRouteImport } from './routes/_protected/preferences'
 import { Route as ProtectedDebtsRouteImport } from './routes/_protected/debts'
-import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
 import { Route as AuthSignOutRouteImport } from './routes/_auth/sign-out'
 import { Route as AuthSignInRouteImport } from './routes/_auth/sign-in'
 import { Route as ApiHelloRouteImport } from './routes/_api/hello'
@@ -74,11 +73,6 @@ const ProtectedDebtsRoute = ProtectedDebtsRouteImport.update({
   path: '/debts',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => ProtectedRoute,
-} as any)
 const AuthSignOutRoute = AuthSignOutRouteImport.update({
   id: '/sign-out',
   path: '/sign-out',
@@ -111,7 +105,6 @@ export interface FileRoutesByFullPath {
   '/hello': typeof ApiHelloRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-out': typeof AuthSignOutRoute
-  '/dashboard': typeof ProtectedDashboardRoute
   '/debts': typeof ProtectedDebtsRoute
   '/preferences': typeof ProtectedPreferencesRoute
   '/recurring': typeof ProtectedRecurringRoute
@@ -126,7 +119,6 @@ export interface FileRoutesByTo {
   '/hello': typeof ApiHelloRoute
   '/sign-in': typeof AuthSignInRoute
   '/sign-out': typeof AuthSignOutRoute
-  '/dashboard': typeof ProtectedDashboardRoute
   '/debts': typeof ProtectedDebtsRoute
   '/preferences': typeof ProtectedPreferencesRoute
   '/recurring': typeof ProtectedRecurringRoute
@@ -145,7 +137,6 @@ export interface FileRoutesById {
   '/_api/hello': typeof ApiHelloRoute
   '/_auth/sign-in': typeof AuthSignInRoute
   '/_auth/sign-out': typeof AuthSignOutRoute
-  '/_protected/dashboard': typeof ProtectedDashboardRoute
   '/_protected/debts': typeof ProtectedDebtsRoute
   '/_protected/preferences': typeof ProtectedPreferencesRoute
   '/_protected/recurring': typeof ProtectedRecurringRoute
@@ -162,7 +153,6 @@ export interface FileRouteTypes {
     | '/hello'
     | '/sign-in'
     | '/sign-out'
-    | '/dashboard'
     | '/debts'
     | '/preferences'
     | '/recurring'
@@ -177,7 +167,6 @@ export interface FileRouteTypes {
     | '/hello'
     | '/sign-in'
     | '/sign-out'
-    | '/dashboard'
     | '/debts'
     | '/preferences'
     | '/recurring'
@@ -195,7 +184,6 @@ export interface FileRouteTypes {
     | '/_api/hello'
     | '/_auth/sign-in'
     | '/_auth/sign-out'
-    | '/_protected/dashboard'
     | '/_protected/debts'
     | '/_protected/preferences'
     | '/_protected/recurring'
@@ -286,13 +274,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedDebtsRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_protected/dashboard': {
-      id: '/_protected/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof ProtectedDashboardRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
     '/_auth/sign-out': {
       id: '/_auth/sign-out'
       path: '/sign-out'
@@ -344,7 +325,6 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface ProtectedRouteChildren {
-  ProtectedDashboardRoute: typeof ProtectedDashboardRoute
   ProtectedDebtsRoute: typeof ProtectedDebtsRoute
   ProtectedPreferencesRoute: typeof ProtectedPreferencesRoute
   ProtectedRecurringRoute: typeof ProtectedRecurringRoute
@@ -355,7 +335,6 @@ interface ProtectedRouteChildren {
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
-  ProtectedDashboardRoute: ProtectedDashboardRoute,
   ProtectedDebtsRoute: ProtectedDebtsRoute,
   ProtectedPreferencesRoute: ProtectedPreferencesRoute,
   ProtectedRecurringRoute: ProtectedRecurringRoute,
