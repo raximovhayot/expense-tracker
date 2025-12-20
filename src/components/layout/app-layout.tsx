@@ -3,6 +3,7 @@ import { Outlet } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { AppSidebar } from './app-sidebar'
 import { MobileNav } from './mobile-nav'
+import { MobileHeader } from './mobile-header'
 import { CreateWorkspaceDialog } from '@/components/workspace/create-workspace-dialog'
 import { useWorkspace } from '@/hooks/use-workspace'
 import { useAuth } from '@/hooks/use-auth'
@@ -146,19 +147,20 @@ export function AppLayout() {
   return (
     <>
       <div className="flex h-[100dvh] bg-background relative overflow-hidden">
-        {/* Desktop Sidebar - Floating Dock Style */}
-        <div className="hidden md:flex h-screen p-4 pr-0 z-20">
+        {/* Desktop Sidebar - Solid Standard Style */}
+        <div className="hidden md:flex h-screen z-20">
           <AppSidebar onCreateWorkspace={() => setShowCreateWorkspace(true)} />
         </div>
 
-        {/* Mobile Nav */}
-        <div className="md:hidden block">
+        {/* Mobile Header & Nav */}
+        <div className="md:hidden">
+          <MobileHeader onCreateWorkspace={() => setShowCreateWorkspace(true)} />
           <MobileNav />
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto h-full w-full pb-32 md:pb-4 md:pt-4 md:px-4 no-scrollbar">
-          <div className="h-full w-full animate-enter">
+        <main className="flex-1 overflow-auto h-full w-full pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0 md:pt-0 no-scrollbar">
+          <div className="h-full w-full animate-enter p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
             <Outlet />
           </div>
         </main>

@@ -14,9 +14,9 @@ export function PageContainer({
     return (
         <div
             className={cn(
-                "min-h-full animate-enter pb-32", // Base styles + animation + mobile nav padding
+                "min-h-full animate-enter", // Base styles + animation
                 fullWidth ? "w-full" : "container mx-auto max-w-7xl", // Width control
-                "p-4 md:p-8", // Standard padding
+                "space-y-6", // Standard vertical spacing
                 className
             )}
         >

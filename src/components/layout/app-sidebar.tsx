@@ -67,9 +67,9 @@ export function AppSidebar({ onCreateWorkspace }: AppSidebarProps) {
       <Link
         to={item.href}
         className={cn(
-          'flex items-center gap-3 rounded-full px-3 py-2 text-sm font-medium transition-colors',
-          'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
-          isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold' : 'text-muted-foreground',
+          'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+          'hover:bg-accent hover:text-accent-foreground',
+          isActive ? 'bg-primary/10 text-primary font-semibold' : 'text-muted-foreground',
           collapsed && 'justify-center px-2',
         )}
       >
@@ -94,27 +94,27 @@ export function AppSidebar({ onCreateWorkspace }: AppSidebarProps) {
     <TooltipProvider>
       <aside
         className={cn(
-          'flex flex-col h-[calc(100vh-2rem)] m-4 rounded-3xl border bg-sidebar text-foreground shadow-sm transition-all duration-300 ease-in-out',
-          collapsed ? 'w-20' : 'w-72',
+          'flex flex-col h-full border-r bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out',
+          collapsed ? 'w-16' : 'w-64',
         )}
       >
         {/* Header */}
         <div
           className={cn(
-            'flex items-center h-16 px-4 border-b',
-            collapsed && 'justify-center px-2',
+            'flex items-center h-14 px-4 border-b',
+            collapsed && 'justify-center px-1',
           )}
         >
           {!collapsed && (
             <Link to="/budgets" className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
-                <PiggyBank className="h-5 w-5 text-primary-foreground" />
+              <div className="h-6 w-6 rounded bg-primary flex items-center justify-center">
+                <PiggyBank className="h-4 w-4 text-primary-foreground" />
               </div>
               <span className="font-bold text-lg">BudgetFlow</span>
             </Link>
           )}
           {collapsed && (
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center">
               <PiggyBank className="h-5 w-5 text-primary-foreground" />
             </div>
           )}
@@ -131,7 +131,7 @@ export function AppSidebar({ onCreateWorkspace }: AppSidebarProps) {
         <Separator />
 
         {/* Navigation */}
-        <ScrollArea className="flex-1 px-3 py-4">
+        <ScrollArea className="flex-1 px-2 py-4">
           <nav className="space-y-1">
             {mainNavItems.map((item) => (
               <NavLink key={item.href} item={item} />
@@ -148,7 +148,7 @@ export function AppSidebar({ onCreateWorkspace }: AppSidebarProps) {
         </ScrollArea>
 
         {/* Footer */}
-        <div className="border-t p-3">
+        <div className="border-t p-2">
           {collapsed ? (
             <Tooltip delayDuration={0}>
               <TooltipTrigger asChild>
@@ -176,18 +176,20 @@ export function AppSidebar({ onCreateWorkspace }: AppSidebarProps) {
         </div>
 
         {/* Collapse Toggle */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute -right-3 top-20 h-6 w-6 rounded-full border bg-background shadow-sm"
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
-          )}
-        </Button>
+        <div className="flex justify-end p-2 border-t">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={() => setCollapsed(!collapsed)}
+          >
+            {collapsed ? (
+              <ChevronRight className="h-4 w-4" />
+            ) : (
+              <ChevronLeft className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
       </aside>
     </TooltipProvider>
   )

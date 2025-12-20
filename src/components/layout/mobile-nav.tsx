@@ -24,7 +24,7 @@ export function MobileNav() {
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t">
-            <div className="flex items-center justify-between px-6 py-2">
+            <div className="flex items-center justify-around px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
                 {navItems.map((item) => {
                     const Icon = item.icon
                     const isCheck = location.pathname.startsWith(item.href) && item.href !== '/'
@@ -35,7 +35,7 @@ export function MobileNav() {
                             key={item.href}
                             to={item.href}
                             className={cn(
-                                'flex flex-1 flex-col items-center justify-center py-2 gap-1 transition-colors relative',
+                                'flex flex-1 flex-col items-center justify-center py-2 gap-1 transition-colors',
                                 isActive
                                     ? 'text-primary'
                                     : 'text-muted-foreground hover:text-foreground'
@@ -45,7 +45,7 @@ export function MobileNav() {
                                 className="h-6 w-6"
                                 strokeWidth={isActive ? 2.5 : 2}
                             />
-                            <span className="text-[10px] font-medium">
+                            <span className="text-[10px] font-medium leading-none">
                                 {t(item.label)}
                             </span>
                         </Link>
