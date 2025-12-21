@@ -138,12 +138,15 @@ export function TransactionList({
             placeholder={t('search')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-10 bg-card border-none shadow-sm"
           />
         </div>
         <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-full sm:w-[150px]">
-            <SelectValue placeholder={t('transaction_filter_type')} />
+          <SelectTrigger className="w-full sm:w-[150px] bg-card border-none shadow-sm">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <SelectValue placeholder={t('transaction_filter_type')} />
+            </div>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t('all')}</SelectItem>
@@ -156,8 +159,11 @@ export function TransactionList({
           </SelectContent>
         </Select>
         <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-          <SelectTrigger className="w-full sm:w-[180px]">
-            <SelectValue placeholder={t('transaction_filter_category')} />
+          <SelectTrigger className="w-full sm:w-[180px] bg-card border-none shadow-sm">
+            <div className="flex items-center gap-2">
+              <Receipt className="h-4 w-4 text-muted-foreground" />
+              <SelectValue placeholder={t('transaction_filter_category')} />
+            </div>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t('all')}</SelectItem>
@@ -173,16 +179,15 @@ export function TransactionList({
       {/* Transaction List */}
       <div className="space-y-2">
         {filteredTransactions.map((transaction) => (
-          <Card key={transaction.$id}>
+          <Card key={transaction.$id} className="border-none shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="py-3 px-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`p-2 rounded-full ${
-                      transaction.type === 'income'
+                    className={`p-2 rounded-full ${transaction.type === 'income'
                         ? 'bg-green-500/10'
                         : 'bg-red-500/10'
-                    }`}
+                      }`}
                   >
                     {transaction.type === 'income' ? (
                       <ArrowUpRight className="h-4 w-4 text-green-500" />
@@ -191,12 +196,12 @@ export function TransactionList({
                     )}
                   </div>
                   <div>
-                    <p className="font-medium text-sm">
+                    <p className="font-bold text-base">
                       {transaction.description ||
                         getCategoryName(transaction.categoryId)}
                     </p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-muted-foreground font-medium">
                         {format(
                           new Date(transaction.transactionDate),
                           'MMM d, yyyy',
@@ -228,11 +233,10 @@ export function TransactionList({
 
                 <div className="flex items-center gap-3">
                   <span
-                    className={`font-semibold ${
-                      transaction.type === 'income'
+                    className={`font-semibold ${transaction.type === 'income'
                         ? 'text-green-500'
                         : 'text-red-500'
-                    }`}
+                      }`}
                   >
                     {transaction.type === 'income' ? '+' : '-'}
                     {formatCurrency(

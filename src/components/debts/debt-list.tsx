@@ -92,7 +92,7 @@ export function DebtList({ debts, onEdit, onUpdate, currency }: DebtListProps) {
     }
 
     return (
-        <div className="rounded-xl border border-white/20 dark:border-white/10 bg-white/50 dark:bg-black/20 backdrop-blur-sm overflow-hidden">
+        <Card className="border-none shadow-sm overflow-hidden">
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -192,6 +192,6 @@ export function DebtList({ debts, onEdit, onUpdate, currency }: DebtListProps) {
                     ))}
                 </TableBody>
             </Table>
-        </div>
+        </Card>
     )
 }

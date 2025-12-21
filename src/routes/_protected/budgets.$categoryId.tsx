@@ -174,7 +174,7 @@ function BudgetDetailsPage() {
   }
 
   return (
-    <PageContainer>
+    <PageContainer fullWidth={false} className="max-w-6xl">
       {/* Header */}
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-4">

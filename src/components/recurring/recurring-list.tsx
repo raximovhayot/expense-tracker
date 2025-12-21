@@ -134,7 +134,7 @@ export function RecurringList({
           return (
             <Card
               key={transaction.$id}
-              className={!transaction.isActive ? 'opacity-60' : ''}
+              className={`border-none shadow-sm hover:shadow-md transition-shadow ${!transaction.isActive ? 'opacity-60' : ''}`}
             >
               <CardContent className="py-4">
                 <div className="flex items-center justify-between">
@@ -144,7 +144,7 @@ export function RecurringList({
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium">{transaction.name}</h3>
+                        <h3 className="font-bold text-base">{transaction.name}</h3>
                         {transaction.categoryId && (
                           <Badge
                             variant="outline"

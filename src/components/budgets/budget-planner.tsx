@@ -181,7 +181,8 @@ export function BudgetPlanner({
   return (
     <div className="space-y-6">
       {/* Month Navigation */}
-      <Card>
+      {/* Month Navigation */}
+      <Card className="border-none shadow-sm">
         <CardContent className="py-4">
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="icon" onClick={handlePrevMonth}>
@@ -210,7 +211,7 @@ export function BudgetPlanner({
             <Plus className="h-4 w-4 mr-2" />
             Set Budget
           </Button>
-          <Button variant="outline" size="sm" onClick={handleCopyFromPrevious} className="h-9">
+          <Button variant="outline" size="sm" onClick={handleCopyFromPrevious} className="h-9 border-none shadow-sm bg-card hover:bg-accent/50">
             <Copy className="h-4 w-4 mr-2" />
             Copy Previous
           </Button>
@@ -226,7 +227,7 @@ export function BudgetPlanner({
 
 
           return (
-            <Card key={category.$id} className="cursor-pointer transition-shadow hover:shadow-md" onClick={() => onCategoryClick(category)}>
+            <Card key={category.$id} className="cursor-pointer transition-all hover:shadow-md border-none shadow-sm" onClick={() => onCategoryClick(category)}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div className="flex items-center gap-3">
                   <div

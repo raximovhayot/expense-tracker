@@ -104,7 +104,7 @@ function BudgetsPage() {
   }
 
   return (
-    <PageContainer>
+    <PageContainer fullWidth={false} className="max-w-6xl">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

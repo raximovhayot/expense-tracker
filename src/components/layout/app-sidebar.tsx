@@ -96,7 +96,9 @@ export function AppSidebar({ onCreateWorkspace }: AppSidebarProps) {
         className={cn(
           'flex flex-col h-full border-r bg-sidebar text-sidebar-foreground transition-all duration-300 ease-in-out',
           collapsed ? 'w-16' : 'w-64',
-        )}
+        )
+        }
+        style={{ backgroundColor: 'hsl(var(--sidebar))' }}
       >
         {/* Header */}
         <div

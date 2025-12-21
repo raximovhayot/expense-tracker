@@ -97,7 +97,7 @@ function DebtsPage() {
     }
 
     return (
-        <PageContainer>
+        <PageContainer fullWidth={false} className="max-w-6xl">
             <div className="flex items-center justify-center lg:justify-between mb-6">
                 <div className="text-center lg:text-left">
                     <h1 className="text-2xl font-bold tracking-tight">{t('debts_title')}</h1>
@@ -124,7 +124,7 @@ function DebtsPage() {
             )}
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-                <Card className="card-sleek">
+                <Card className="border-none shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
                             {t('debts_total_lent')}
@@ -139,7 +139,7 @@ function DebtsPage() {
                         </p>
                     </CardContent>
                 </Card>
-                <Card className="card-sleek">
+                <Card className="border-none shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
                             {t('debts_total_borrowed')}
